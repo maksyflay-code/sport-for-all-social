@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Heart, MessageCircle, Share2, MoreHorizontal, Send } from "lucide-react";
+import { Heart, MessageCircle, Share2, Send, ThumbsUp, Image, Smile, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -44,6 +43,7 @@ const FeedSection = () => {
     if (!postsData) return;
 
     const postIds = postsData.map((p) => p.id);
+    if (postIds.length === 0) { setPosts([]); return; }
 
     const { data: likesData } = await supabase
       .from("likes")
@@ -85,7 +85,7 @@ const FeedSection = () => {
     setPosting(true);
     const { error } = await supabase.from("posts").insert({ content: newPost.trim(), user_id: user.id });
     if (error) toast.error("Erro ao publicar");
-    else { setNewPost(""); loadPosts(); toast.success("Publicado! 🎉"); }
+    else { setNewPost(""); loadPosts(); toast.success("Publicado!"); }
     setPosting(false);
   };
 
@@ -124,145 +124,203 @@ const FeedSection = () => {
     return name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
   };
 
-  return (
-    <section id="feed" className="py-16 bg-background">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-display text-foreground mb-3">
-            HISTÓRIAS QUE <span className="text-gradient">INSPIRAM</span>
-          </h2>
-          <p className="text-muted-foreground font-body max-w-md mx-auto">
-            Compartilhe suas conquistas com a comunidade
-          </p>
-        </div>
+  const getUserName = () => user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Você";
 
-        <div className="max-w-2xl mx-auto space-y-6">
-          {/* Create Post */}
-          {user && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-card rounded-xl p-5 shadow-card border border-border"
+  return (
+    <section id="feed" className="space-y-4">
+      {/* Create Post - Facebook style */}
+      {user && (
+        <div className="bg-card rounded-lg shadow-card p-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0">
+              <span className="text-sm font-bold text-primary-foreground">
+                {getUserName().charAt(0).toUpperCase()}
+              </span>
+            </div>
+            <button
+              onClick={() => document.getElementById("post-textarea")?.focus()}
+              className="flex-1 bg-secondary rounded-full px-4 py-2.5 text-left text-muted-foreground text-[15px] hover:bg-secondary/80 transition-colors"
             >
-              <Textarea
-                value={newPost}
-                onChange={(e) => setNewPost(e.target.value)}
-                placeholder="Compartilhe sua história, conquista ou dica esportiva... 💙"
-                rows={3}
-                className="mb-3 resize-none"
-              />
-              <div className="flex justify-end">
-                <Button
-                  onClick={handlePost}
-                  disabled={posting || !newPost.trim()}
-                  className="gradient-hero text-primary-foreground font-semibold gap-2"
-                >
-                  <Send className="w-4 h-4" /> {posting ? "Publicando..." : "Publicar"}
-                </Button>
-              </div>
-            </motion.div>
+              No que você está pensando, {getUserName().split(" ")[0]}?
+            </button>
+          </div>
+          
+          {newPost !== "" && (
+            <Textarea
+              id="post-textarea"
+              value={newPost}
+              onChange={(e) => setNewPost(e.target.value)}
+              placeholder="Compartilhe sua história, conquista ou dica esportiva..."
+              rows={3}
+              className="mb-3 resize-none border-0 bg-transparent focus-visible:ring-0 text-[15px]"
+              autoFocus
+            />
           )}
 
-          {/* Posts */}
-          {posts.map((post, i) => (
-            <motion.article
-              key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-card rounded-xl p-6 shadow-card border border-border hover:shadow-elevated transition-shadow"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center overflow-hidden">
-                    {post.profiles?.avatar_url ? (
-                      <img src={post.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-sm font-bold text-primary-foreground">
-                        {getInitials(post.profiles?.display_name)}
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-card-foreground">{post.profiles?.display_name || "Anônimo"}</h3>
-                    <p className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}
-                    </p>
-                  </div>
-                </div>
-              </div>
+          {newPost === "" && (
+            <Textarea
+              id="post-textarea"
+              value={newPost}
+              onChange={(e) => setNewPost(e.target.value)}
+              placeholder=""
+              rows={1}
+              className="hidden"
+            />
+          )}
 
-              <p className="text-card-foreground/90 font-body mb-5 leading-relaxed whitespace-pre-wrap">{post.content}</p>
+          <div className="flex items-center border-t border-border pt-3 gap-1">
+            <button className="flex items-center gap-2 flex-1 justify-center py-2 rounded-lg hover:bg-secondary transition-colors text-sm font-semibold text-muted-foreground">
+              <Video className="w-5 h-5 text-destructive" /> Vídeo ao vivo
+            </button>
+            <button className="flex items-center gap-2 flex-1 justify-center py-2 rounded-lg hover:bg-secondary transition-colors text-sm font-semibold text-muted-foreground">
+              <Image className="w-5 h-5 text-success" /> Foto/vídeo
+            </button>
+            <button className="flex items-center gap-2 flex-1 justify-center py-2 rounded-lg hover:bg-secondary transition-colors text-sm font-semibold text-muted-foreground">
+              <Smile className="w-5 h-5 text-accent-foreground" /> Sentimento
+            </button>
+          </div>
 
-              <div className="flex items-center gap-6 pt-4 border-t border-border">
-                <button
-                  onClick={() => handleLike(post.id, post.user_liked)}
-                  className={`flex items-center gap-2 text-sm font-semibold transition-colors ${
-                    post.user_liked ? "text-primary" : "text-muted-foreground hover:text-primary"
-                  }`}
-                >
-                  <Heart className={`w-5 h-5 ${post.user_liked ? "fill-primary" : ""}`} /> {post.likes_count}
-                </button>
-                <button
-                  onClick={() => toggleComments(post.id)}
-                  className="flex items-center gap-2 text-muted-foreground hover:text-secondary transition-colors text-sm font-semibold"
-                >
-                  <MessageCircle className="w-5 h-5" /> {post.comments_count}
-                </button>
-                <button
-                  onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success("Link copiado!"); }}
-                  className="flex items-center gap-2 text-muted-foreground hover:text-accent transition-colors text-sm font-semibold ml-auto"
-                >
-                  <Share2 className="w-5 h-5" /> Compartilhar
-                </button>
-              </div>
-
-              {/* Comments */}
-              {expandedComments === post.id && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  className="mt-4 pt-4 border-t border-border space-y-3"
-                >
-                  {comments[post.id]?.map((comment: any) => (
-                    <div key={comment.id} className="flex gap-3">
-                      <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center shrink-0">
-                        <span className="text-xs font-bold text-secondary-foreground">
-                          {getInitials(comment.profiles?.display_name)}
-                        </span>
-                      </div>
-                      <div className="bg-muted rounded-lg px-3 py-2 flex-1">
-                        <p className="text-sm font-semibold text-foreground">{comment.profiles?.display_name || "Anônimo"}</p>
-                        <p className="text-sm text-foreground/80">{comment.content}</p>
-                      </div>
-                    </div>
-                  ))}
-                  {user && (
-                    <div className="flex gap-2">
-                      <Input
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Escreva um comentário..."
-                        onKeyDown={(e) => e.key === "Enter" && handleComment(post.id)}
-                      />
-                      <Button size="icon" onClick={() => handleComment(post.id)} className="bg-secondary text-secondary-foreground">
-                        <Send className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </motion.article>
-          ))}
-
-          {posts.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">Nenhuma publicação ainda. Seja o primeiro a compartilhar! 🎉</p>
+          {newPost.trim() && (
+            <div className="flex justify-end mt-3">
+              <Button
+                onClick={handlePost}
+                disabled={posting}
+                className="bg-primary text-primary-foreground font-semibold rounded-lg px-6"
+              >
+                {posting ? "Publicando..." : "Publicar"}
+              </Button>
             </div>
           )}
         </div>
-      </div>
+      )}
+
+      {/* Posts */}
+      {posts.map((post) => (
+        <article
+          key={post.id}
+          className="bg-card rounded-lg shadow-card"
+        >
+          {/* Post header */}
+          <div className="flex items-center gap-3 p-4 pb-0">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center overflow-hidden shrink-0">
+              {post.profiles?.avatar_url ? (
+                <img src={post.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-sm font-bold text-primary-foreground">
+                  {getInitials(post.profiles?.display_name)}
+                </span>
+              )}
+            </div>
+            <div>
+              <p className="text-[15px] font-semibold text-foreground leading-tight">{post.profiles?.display_name || "Anônimo"}</p>
+              <p className="text-xs text-muted-foreground">
+                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}
+              </p>
+            </div>
+          </div>
+
+          {/* Post content */}
+          <div className="px-4 py-3">
+            <p className="text-[15px] text-foreground whitespace-pre-wrap leading-relaxed">{post.content}</p>
+          </div>
+
+          {/* Reactions count */}
+          {(post.likes_count > 0 || post.comments_count > 0) && (
+            <div className="flex items-center justify-between px-4 py-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                {post.likes_count > 0 && (
+                  <>
+                    <span className="inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-primary text-primary-foreground">
+                      <ThumbsUp className="w-2.5 h-2.5" />
+                    </span>
+                    <span>{post.likes_count}</span>
+                  </>
+                )}
+              </div>
+              {post.comments_count > 0 && (
+                <button onClick={() => toggleComments(post.id)} className="hover:underline">
+                  {post.comments_count} comentário{post.comments_count !== 1 ? "s" : ""}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Action buttons */}
+          <div className="flex items-center border-t border-border mx-4 py-1">
+            <button
+              onClick={() => handleLike(post.id, post.user_liked)}
+              className={`flex items-center gap-2 flex-1 justify-center py-2 rounded-lg hover:bg-secondary transition-colors text-sm font-semibold ${
+                post.user_liked ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <ThumbsUp className={`w-5 h-5 ${post.user_liked ? "fill-primary" : ""}`} /> Curtir
+            </button>
+            <button
+              onClick={() => toggleComments(post.id)}
+              className="flex items-center gap-2 flex-1 justify-center py-2 rounded-lg hover:bg-secondary transition-colors text-sm font-semibold text-muted-foreground"
+            >
+              <MessageCircle className="w-5 h-5" /> Comentar
+            </button>
+            <button
+              onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success("Link copiado!"); }}
+              className="flex items-center gap-2 flex-1 justify-center py-2 rounded-lg hover:bg-secondary transition-colors text-sm font-semibold text-muted-foreground"
+            >
+              <Share2 className="w-5 h-5" /> Compartilhar
+            </button>
+          </div>
+
+          {/* Comments section */}
+          {expandedComments === post.id && (
+            <div className="border-t border-border px-4 py-3 space-y-3">
+              {comments[post.id]?.map((comment: any) => (
+                <div key={comment.id} className="flex gap-2">
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-xs font-bold text-muted-foreground">
+                      {getInitials(comment.profiles?.display_name)}
+                    </span>
+                  </div>
+                  <div className="bg-secondary rounded-2xl px-3 py-2 max-w-[85%]">
+                    <p className="text-[13px] font-semibold text-foreground">{comment.profiles?.display_name || "Anônimo"}</p>
+                    <p className="text-[13px] text-foreground/90">{comment.content}</p>
+                  </div>
+                </div>
+              ))}
+              {user && (
+                <div className="flex gap-2 items-center">
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0">
+                    <span className="text-xs font-bold text-primary-foreground">
+                      {getUserName().charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="flex-1 relative">
+                    <Input
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder="Escreva um comentário..."
+                      className="rounded-full bg-secondary border-0 pr-10 text-[13px] h-9 focus-visible:ring-0"
+                      onKeyDown={(e) => e.key === "Enter" && handleComment(post.id)}
+                    />
+                    {newComment.trim() && (
+                      <button
+                        onClick={() => handleComment(post.id)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-primary"
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </article>
+      ))}
+
+      {posts.length === 0 && (
+        <div className="bg-card rounded-lg shadow-card p-8 text-center">
+          <p className="text-muted-foreground text-[15px]">Nenhuma publicação ainda. Seja o primeiro a compartilhar! 🎉</p>
+        </div>
+      )}
     </section>
   );
 };
