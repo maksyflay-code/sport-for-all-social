@@ -1,19 +1,21 @@
 import Header from "@/components/Header";
-import HeroSection from "@/components/HeroSection";
+import LeftSidebar from "@/components/LeftSidebar";
+import RightSidebar from "@/components/RightSidebar";
 import FeedSection from "@/components/FeedSection";
-import CommunitiesSection from "@/components/CommunitiesSection";
-import EventsSection from "@/components/EventsSection";
-import FooterSection from "@/components/FooterSection";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <HeroSection />
-      <FeedSection />
-      <CommunitiesSection />
-      <EventsSection />
-      <FooterSection />
+      <div className="container mx-auto px-4">
+        <div className="flex gap-4">
+          <LeftSidebar />
+          <main className="flex-1 min-w-0 py-4 max-w-[680px] mx-auto">
+            <FeedSection />
+          </main>
+          <RightSidebar />
+        </div>
+      </div>
     </div>
   );
 };

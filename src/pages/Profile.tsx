@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
 import { Camera, Save, Trophy, Medal } from "lucide-react";
 
 const SPORTS_OPTIONS = [
@@ -60,20 +59,14 @@ const Profile = () => {
     const ext = file.name.split(".").pop();
     const path = `${user!.id}/avatar.${ext}`;
     const { error } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
-    if (error) {
-      toast.error("Erro ao fazer upload");
-      setUploading(false);
-      return;
-    }
+    if (error) { toast.error("Erro ao fazer upload"); setUploading(false); return; }
     const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
     setAvatarUrl(publicUrl);
     setUploading(false);
   };
 
   const toggleSport = (sport: string) => {
-    setSports((prev) =>
-      prev.includes(sport) ? prev.filter((s) => s !== sport) : [...prev, sport]
-    );
+    setSports((prev) => prev.includes(sport) ? prev.filter((s) => s !== sport) : [...prev, sport]);
   };
 
   const addAchievement = () => {
@@ -87,17 +80,10 @@ const Profile = () => {
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
-      .update({
-        display_name: displayName,
-        bio,
-        sports,
-        achievements,
-        avatar_url: avatarUrl,
-      })
+      .update({ display_name: displayName, bio, sports, achievements, avatar_url: avatarUrl })
       .eq("user_id", user!.id);
-
     if (error) toast.error("Erro ao salvar");
-    else toast.success("Perfil atualizado! 🎉");
+    else toast.success("Perfil atualizado!");
     setSaving(false);
   };
 
@@ -106,99 +92,96 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-card rounded-2xl p-8 shadow-card border border-border"
-        >
-          <h2 className="text-3xl font-display text-foreground mb-6">MEU PERFIL</h2>
-
-          {/* Avatar */}
-          <div className="flex items-center gap-6 mb-8">
-            <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center overflow-hidden">
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-3xl font-bold text-muted-foreground">
-                    {displayName?.charAt(0)?.toUpperCase() || "?"}
-                  </span>
-                )}
+      <div className="container mx-auto px-4 py-6 max-w-[680px]">
+        {/* Cover + Avatar */}
+        <div className="bg-card rounded-lg shadow-card overflow-hidden mb-4">
+          <div className="h-[200px] bg-gradient-to-r from-primary/30 to-primary/10 relative">
+            <div className="absolute -bottom-[40px] left-6">
+              <div className="relative">
+                <div className="w-[120px] h-[120px] rounded-full bg-card border-4 border-card flex items-center justify-center overflow-hidden shadow-elevated">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-4xl font-bold text-muted-foreground">
+                      {displayName?.charAt(0)?.toUpperCase() || "?"}
+                    </span>
+                  )}
+                </div>
+                <label className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-secondary flex items-center justify-center cursor-pointer hover:bg-secondary/80 transition-colors border-2 border-card">
+                  <Camera className="w-4 h-4 text-foreground" />
+                  <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                </label>
               </div>
-              <label className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
-                <Camera className="w-4 h-4 text-primary-foreground" />
-                <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-              </label>
             </div>
-            <div>
-              <p className="font-semibold text-foreground">{displayName || "Seu nome"}</p>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
-              {uploading && <p className="text-xs text-primary">Fazendo upload...</p>}
+          </div>
+          <div className="pt-14 pb-4 px-6">
+            <h2 className="text-2xl font-bold text-foreground">{displayName || "Seu nome"}</h2>
+            <p className="text-sm text-muted-foreground">{user?.email}</p>
+            {uploading && <p className="text-xs text-primary mt-1">Fazendo upload...</p>}
+          </div>
+        </div>
+
+        {/* Edit Form */}
+        <div className="bg-card rounded-lg shadow-card p-6 space-y-5">
+          <h3 className="text-xl font-bold text-foreground">Editar perfil</h3>
+
+          <div>
+            <Label className="text-[13px] font-semibold text-muted-foreground">Nome de exibição</Label>
+            <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Como quer ser chamado?" className="mt-1" />
+          </div>
+
+          <div>
+            <Label className="text-[13px] font-semibold text-muted-foreground">Bio</Label>
+            <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Conte sobre você e sua relação com o esporte..." rows={3} className="mt-1 resize-none" />
+          </div>
+
+          <div>
+            <Label className="text-[13px] font-semibold text-muted-foreground mb-2 block">Modalidades Esportivas</Label>
+            <div className="flex flex-wrap gap-2">
+              {SPORTS_OPTIONS.map((sport) => (
+                <button
+                  key={sport}
+                  type="button"
+                  onClick={() => toggleSport(sport)}
+                  className={`px-3 py-1.5 rounded-full text-[13px] font-semibold transition-colors ${
+                    sports.includes(sport)
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  }`}
+                >
+                  {sport}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="space-y-5">
-            <div>
-              <Label>Nome de exibição</Label>
-              <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Como quer ser chamado?" />
+          <div>
+            <Label className="text-[13px] font-semibold text-muted-foreground mb-2 flex items-center gap-1">
+              <Trophy className="w-4 h-4" /> Conquistas
+            </Label>
+            <div className="flex gap-2 mb-2">
+              <Input
+                value={newAchievement}
+                onChange={(e) => setNewAchievement(e.target.value)}
+                placeholder="Ex: 1km na natação adaptada"
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addAchievement())}
+              />
+              <Button type="button" variant="outline" onClick={addAchievement} className="shrink-0">+</Button>
             </div>
-
-            <div>
-              <Label>Bio</Label>
-              <Textarea value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Conte sobre você e sua relação com o esporte..." rows={3} />
+            <div className="flex flex-wrap gap-2">
+              {achievements.map((a, i) => (
+                <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-accent text-accent-foreground text-[13px] font-medium">
+                  <Medal className="w-3 h-3" /> {a}
+                  <button onClick={() => setAchievements((prev) => prev.filter((_, j) => j !== i))} className="ml-1 text-muted-foreground hover:text-destructive">×</button>
+                </span>
+              ))}
             </div>
-
-            {/* Sports */}
-            <div>
-              <Label className="mb-3 block">Modalidades Esportivas</Label>
-              <div className="flex flex-wrap gap-2">
-                {SPORTS_OPTIONS.map((sport) => (
-                  <button
-                    key={sport}
-                    type="button"
-                    onClick={() => toggleSport(sport)}
-                    className={`px-3 py-1.5 rounded-full text-sm font-semibold transition-colors ${
-                      sports.includes(sport)
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground hover:bg-muted/80"
-                    }`}
-                  >
-                    {sport}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Achievements */}
-            <div>
-              <Label className="mb-3 block flex items-center gap-2">
-                <Trophy className="w-4 h-4 text-accent" /> Conquistas
-              </Label>
-              <div className="flex gap-2 mb-3">
-                <Input
-                  value={newAchievement}
-                  onChange={(e) => setNewAchievement(e.target.value)}
-                  placeholder="Ex: 1km na natação adaptada"
-                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addAchievement())}
-                />
-                <Button type="button" variant="outline" onClick={addAchievement}>+</Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {achievements.map((a, i) => (
-                  <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-accent/20 text-accent-foreground text-sm">
-                    <Medal className="w-3 h-3" /> {a}
-                    <button onClick={() => setAchievements((prev) => prev.filter((_, j) => j !== i))} className="ml-1 text-muted-foreground hover:text-destructive">×</button>
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <Button onClick={handleSave} disabled={saving} className="w-full gradient-hero text-primary-foreground font-semibold gap-2">
-              <Save className="w-4 h-4" /> {saving ? "Salvando..." : "Salvar Perfil"}
-            </Button>
           </div>
-        </motion.div>
+
+          <Button onClick={handleSave} disabled={saving} className="w-full bg-primary text-primary-foreground font-bold rounded-lg h-10 gap-2">
+            <Save className="w-4 h-4" /> {saving ? "Salvando..." : "Salvar alterações"}
+          </Button>
+        </div>
       </div>
     </div>
   );
