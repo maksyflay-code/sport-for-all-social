@@ -1,4 +1,5 @@
 import { Heart } from "lucide-react";
+import logoCidadelas from "@/assets/logo-cidadelas.jpeg";
 
 const FooterSection = () => {
   return (
@@ -7,9 +8,7 @@ const FooterSection = () => {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-full gradient-hero flex items-center justify-center">
-                <span className="font-display text-primary-foreground text-sm">C</span>
-              </div>
+              <img src={logoCidadelas} alt="Cidadelas 360" className="w-8 h-8 rounded-full object-cover" />
               <span className="font-display text-xl text-primary-foreground">CIDADELAS 360</span>
             </div>
             <p className="text-sm text-primary-foreground/60 leading-relaxed">

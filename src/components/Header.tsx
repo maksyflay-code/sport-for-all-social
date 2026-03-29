@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Menu, X, Search, Bell, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import logoCidadelas from "@/assets/logo-cidadelas.jpeg";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -12,9 +13,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 bg-card/90 backdrop-blur-md border-b border-border">
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
         <a href="/" className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full gradient-hero flex items-center justify-center">
-            <span className="font-display text-primary-foreground text-lg leading-none">C</span>
-          </div>
+          <img src={logoCidadelas} alt="Cidadelas 360" className="w-10 h-10 rounded-full object-cover" />
           <span className="font-display text-2xl tracking-wide text-foreground">
             CIDADELAS <span className="text-gradient">360</span>
           </span>
