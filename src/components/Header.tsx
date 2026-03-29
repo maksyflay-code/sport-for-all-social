@@ -1,13 +1,27 @@
 import { useState } from "react";
-import { Menu, X, Search, Bell, User } from "lucide-react";
+import { Menu, X, Search, Bell, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import logoCidadelas from "@/assets/logo-cidadelas.jpeg";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const navItems = ["Feed", "Comunidades", "Eventos", "Histórias", "Sobre"];
+
+  const handleAuth = () => {
+    if (user) navigate("/perfil");
+    else navigate("/auth");
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-card/90 backdrop-blur-md border-b border-border">
@@ -38,12 +52,20 @@ const Header = () => {
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
             <Bell className="w-5 h-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-            <User className="w-5 h-5" />
-          </Button>
-          <Button className="gradient-hero text-primary-foreground font-semibold hover:opacity-90 transition-opacity">
-            Entrar
-          </Button>
+          {user ? (
+            <>
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={() => navigate("/perfil")}>
+                <User className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive" onClick={handleSignOut}>
+                <LogOut className="w-5 h-5" />
+              </Button>
+            </>
+          ) : (
+            <Button onClick={handleAuth} className="gradient-hero text-primary-foreground font-semibold hover:opacity-90 transition-opacity">
+              Entrar
+            </Button>
+          )}
         </div>
 
         <Button
@@ -75,9 +97,20 @@ const Header = () => {
                   {item}
                 </a>
               ))}
-              <Button className="gradient-hero text-primary-foreground font-semibold mt-2">
-                Entrar
-              </Button>
+              {user ? (
+                <>
+                  <Button variant="outline" onClick={() => { navigate("/perfil"); setMobileOpen(false); }} className="mt-2">
+                    Meu Perfil
+                  </Button>
+                  <Button variant="ghost" onClick={() => { handleSignOut(); setMobileOpen(false); }} className="text-destructive">
+                    Sair
+                  </Button>
+                </>
+              ) : (
+                <Button onClick={() => { handleAuth(); setMobileOpen(false); }} className="gradient-hero text-primary-foreground font-semibold mt-2">
+                  Entrar
+                </Button>
+              )}
             </nav>
           </motion.div>
         )}
