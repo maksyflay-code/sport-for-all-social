@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import FeedSection from "@/components/FeedSection";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useEvents } from "@/hooks/useEvents";
 import { Users, Calendar, Trophy, Flame, TrendingUp, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-sports.jpg";
@@ -20,14 +21,6 @@ const trendingTopics = [
   { label: "Surfe", count: "1.9k posts", emoji: "🏄" },
 ];
 
-const upcomingEvents = [
-  { title: "Maratona Inclusiva SP", date: "15 Abr", emoji: "🏅" },
-  { title: "Torneio de Futebol Society", date: "20 Abr", emoji: "⚽" },
-  { title: "Campeonato de Natação", date: "22 Abr", emoji: "🏊" },
-  { title: "Copa de Vôlei Misto", date: "28 Abr", emoji: "🏐" },
-  { title: "Corrida de Rua 10km", date: "05 Mai", emoji: "🏃" },
-];
-
 const sports = [
   { name: "Futebol", emoji: "⚽" },
   { name: "Basquete", emoji: "🏀" },
@@ -43,9 +36,15 @@ const sports = [
   { name: "Handbol", emoji: "🤾" },
 ];
 
+const formatEventDate = (dateStr: string) => {
+  const date = new Date(dateStr + "T00:00:00");
+  return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+};
+
 // Landing page for non-logged users
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { events } = useEvents();
 
   return (
     <div className="min-h-screen bg-[#1a1a2e]">
@@ -53,7 +52,7 @@ const LandingPage = () => {
       <header className="absolute top-0 left-0 right-0 z-50 px-4 py-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img src={logoCidadelas} alt="Cidadelas 360" className="w-12 h-12 rounded-xl object-cover" />
+            <img src={logoCidadelas} alt="Cidadelas 360" className="w-12 h-12 rounded-full object-cover shadow-lg" />
             <span className="text-lg font-extrabold tracking-tight text-white">
               CIDADELAS <span className="text-orange-400">360</span>
             </span>
@@ -119,7 +118,7 @@ const LandingPage = () => {
             </div>
             <div className="text-center">
               <Calendar className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-              <p className="text-3xl font-black text-white">8</p>
+              <p className="text-3xl font-black text-white">{events.length}</p>
               <p className="text-sm text-white/50">Eventos</p>
             </div>
           </div>
@@ -143,23 +142,28 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Events */}
+      {/* Events - Dynamic from DB */}
       <section className="py-16 bg-[#1a1a2e]">
         <div className="container mx-auto px-4 max-w-2xl">
           <h2 className="text-2xl font-extrabold text-white text-center mb-8">
             Próximos <span className="text-orange-400">Eventos</span>
           </h2>
           <div className="space-y-3">
-            {upcomingEvents.map((event) => (
-              <div key={event.title} className="bg-white/5 rounded-2xl p-4 flex items-center gap-4 border border-white/5 hover:border-orange-400/20 transition-colors cursor-pointer">
+            {events.length > 0 ? events.map((event) => (
+              <div key={event.id} className="bg-white/5 rounded-2xl p-4 flex items-center gap-4 border border-white/5 hover:border-orange-400/20 transition-colors cursor-pointer">
                 <span className="text-2xl">{event.emoji}</span>
                 <div className="flex-1">
                   <p className="text-sm font-semibold text-white">{event.title}</p>
-                  <p className="text-xs text-white/50">{event.date}</p>
+                  <p className="text-xs text-white/50">
+                    {formatEventDate(event.event_date)}
+                    {event.location && ` • ${event.location}`}
+                  </p>
                 </div>
                 <ArrowRight className="w-4 h-4 text-orange-400" />
               </div>
-            ))}
+            )) : (
+              <p className="text-center text-white/30 text-sm">Nenhum evento próximo</p>
+            )}
           </div>
         </div>
       </section>
@@ -201,6 +205,8 @@ const LandingPage = () => {
 
 // Feed page for logged-in users
 const FeedPage = () => {
+  const { events } = useEvents();
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -220,12 +226,12 @@ const FeedPage = () => {
             </div>
             <div className="bg-card rounded-2xl p-4 shadow-card text-center animate-fade-in">
               <Calendar className="w-5 h-5 text-primary mx-auto mb-1.5" />
-              <p className="text-lg font-bold text-foreground">8</p>
+              <p className="text-lg font-bold text-foreground">{events.length}</p>
               <p className="text-xs text-muted-foreground">Eventos</p>
             </div>
           </div>
 
-          {/* Feed - only for logged users */}
+          {/* Feed */}
           <FeedSection />
 
           {/* Trending */}
@@ -247,21 +253,26 @@ const FeedPage = () => {
             </div>
           </div>
 
-          {/* Upcoming events */}
+          {/* Upcoming events - Dynamic */}
           <div className="bg-card rounded-2xl shadow-card p-5 animate-fade-in">
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2 mb-3">
               <Calendar className="w-4 h-4 text-primary" /> Próximos eventos
             </h3>
             <div className="space-y-3">
-              {upcomingEvents.map((event) => (
-                <div key={event.title} className="flex items-center gap-3 group cursor-pointer">
+              {events.length > 0 ? events.map((event) => (
+                <div key={event.id} className="flex items-center gap-3 group cursor-pointer">
                   <span className="text-xl">{event.emoji}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{event.title}</p>
-                    <p className="text-xs text-muted-foreground">{event.date}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatEventDate(event.event_date)}
+                      {event.location && ` • ${event.location}`}
+                    </p>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <p className="text-sm text-muted-foreground">Nenhum evento próximo</p>
+              )}
             </div>
           </div>
 

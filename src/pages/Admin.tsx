@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdmin } from "@/hooks/useAdmin";
+import { useEvents } from "@/hooks/useEvents";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX } from "lucide-react";
+import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX, Calendar, Plus, Edit } from "lucide-react";
 
 interface UserProfile {
   user_id: string;
@@ -27,10 +29,18 @@ interface PostItem {
 const Admin = () => {
   const { user } = useAuth();
   const { isAdmin, loading } = useAdmin();
+  const { events, reload: reloadEvents } = useEvents();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"users" | "posts">("users");
+  const [tab, setTab] = useState<"users" | "posts" | "events">("users");
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [posts, setPosts] = useState<PostItem[]>([]);
+
+  // New event form
+  const [showEventForm, setShowEventForm] = useState(false);
+  const [eventTitle, setEventTitle] = useState("");
+  const [eventEmoji, setEventEmoji] = useState("🏅");
+  const [eventDate, setEventDate] = useState("");
+  const [eventLocation, setEventLocation] = useState("");
 
   useEffect(() => {
     if (!loading && !isAdmin) navigate("/");
@@ -83,6 +93,28 @@ const Admin = () => {
     loadUsers();
   };
 
+  const createEvent = async () => {
+    if (!eventTitle || !eventDate) { toast.error("Preencha título e data"); return; }
+    const { error } = await supabase.from("events").insert({
+      title: eventTitle,
+      emoji: eventEmoji || "🏅",
+      event_date: eventDate,
+      location: eventLocation || null,
+      created_by: user?.id,
+    } as any);
+    if (error) { toast.error("Erro ao criar evento"); return; }
+    toast.success("Evento criado!");
+    setEventTitle(""); setEventEmoji("🏅"); setEventDate(""); setEventLocation("");
+    setShowEventForm(false);
+    reloadEvents();
+  };
+
+  const deleteEvent = async (eventId: string) => {
+    const { error } = await supabase.from("events").delete().eq("id", eventId);
+    if (error) toast.error("Erro ao excluir evento");
+    else { toast.success("Evento excluído"); reloadEvents(); }
+  };
+
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><p className="text-muted-foreground">Carregando...</p></div>;
   if (!isAdmin) return null;
 
@@ -98,20 +130,15 @@ const Admin = () => {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-2 mb-6">
-            <Button
-              variant={tab === "users" ? "default" : "outline"}
-              onClick={() => setTab("users")}
-              className="rounded-xl gap-2"
-            >
+          <div className="flex gap-2 mb-6 flex-wrap">
+            <Button variant={tab === "users" ? "default" : "outline"} onClick={() => setTab("users")} className="rounded-xl gap-2">
               <Users className="w-4 h-4" /> Usuários ({users.length})
             </Button>
-            <Button
-              variant={tab === "posts" ? "default" : "outline"}
-              onClick={() => setTab("posts")}
-              className="rounded-xl gap-2"
-            >
+            <Button variant={tab === "posts" ? "default" : "outline"} onClick={() => setTab("posts")} className="rounded-xl gap-2">
               <FileText className="w-4 h-4" /> Posts ({posts.length})
+            </Button>
+            <Button variant={tab === "events" ? "default" : "outline"} onClick={() => setTab("events")} className="rounded-xl gap-2">
+              <Calendar className="w-4 h-4" /> Eventos ({events.length})
             </Button>
           </div>
 
@@ -171,6 +198,57 @@ const Admin = () => {
                   </Button>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Events tab */}
+          {tab === "events" && (
+            <div className="space-y-4">
+              <Button onClick={() => setShowEventForm(!showEventForm)} className="rounded-xl gap-2 bg-primary text-primary-foreground">
+                <Plus className="w-4 h-4" /> Novo Evento
+              </Button>
+
+              {showEventForm && (
+                <div className="bg-card rounded-2xl shadow-card p-5 space-y-3">
+                  <h3 className="text-sm font-bold text-foreground">Criar Evento</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Input value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} placeholder="Título do evento" className="rounded-xl" />
+                    <Input value={eventEmoji} onChange={(e) => setEventEmoji(e.target.value)} placeholder="Emoji (ex: 🏅)" className="rounded-xl" />
+                    <Input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="rounded-xl" />
+                    <Input value={eventLocation} onChange={(e) => setEventLocation(e.target.value)} placeholder="Local (opcional)" className="rounded-xl" />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button onClick={createEvent} className="rounded-xl bg-primary text-primary-foreground">Criar</Button>
+                    <Button variant="outline" onClick={() => setShowEventForm(false)} className="rounded-xl">Cancelar</Button>
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                {events.map((event) => (
+                  <div key={event.id} className="bg-card rounded-2xl shadow-card p-4 flex items-center gap-3">
+                    <span className="text-2xl">{event.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground">{event.title}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(event.event_date + "T00:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
+                        {event.location && ` • ${event.location}`}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => deleteEvent(event.id)}
+                      className="rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+                {events.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-4">Nenhum evento cadastrado</p>
+                )}
+              </div>
             </div>
           )}
         </div>
