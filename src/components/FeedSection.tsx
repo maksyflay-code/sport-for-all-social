@@ -161,6 +161,9 @@ const FeedSection = () => {
         </div>
       )}
 
+      {/* Strava Activities */}
+      {user && <StravaActivities onPost={(content) => { setNewPost(content); }} />}
+
       {/* Posts */}
       {posts.map((post) => (
         <article key={post.id} className="bg-white/5 rounded-2xl border border-white/5">
