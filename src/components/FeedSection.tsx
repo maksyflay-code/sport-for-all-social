@@ -71,13 +71,46 @@ const FeedSection = () => {
     })));
   };
 
+  const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    if (file.size > maxSize) { toast.error("Arquivo muito grande (máx 50MB)"); return; }
+    setMediaFile(file);
+    setMediaPreview(URL.createObjectURL(file));
+  };
+
+  const clearMedia = () => {
+    setMediaFile(null);
+    if (mediaPreview) URL.revokeObjectURL(mediaPreview);
+    setMediaPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handlePost = async () => {
     if (!user) { toast.error("Faça login para postar"); return; }
-    if (!newPost.trim()) return;
+    if (!newPost.trim() && !mediaFile) return;
     setPosting(true);
-    const { error } = await supabase.from("posts").insert({ content: newPost.trim(), user_id: user.id });
+
+    let imageUrl: string | null = null;
+    if (mediaFile) {
+      const ext = mediaFile.name.split(".").pop();
+      const path = `${user.id}/${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("post-media")
+        .upload(path, mediaFile, { contentType: mediaFile.type });
+      if (uploadError) { toast.error("Erro ao enviar mídia"); setPosting(false); return; }
+      const { data: urlData } = supabase.storage.from("post-media").getPublicUrl(path);
+      imageUrl = urlData.publicUrl;
+    }
+
+    const { error } = await supabase.from("posts").insert({
+      content: newPost.trim() || " ",
+      user_id: user.id,
+      image_url: imageUrl,
+    });
     if (error) toast.error("Erro ao publicar");
-    else { setNewPost(""); loadPosts(); toast.success("Publicado!"); }
+    else { setNewPost(""); clearMedia(); loadPosts(); toast.success("Publicado!"); }
     setPosting(false);
   };
 
