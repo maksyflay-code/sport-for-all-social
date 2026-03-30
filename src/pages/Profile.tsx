@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Camera, Save, Trophy, Medal } from "lucide-react";
+import { StravaConnectButton } from "@/components/StravaIntegration";
 
 const SPORTS_OPTIONS = [
   "Futebol", "Basquete", "Natação", "Vôlei", "Tênis", "Corrida",
