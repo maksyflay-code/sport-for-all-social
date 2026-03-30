@@ -93,8 +93,8 @@ const LandingPage = () => {
                 Junte-se à Comunidade <ArrowRight className="w-5 h-5" />
               </Button>
               <Button
-                variant="outline"
-                className="h-12 px-8 rounded-xl border-white/20 text-white hover:bg-white/10 hover:text-white font-semibold text-base"
+                onClick={() => navigate("/auth")}
+                className="h-12 px-8 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-base"
               >
                 Explorar Eventos
               </Button>
