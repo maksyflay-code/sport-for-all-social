@@ -53,7 +53,7 @@ const LandingPage = () => {
       <header className="absolute top-0 left-0 right-0 z-50 px-4 py-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img src={logoCidadelas} alt="Cidadelas 360" className="w-9 h-9 rounded-xl object-cover" />
+            <img src={logoCidadelas} alt="Cidadelas 360" className="w-12 h-12 rounded-xl object-cover" />
             <span className="text-lg font-extrabold tracking-tight text-white">
               CIDADELAS <span className="text-orange-400">360</span>
             </span>
@@ -180,11 +180,19 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer className="py-8 border-t border-white/5">
-        <div className="container mx-auto px-4 text-center text-xs text-white/30 space-x-3">
-          <span>© 2026 Cidadelas 360</span>
-          <a href="#" className="hover:text-white/60 transition-colors">Sobre</a>
-          <a href="#" className="hover:text-white/60 transition-colors">Termos</a>
-          <a href="#" className="hover:text-white/60 transition-colors">Privacidade</a>
+        <div className="container mx-auto px-4 text-center space-y-2">
+          <div className="text-xs text-white/30 space-x-3">
+            <span>© 2026 Cidadelas 360</span>
+            <a href="#" className="hover:text-white/60 transition-colors">Sobre</a>
+            <a href="#" className="hover:text-white/60 transition-colors">Termos</a>
+            <a href="#" className="hover:text-white/60 transition-colors">Privacidade</a>
+          </div>
+          <p className="text-xs text-white/40">
+            Desenvolvido por{" "}
+            <a href="https://www.linkedin.com/in/maksyflay/" target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 transition-colors font-medium">
+              Maksyflay Souza
+            </a>
+          </p>
         </div>
       </footer>
     </div>
@@ -258,11 +266,19 @@ const FeedPage = () => {
           </div>
 
           {/* Footer */}
-          <div className="text-center py-6 text-xs text-muted-foreground space-x-3">
-            <span>© 2026 Cidadelas 360</span>
-            <a href="#" className="hover:text-foreground transition-colors">Sobre</a>
-            <a href="#" className="hover:text-foreground transition-colors">Termos</a>
-            <a href="#" className="hover:text-foreground transition-colors">Privacidade</a>
+          <div className="text-center py-6 space-y-2">
+            <div className="text-xs text-muted-foreground space-x-3">
+              <span>© 2026 Cidadelas 360</span>
+              <a href="#" className="hover:text-foreground transition-colors">Sobre</a>
+              <a href="#" className="hover:text-foreground transition-colors">Termos</a>
+              <a href="#" className="hover:text-foreground transition-colors">Privacidade</a>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Desenvolvido por{" "}
+              <a href="https://www.linkedin.com/in/maksyflay/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
+                Maksyflay Souza
+              </a>
+            </p>
           </div>
         </div>
       </div>
