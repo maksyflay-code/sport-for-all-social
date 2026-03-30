@@ -3,6 +3,7 @@ import { Heart, MessageCircle, Share2, Send, Image, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { StravaActivities } from "@/components/StravaIntegration";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
