@@ -103,10 +103,23 @@ const FeedSection = () => {
     setExpandedComments(postId);
     const { data } = await supabase
       .from("comments")
-      .select("*, profiles!comments_user_id_fkey(display_name, avatar_url)")
+      .select("*")
       .eq("post_id", postId)
       .order("created_at", { ascending: true });
-    setComments((prev) => ({ ...prev, [postId]: data || [] }));
+    
+    if (data && data.length > 0) {
+      const commentUserIds = [...new Set(data.map((c) => c.user_id))];
+      const { data: commentProfiles } = await supabase
+        .from("profiles")
+        .select("user_id, display_name, avatar_url")
+        .in("user_id", commentUserIds);
+      const profileMap: Record<string, any> = {};
+      commentProfiles?.forEach((p) => { profileMap[p.user_id] = p; });
+      const enriched = data.map((c) => ({ ...c, profiles: profileMap[c.user_id] || null }));
+      setComments((prev) => ({ ...prev, [postId]: enriched }));
+    } else {
+      setComments((prev) => ({ ...prev, [postId]: [] }));
+    }
   };
 
   const handleComment = async (postId: string) => {
