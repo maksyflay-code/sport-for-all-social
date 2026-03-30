@@ -60,8 +60,7 @@ const LandingPage = () => {
           </div>
           <Button
             onClick={() => navigate("/auth")}
-            variant="outline"
-            className="rounded-xl border-white/20 text-white hover:bg-white/10 hover:text-white font-semibold"
+            className="rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold"
           >
             Entrar
           </Button>
