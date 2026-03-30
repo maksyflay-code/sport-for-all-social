@@ -180,11 +180,19 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer className="py-8 border-t border-white/5">
-        <div className="container mx-auto px-4 text-center text-xs text-white/30 space-x-3">
-          <span>© 2026 Cidadelas 360</span>
-          <a href="#" className="hover:text-white/60 transition-colors">Sobre</a>
-          <a href="#" className="hover:text-white/60 transition-colors">Termos</a>
-          <a href="#" className="hover:text-white/60 transition-colors">Privacidade</a>
+        <div className="container mx-auto px-4 text-center space-y-2">
+          <div className="text-xs text-white/30 space-x-3">
+            <span>© 2026 Cidadelas 360</span>
+            <a href="#" className="hover:text-white/60 transition-colors">Sobre</a>
+            <a href="#" className="hover:text-white/60 transition-colors">Termos</a>
+            <a href="#" className="hover:text-white/60 transition-colors">Privacidade</a>
+          </div>
+          <p className="text-xs text-white/40">
+            Desenvolvido por{" "}
+            <a href="https://www.linkedin.com/in/maksyflay/" target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 transition-colors font-medium">
+              Maksyflay Souza
+            </a>
+          </p>
         </div>
       </footer>
     </div>
