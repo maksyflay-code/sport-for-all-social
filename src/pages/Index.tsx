@@ -266,11 +266,19 @@ const FeedPage = () => {
           </div>
 
           {/* Footer */}
-          <div className="text-center py-6 text-xs text-muted-foreground space-x-3">
-            <span>© 2026 Cidadelas 360</span>
-            <a href="#" className="hover:text-foreground transition-colors">Sobre</a>
-            <a href="#" className="hover:text-foreground transition-colors">Termos</a>
-            <a href="#" className="hover:text-foreground transition-colors">Privacidade</a>
+          <div className="text-center py-6 space-y-2">
+            <div className="text-xs text-muted-foreground space-x-3">
+              <span>© 2026 Cidadelas 360</span>
+              <a href="#" className="hover:text-foreground transition-colors">Sobre</a>
+              <a href="#" className="hover:text-foreground transition-colors">Termos</a>
+              <a href="#" className="hover:text-foreground transition-colors">Privacidade</a>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Desenvolvido por{" "}
+              <a href="https://www.linkedin.com/in/maksyflay/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
+                Maksyflay Souza
+              </a>
+            </p>
           </div>
         </div>
       </div>
