@@ -250,6 +250,15 @@ const FeedSection = () => {
           {/* Post content */}
           <div className="px-4 py-3">
             <p className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed">{post.content}</p>
+            {post.image_url && (
+              <div className="mt-3 rounded-xl overflow-hidden">
+                {post.image_url.match(/\.(mp4|webm|mov|avi)/) ? (
+                  <video src={post.image_url} className="w-full max-h-96 object-cover" controls />
+                ) : (
+                  <img src={post.image_url} alt="" className="w-full max-h-96 object-cover" loading="lazy" />
+                )}
+              </div>
+            )}
           </div>
 
           {/* Reactions count */}
