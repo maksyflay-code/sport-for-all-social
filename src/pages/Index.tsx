@@ -34,11 +34,11 @@ const Index = () => {
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Welcome banner for non-logged users */}
           {!user && (
-            <div className="bg-primary rounded-2xl p-6 text-primary-foreground animate-fade-in">
-              <h1 className="text-2xl font-extrabold tracking-tight mb-1">
+            <div className="bg-gradient-to-r from-accent to-secondary rounded-2xl p-6 border border-border animate-fade-in">
+              <h1 className="text-2xl font-extrabold tracking-tight mb-1 text-foreground">
                 Bem-vindo ao Cidadelas 360 ⚡
               </h1>
-              <p className="text-primary-foreground/80 text-sm">
+              <p className="text-muted-foreground text-sm">
                 A rede social de inclusão no esporte. Conecte-se, compartilhe e celebre cada conquista.
               </p>
             </div>
