@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X, Search, Bell, LogOut, User, Plus } from "lucide-react";
+import { Menu, X, Search, Bell, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,23 +18,23 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-card/80 glass border-b border-border">
+    <header className="sticky top-0 z-50 bg-[#16162a]/90 glass border-b border-white/5">
       <div className="container mx-auto flex items-center justify-between h-16 px-4 gap-4">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2.5 shrink-0">
           <img src={logoCidadelas} alt="Cidadelas 360" className="w-10 h-10 rounded-full object-cover shadow-sm" />
-          <span className="text-lg font-extrabold tracking-tight text-foreground hidden sm:block">
-            Cidadelas <span className="text-primary">360</span>
+          <span className="text-lg font-extrabold tracking-tight text-white hidden sm:block">
+            CIDADELAS <span className="text-orange-400">360</span>
           </span>
         </a>
 
         {/* Search */}
         <div className="hidden md:block flex-1 max-w-md mx-auto">
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
             <Input
               placeholder="Buscar pessoas, comunidades, eventos..."
-              className="pl-10 h-10 bg-secondary border-0 rounded-xl text-sm focus-visible:ring-1 focus-visible:ring-primary/30"
+              className="pl-10 h-10 bg-white/5 border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus-visible:ring-orange-400/30"
             />
           </div>
         </div>
@@ -43,13 +43,13 @@ const Header = () => {
         <div className="hidden md:flex items-center gap-2 shrink-0">
           {user ? (
             <>
-              <Button variant="ghost" size="icon" className="rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary w-10 h-10">
+              <Button variant="ghost" size="icon" className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10">
                 <Bell className="w-5 h-5" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-xl text-muted-foreground hover:text-foreground hover:bg-secondary w-10 h-10"
+                className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
                 onClick={() => navigate("/perfil")}
               >
                 <User className="w-5 h-5" />
@@ -57,14 +57,14 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-xl text-muted-foreground hover:text-destructive hover:bg-secondary w-10 h-10"
+                className="rounded-xl text-white/50 hover:text-red-400 hover:bg-white/10 w-10 h-10"
                 onClick={handleSignOut}
               >
                 <LogOut className="w-5 h-5" />
               </Button>
             </>
           ) : (
-            <Button onClick={() => navigate("/auth")} className="rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 h-10 px-5">
+            <Button onClick={() => navigate("/auth")} className="rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold h-10 px-5">
               Entrar
             </Button>
           )}
@@ -74,7 +74,7 @@ const Header = () => {
         <Button
           variant="ghost"
           size="icon"
-          className="md:hidden text-foreground"
+          className="md:hidden text-white"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -87,32 +87,32 @@ const Header = () => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden bg-card border-t border-border"
+            className="md:hidden overflow-hidden bg-[#16162a] border-t border-white/5"
           >
             <nav className="flex flex-col p-3 gap-1">
               <div className="relative mb-2">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input placeholder="Buscar..." className="pl-10 h-10 bg-secondary border-0 rounded-xl text-sm" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                <Input placeholder="Buscar..." className="pl-10 h-10 bg-white/5 border-white/10 rounded-xl text-sm text-white placeholder:text-white/30" />
               </div>
               {user ? (
                 <>
                   <button
                     onClick={() => { navigate("/perfil"); setMobileOpen(false); }}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-foreground hover:bg-secondary transition-colors text-sm font-medium"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white hover:bg-white/5 transition-colors text-sm font-medium"
                   >
-                    <User className="w-5 h-5 text-primary" />
+                    <User className="w-5 h-5 text-orange-400" />
                     Meu Perfil
                   </button>
                   <button
                     onClick={() => { handleSignOut(); setMobileOpen(false); }}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-destructive hover:bg-secondary transition-colors text-sm font-medium"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400 hover:bg-white/5 transition-colors text-sm font-medium"
                   >
                     <LogOut className="w-5 h-5" />
                     Sair
                   </button>
                 </>
               ) : (
-                <Button onClick={() => { navigate("/auth"); setMobileOpen(false); }} className="bg-primary text-primary-foreground font-semibold rounded-xl mt-1">
+                <Button onClick={() => { navigate("/auth"); setMobileOpen(false); }} className="bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl mt-1">
                   Entrar
                 </Button>
               )}
