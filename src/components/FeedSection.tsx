@@ -174,9 +174,34 @@ const FeedSection = () => {
                 rows={2}
                 className="resize-none border-0 bg-transparent focus-visible:ring-0 text-sm p-0 min-h-[60px] text-white placeholder:text-white/30"
               />
+              {/* Media preview */}
+              {mediaPreview && mediaFile && (
+                <div className="relative mt-2 rounded-xl overflow-hidden border border-white/10 max-h-60">
+                  {mediaFile.type.startsWith("video/") ? (
+                    <video src={mediaPreview} className="w-full max-h-60 object-cover" controls />
+                  ) : (
+                    <img src={mediaPreview} alt="Preview" className="w-full max-h-60 object-cover" />
+                  )}
+                  <button onClick={clearMedia} className="absolute top-2 right-2 bg-black/60 rounded-full p-1 hover:bg-black/80 transition-colors">
+                    <X className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              )}
+
               <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
                 <div className="flex items-center gap-1">
-                  <button className="p-2 rounded-lg hover:bg-white/5 transition-colors text-white/30 hover:text-orange-400">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={handleMediaSelect}
+                    className="hidden"
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-2 rounded-lg hover:bg-white/5 transition-colors text-white/30 hover:text-orange-400"
+                    title="Enviar foto ou vídeo"
+                  >
                     <Image className="w-4.5 h-4.5" />
                   </button>
                   <button className="p-2 rounded-lg hover:bg-white/5 transition-colors text-white/30 hover:text-orange-400">
