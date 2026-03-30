@@ -29,6 +29,9 @@ const FeedSection = () => {
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
   const [comments, setComments] = useState<Record<string, any[]>>({});
   const [newComment, setNewComment] = useState("");
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { loadPosts(); }, [user]);
 
