@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Camera, Save, Trophy, Medal } from "lucide-react";
+import { StravaConnectButton } from "@/components/StravaIntegration";
 
 const SPORTS_OPTIONS = [
   "Futebol", "Basquete", "Natação", "Vôlei", "Tênis", "Corrida",
@@ -118,6 +119,15 @@ const Profile = () => {
               {uploading && <p className="text-xs text-orange-400 mt-1">Fazendo upload...</p>}
             </div>
           </div>
+        </div>
+
+        {/* Strava Connection */}
+        <div className="bg-white/5 rounded-2xl p-5 border border-white/5 mb-4">
+          <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+            🏃 Integração Strava
+          </h3>
+          <p className="text-xs text-white/40 mb-3">Conecte sua conta Strava para compartilhar atividades no feed.</p>
+          <StravaConnectButton />
         </div>
 
         {/* Edit Form */}

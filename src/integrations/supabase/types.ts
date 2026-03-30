@@ -177,6 +177,39 @@ export type Database = {
         }
         Relationships: []
       }
+      strava_tokens: {
+        Row: {
+          access_token: string
+          created_at: string
+          expires_at: number
+          id: string
+          refresh_token: string
+          strava_athlete_id: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          created_at?: string
+          expires_at: number
+          id?: string
+          refresh_token: string
+          strava_athlete_id: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          created_at?: string
+          expires_at?: number
+          id?: string
+          refresh_token?: string
+          strava_athlete_id?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
