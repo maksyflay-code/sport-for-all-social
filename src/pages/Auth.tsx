@@ -57,21 +57,21 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#1a1a2e] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <img src={logoCidadelas} alt="Cidadelas 360" className="w-16 h-16 rounded-2xl object-cover mx-auto mb-4 shadow-elevated" />
-          <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
-            Cidadelas <span className="text-primary">360</span>
+          <img src={logoCidadelas} alt="Cidadelas 360" className="w-16 h-16 rounded-full object-cover mx-auto mb-4 shadow-lg" />
+          <h1 className="text-2xl font-extrabold tracking-tight text-white">
+            CIDADELAS <span className="text-orange-400">360</span>
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-white/50 mt-1">
             Inclusão no esporte para todos
           </p>
         </div>
 
         {/* Form card */}
-        <div className="bg-card rounded-2xl shadow-elevated p-6">
+        <div className="bg-white/5 rounded-2xl shadow-lg p-6 border border-white/10 backdrop-blur-sm">
           <form onSubmit={handleSubmit} className="space-y-3">
             {!isLogin && (
               <Input
@@ -79,7 +79,7 @@ const Auth = () => {
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Nome completo"
                 required={!isLogin}
-                className="h-11 rounded-xl border-border text-sm"
+                className="h-11 rounded-xl bg-white/5 border-white/10 text-white placeholder:text-white/30 text-sm focus-visible:ring-orange-400/50"
               />
             )}
             <Input
@@ -88,7 +88,7 @@ const Auth = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
               required
-              className="h-11 rounded-xl border-border text-sm"
+              className="h-11 rounded-xl bg-white/5 border-white/10 text-white placeholder:text-white/30 text-sm focus-visible:ring-orange-400/50"
             />
             <Input
               type="password"
@@ -97,12 +97,12 @@ const Auth = () => {
               placeholder="Senha"
               required
               minLength={6}
-              className="h-11 rounded-xl border-border text-sm"
+              className="h-11 rounded-xl bg-white/5 border-white/10 text-white placeholder:text-white/30 text-sm focus-visible:ring-orange-400/50"
             />
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-11 font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 text-sm"
+              className="w-full h-11 font-semibold rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-sm"
             >
               {loading ? "Carregando..." : isLogin ? "Entrar" : "Criar conta"}
             </Button>
@@ -110,21 +110,21 @@ const Auth = () => {
 
           {isLogin && (
             <div className="text-center mt-3">
-              <a href="#" className="text-xs text-primary hover:underline">Esqueceu a senha?</a>
+              <a href="#" className="text-xs text-orange-400 hover:underline">Esqueceu a senha?</a>
             </div>
           )}
 
           <div className="flex items-center gap-3 my-4">
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-xs text-muted-foreground">ou</span>
-            <div className="flex-1 h-px bg-border" />
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-xs text-white/30">ou</span>
+            <div className="flex-1 h-px bg-white/10" />
           </div>
 
           <Button
             type="button"
             variant="outline"
             onClick={handleGoogleLogin}
-            className="w-full h-11 font-medium rounded-xl text-sm"
+            className="w-full h-11 font-medium rounded-xl text-sm bg-white/5 border-white/10 text-white hover:bg-white/10 hover:text-white"
           >
             <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -139,7 +139,7 @@ const Auth = () => {
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-primary font-medium hover:underline"
+              className="text-sm text-orange-400 font-medium hover:underline"
             >
               {isLogin ? "Não tem conta? Cadastre-se" : "Já tem conta? Entrar"}
             </button>
