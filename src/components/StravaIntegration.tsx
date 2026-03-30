@@ -170,7 +170,12 @@ export const StravaActivities = ({ onPost }: { onPost: (content: string) => void
   };
 
   useEffect(() => {
-    if (connected) loadActivities();
+    if (connected) {
+      console.log("Strava connected, loading activities...");
+      loadActivities();
+    } else {
+      console.log("Strava not connected, skipping activities load");
+    }
   }, [connected]);
 
   if (!connected) return null;
