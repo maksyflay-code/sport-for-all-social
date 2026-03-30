@@ -70,7 +70,9 @@ export const StravaConnectButton = () => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
     const scope = params.get("scope");
-    if (code && scope?.includes("activity:read") && user) {
+    console.log("Strava OAuth check:", { code: !!code, scope, userId: user?.id });
+    if (code && user) {
+      console.log("Strava OAuth callback detected, processing...");
       handleCallback(code);
       window.history.replaceState({}, "", window.location.pathname);
     }
