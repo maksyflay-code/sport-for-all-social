@@ -53,7 +53,7 @@ const LandingPage = () => {
       <header className="absolute top-0 left-0 right-0 z-50 px-4 py-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <img src={logoCidadelas} alt="Cidadelas 360" className="w-9 h-9 rounded-xl object-cover" />
+            <img src={logoCidadelas} alt="Cidadelas 360" className="w-12 h-12 rounded-xl object-cover" />
             <span className="text-lg font-extrabold tracking-tight text-white">
               CIDADELAS <span className="text-orange-400">360</span>
             </span>
