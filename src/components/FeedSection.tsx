@@ -36,24 +36,23 @@ const FeedSection = () => {
   const loadPosts = async () => {
     const { data: postsData } = await supabase
       .from("posts")
-      .select("*, profiles!posts_user_id_fkey(display_name, avatar_url)")
+      .select("*")
       .order("created_at", { ascending: false })
       .limit(20);
 
-    if (!postsData) return;
+    if (!postsData || postsData.length === 0) { setPosts([]); return; }
 
     const postIds = postsData.map((p) => p.id);
-    if (postIds.length === 0) { setPosts([]); return; }
+    const userIds = [...new Set(postsData.map((p) => p.user_id))];
 
-    const { data: likesData } = await supabase
-      .from("likes")
-      .select("post_id, user_id")
-      .in("post_id", postIds);
+    const [{ data: profilesData }, { data: likesData }, { data: commentsData }] = await Promise.all([
+      supabase.from("profiles").select("user_id, display_name, avatar_url").in("user_id", userIds),
+      supabase.from("likes").select("post_id, user_id").in("post_id", postIds),
+      supabase.from("comments").select("post_id").in("post_id", postIds),
+    ]);
 
-    const { data: commentsData } = await supabase
-      .from("comments")
-      .select("post_id")
-      .in("post_id", postIds);
+    const profilesMap: Record<string, { display_name: string | null; avatar_url: string | null }> = {};
+    profilesData?.forEach((p) => { profilesMap[p.user_id] = p; });
 
     const likesMap: Record<string, { count: number; userLiked: boolean }> = {};
     const commentsMap: Record<string, number> = {};
@@ -71,7 +70,7 @@ const FeedSection = () => {
     setPosts(
       postsData.map((p) => ({
         ...p,
-        profiles: p.profiles as any,
+        profiles: profilesMap[p.user_id] || null,
         likes_count: likesMap[p.id]?.count || 0,
         comments_count: commentsMap[p.id] || 0,
         user_liked: likesMap[p.id]?.userLiked || false,
@@ -104,10 +103,23 @@ const FeedSection = () => {
     setExpandedComments(postId);
     const { data } = await supabase
       .from("comments")
-      .select("*, profiles!comments_user_id_fkey(display_name, avatar_url)")
+      .select("*")
       .eq("post_id", postId)
       .order("created_at", { ascending: true });
-    setComments((prev) => ({ ...prev, [postId]: data || [] }));
+    
+    if (data && data.length > 0) {
+      const commentUserIds = [...new Set(data.map((c) => c.user_id))];
+      const { data: commentProfiles } = await supabase
+        .from("profiles")
+        .select("user_id, display_name, avatar_url")
+        .in("user_id", commentUserIds);
+      const profileMap: Record<string, any> = {};
+      commentProfiles?.forEach((p) => { profileMap[p.user_id] = p; });
+      const enriched = data.map((c) => ({ ...c, profiles: profileMap[c.user_id] || null }));
+      setComments((prev) => ({ ...prev, [postId]: enriched }));
+    } else {
+      setComments((prev) => ({ ...prev, [postId]: [] }));
+    }
   };
 
   const handleComment = async (postId: string) => {
