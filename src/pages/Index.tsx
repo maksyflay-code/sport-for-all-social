@@ -208,26 +208,26 @@ const FeedPage = () => {
   const { events } = useEvents();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#1a1a2e]">
       <Header />
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Quick stats */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-card rounded-2xl p-4 shadow-card text-center animate-fade-in">
-              <Users className="w-5 h-5 text-primary mx-auto mb-1.5" />
-              <p className="text-lg font-bold text-foreground">4.2k</p>
-              <p className="text-xs text-muted-foreground">Membros</p>
+            <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
+              <Users className="w-5 h-5 text-orange-400 mx-auto mb-1.5" />
+              <p className="text-lg font-bold text-white">4.2k</p>
+              <p className="text-xs text-white/50">Membros</p>
             </div>
-            <div className="bg-card rounded-2xl p-4 shadow-card text-center animate-fade-in">
-              <Trophy className="w-5 h-5 text-primary mx-auto mb-1.5" />
-              <p className="text-lg font-bold text-foreground">12</p>
-              <p className="text-xs text-muted-foreground">Comunidades</p>
+            <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
+              <Trophy className="w-5 h-5 text-orange-400 mx-auto mb-1.5" />
+              <p className="text-lg font-bold text-white">12</p>
+              <p className="text-xs text-white/50">Comunidades</p>
             </div>
-            <div className="bg-card rounded-2xl p-4 shadow-card text-center animate-fade-in">
-              <Calendar className="w-5 h-5 text-primary mx-auto mb-1.5" />
-              <p className="text-lg font-bold text-foreground">{events.length}</p>
-              <p className="text-xs text-muted-foreground">Eventos</p>
+            <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
+              <Calendar className="w-5 h-5 text-orange-400 mx-auto mb-1.5" />
+              <p className="text-lg font-bold text-white">{events.length}</p>
+              <p className="text-xs text-white/50">Eventos</p>
             </div>
           </div>
 
@@ -235,58 +235,58 @@ const FeedPage = () => {
           <FeedSection />
 
           {/* Trending */}
-          <div className="bg-card rounded-2xl shadow-card p-5 animate-fade-in">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2 mb-3">
-              <Flame className="w-4 h-4 text-primary" /> Em alta
+          <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
+              <Flame className="w-4 h-4 text-orange-400" /> Em alta
             </h3>
             <div className="space-y-3">
               {trendingTopics.map((topic) => (
                 <div key={topic.label} className="flex items-center gap-3 group cursor-pointer">
                   <span className="text-xl">{topic.emoji}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{topic.label}</p>
-                    <p className="text-xs text-muted-foreground">{topic.count}</p>
+                    <p className="text-sm font-semibold text-white group-hover:text-orange-400 transition-colors">{topic.label}</p>
+                    <p className="text-xs text-white/40">{topic.count}</p>
                   </div>
-                  <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                  <TrendingUp className="w-4 h-4 text-white/30" />
                 </div>
               ))}
             </div>
           </div>
 
           {/* Upcoming events - Dynamic */}
-          <div className="bg-card rounded-2xl shadow-card p-5 animate-fade-in">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2 mb-3">
-              <Calendar className="w-4 h-4 text-primary" /> Próximos eventos
+          <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
+              <Calendar className="w-4 h-4 text-orange-400" /> Próximos eventos
             </h3>
             <div className="space-y-3">
               {events.length > 0 ? events.map((event) => (
                 <div key={event.id} className="flex items-center gap-3 group cursor-pointer">
                   <span className="text-xl">{event.emoji}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{event.title}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm font-semibold text-white group-hover:text-orange-400 transition-colors">{event.title}</p>
+                    <p className="text-xs text-white/40">
                       {formatEventDate(event.event_date)}
                       {event.location && ` • ${event.location}`}
                     </p>
                   </div>
                 </div>
               )) : (
-                <p className="text-sm text-muted-foreground">Nenhum evento próximo</p>
+                <p className="text-sm text-white/30">Nenhum evento próximo</p>
               )}
             </div>
           </div>
 
           {/* Footer */}
           <div className="text-center py-6 space-y-2">
-            <div className="text-xs text-muted-foreground space-x-3">
+            <div className="text-xs text-white/30 space-x-3">
               <span>© 2026 Cidadelas 360</span>
-              <a href="#" className="hover:text-foreground transition-colors">Sobre</a>
-              <a href="#" className="hover:text-foreground transition-colors">Termos</a>
-              <a href="#" className="hover:text-foreground transition-colors">Privacidade</a>
+              <a href="#" className="hover:text-white/60 transition-colors">Sobre</a>
+              <a href="#" className="hover:text-white/60 transition-colors">Termos</a>
+              <a href="#" className="hover:text-white/60 transition-colors">Privacidade</a>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-white/40">
               Desenvolvido por{" "}
-              <a href="https://www.linkedin.com/in/maksyflay/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
+              <a href="https://www.linkedin.com/in/maksyflay/" target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 transition-colors font-medium">
                 Maksyflay Souza
               </a>
             </p>

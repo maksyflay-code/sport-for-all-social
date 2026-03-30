@@ -29,17 +29,10 @@ const FeedSection = () => {
   const [comments, setComments] = useState<Record<string, any[]>>({});
   const [newComment, setNewComment] = useState("");
 
-  useEffect(() => {
-    loadPosts();
-  }, [user]);
+  useEffect(() => { loadPosts(); }, [user]);
 
   const loadPosts = async () => {
-    const { data: postsData } = await supabase
-      .from("posts")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(20);
-
+    const { data: postsData } = await supabase.from("posts").select("*").order("created_at", { ascending: false }).limit(20);
     if (!postsData || postsData.length === 0) { setPosts([]); return; }
 
     const postIds = postsData.map((p) => p.id);
@@ -63,19 +56,15 @@ const FeedSection = () => {
       if (l.user_id === user?.id) likesMap[l.post_id].userLiked = true;
     });
 
-    commentsData?.forEach((c) => {
-      commentsMap[c.post_id] = (commentsMap[c.post_id] || 0) + 1;
-    });
+    commentsData?.forEach((c) => { commentsMap[c.post_id] = (commentsMap[c.post_id] || 0) + 1; });
 
-    setPosts(
-      postsData.map((p) => ({
-        ...p,
-        profiles: profilesMap[p.user_id] || null,
-        likes_count: likesMap[p.id]?.count || 0,
-        comments_count: commentsMap[p.id] || 0,
-        user_liked: likesMap[p.id]?.userLiked || false,
-      }))
-    );
+    setPosts(postsData.map((p) => ({
+      ...p,
+      profiles: profilesMap[p.user_id] || null,
+      likes_count: likesMap[p.id]?.count || 0,
+      comments_count: commentsMap[p.id] || 0,
+      user_liked: likesMap[p.id]?.userLiked || false,
+    })));
   };
 
   const handlePost = async () => {
@@ -101,22 +90,13 @@ const FeedSection = () => {
   const toggleComments = async (postId: string) => {
     if (expandedComments === postId) { setExpandedComments(null); return; }
     setExpandedComments(postId);
-    const { data } = await supabase
-      .from("comments")
-      .select("*")
-      .eq("post_id", postId)
-      .order("created_at", { ascending: true });
-    
+    const { data } = await supabase.from("comments").select("*").eq("post_id", postId).order("created_at", { ascending: true });
     if (data && data.length > 0) {
       const commentUserIds = [...new Set(data.map((c) => c.user_id))];
-      const { data: commentProfiles } = await supabase
-        .from("profiles")
-        .select("user_id, display_name, avatar_url")
-        .in("user_id", commentUserIds);
+      const { data: commentProfiles } = await supabase.from("profiles").select("user_id, display_name, avatar_url").in("user_id", commentUserIds);
       const profileMap: Record<string, any> = {};
       commentProfiles?.forEach((p) => { profileMap[p.user_id] = p; });
-      const enriched = data.map((c) => ({ ...c, profiles: profileMap[c.user_id] || null }));
-      setComments((prev) => ({ ...prev, [postId]: enriched }));
+      setComments((prev) => ({ ...prev, [postId]: data.map((c) => ({ ...c, profiles: profileMap[c.user_id] || null })) }));
     } else {
       setComments((prev) => ({ ...prev, [postId]: [] }));
     }
@@ -142,10 +122,10 @@ const FeedSection = () => {
     <section className="space-y-4">
       {/* Create Post */}
       {user && (
-        <div className="bg-card rounded-2xl shadow-card p-4 animate-fade-in">
+        <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <span className="text-sm font-bold text-primary">
+            <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
+              <span className="text-sm font-bold text-orange-400">
                 {getUserName().charAt(0).toUpperCase()}
               </span>
             </div>
@@ -155,14 +135,14 @@ const FeedSection = () => {
                 onChange={(e) => setNewPost(e.target.value)}
                 placeholder={`O que está acontecendo, ${getUserName().split(" ")[0]}?`}
                 rows={2}
-                className="resize-none border-0 bg-transparent focus-visible:ring-0 text-sm p-0 min-h-[60px] placeholder:text-muted-foreground"
+                className="resize-none border-0 bg-transparent focus-visible:ring-0 text-sm p-0 min-h-[60px] text-white placeholder:text-white/30"
               />
-              <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
                 <div className="flex items-center gap-1">
-                  <button className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                  <button className="p-2 rounded-lg hover:bg-white/5 transition-colors text-white/30 hover:text-orange-400">
                     <Image className="w-4.5 h-4.5" />
                   </button>
-                  <button className="p-2 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-primary">
+                  <button className="p-2 rounded-lg hover:bg-white/5 transition-colors text-white/30 hover:text-orange-400">
                     <Smile className="w-4.5 h-4.5" />
                   </button>
                 </div>
@@ -170,7 +150,7 @@ const FeedSection = () => {
                   onClick={handlePost}
                   disabled={posting || !newPost.trim()}
                   size="sm"
-                  className="rounded-xl bg-primary text-primary-foreground font-semibold px-5 h-9 disabled:opacity-40"
+                  className="rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 h-9 disabled:opacity-40"
                 >
                   {posting ? "..." : "Publicar"}
                 </Button>
@@ -182,21 +162,21 @@ const FeedSection = () => {
 
       {/* Posts */}
       {posts.map((post) => (
-        <article key={post.id} className="bg-card rounded-2xl shadow-card animate-fade-in">
+        <article key={post.id} className="bg-white/5 rounded-2xl border border-white/5">
           {/* Post header */}
           <div className="flex items-center gap-3 p-4 pb-0">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
+            <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center overflow-hidden shrink-0">
               {post.profiles?.avatar_url ? (
                 <img src={post.profiles.avatar_url} alt="" className="w-full h-full object-cover" />
               ) : (
-                <span className="text-sm font-bold text-primary">
+                <span className="text-sm font-bold text-orange-400">
                   {getInitials(post.profiles?.display_name)}
                 </span>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground leading-tight truncate">{post.profiles?.display_name || "Anônimo"}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm font-semibold text-white leading-tight truncate">{post.profiles?.display_name || "Anônimo"}</p>
+              <p className="text-xs text-white/40">
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}
               </p>
             </div>
@@ -204,20 +184,20 @@ const FeedSection = () => {
 
           {/* Post content */}
           <div className="px-4 py-3">
-            <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{post.content}</p>
+            <p className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed">{post.content}</p>
           </div>
 
           {/* Reactions count */}
           {(post.likes_count > 0 || post.comments_count > 0) && (
-            <div className="flex items-center gap-4 px-4 pb-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-4 px-4 pb-2 text-xs text-white/40">
               {post.likes_count > 0 && (
                 <span className="flex items-center gap-1">
-                  <Heart className="w-3 h-3 fill-primary text-primary" />
+                  <Heart className="w-3 h-3 fill-orange-400 text-orange-400" />
                   {post.likes_count}
                 </span>
               )}
               {post.comments_count > 0 && (
-                <button onClick={() => toggleComments(post.id)} className="hover:text-foreground transition-colors">
+                <button onClick={() => toggleComments(post.id)} className="hover:text-white transition-colors">
                   {post.comments_count} comentário{post.comments_count !== 1 ? "s" : ""}
                 </button>
               )}
@@ -225,26 +205,26 @@ const FeedSection = () => {
           )}
 
           {/* Action buttons */}
-          <div className="flex items-center border-t border-border mx-4 py-1.5 gap-1">
+          <div className="flex items-center border-t border-white/5 mx-4 py-1.5 gap-1">
             <button
               onClick={() => handleLike(post.id, post.user_liked)}
               className={`flex items-center gap-1.5 flex-1 justify-center py-2 rounded-xl text-sm font-medium transition-all ${
                 post.user_liked
-                  ? "text-primary bg-accent"
-                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  ? "text-orange-400 bg-orange-500/10"
+                  : "text-white/40 hover:bg-white/5 hover:text-white"
               }`}
             >
-              <Heart className={`w-[18px] h-[18px] ${post.user_liked ? "fill-primary" : ""}`} /> Curtir
+              <Heart className={`w-[18px] h-[18px] ${post.user_liked ? "fill-orange-400" : ""}`} /> Curtir
             </button>
             <button
               onClick={() => toggleComments(post.id)}
-              className="flex items-center gap-1.5 flex-1 justify-center py-2 rounded-xl text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-all"
+              className="flex items-center gap-1.5 flex-1 justify-center py-2 rounded-xl text-sm font-medium text-white/40 hover:bg-white/5 hover:text-white transition-all"
             >
               <MessageCircle className="w-[18px] h-[18px]" /> Comentar
             </button>
             <button
               onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success("Link copiado!"); }}
-              className="flex items-center gap-1.5 flex-1 justify-center py-2 rounded-xl text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-all"
+              className="flex items-center gap-1.5 flex-1 justify-center py-2 rounded-xl text-sm font-medium text-white/40 hover:bg-white/5 hover:text-white transition-all"
             >
               <Share2 className="w-[18px] h-[18px]" /> Compartilhar
             </button>
@@ -252,24 +232,24 @@ const FeedSection = () => {
 
           {/* Comments section */}
           {expandedComments === post.id && (
-            <div className="border-t border-border px-4 py-3 space-y-3">
+            <div className="border-t border-white/5 px-4 py-3 space-y-3">
               {comments[post.id]?.map((comment: any) => (
                 <div key={comment.id} className="flex gap-2.5">
-                  <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center shrink-0 mt-0.5">
-                    <span className="text-[10px] font-bold text-muted-foreground">
+                  <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="text-[10px] font-bold text-white/50">
                       {getInitials(comment.profiles?.display_name)}
                     </span>
                   </div>
-                  <div className="bg-secondary rounded-2xl px-3 py-2 max-w-[85%]">
-                    <p className="text-xs font-semibold text-foreground">{comment.profiles?.display_name || "Anônimo"}</p>
-                    <p className="text-xs text-foreground/85 mt-0.5">{comment.content}</p>
+                  <div className="bg-white/5 rounded-2xl px-3 py-2 max-w-[85%]">
+                    <p className="text-xs font-semibold text-white">{comment.profiles?.display_name || "Anônimo"}</p>
+                    <p className="text-xs text-white/70 mt-0.5">{comment.content}</p>
                   </div>
                 </div>
               ))}
               {user && (
                 <div className="flex gap-2.5 items-center">
-                  <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <span className="text-[10px] font-bold text-primary">
+                  <div className="w-7 h-7 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
+                    <span className="text-[10px] font-bold text-orange-400">
                       {getUserName().charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -278,13 +258,13 @@ const FeedSection = () => {
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       placeholder="Escreva um comentário..."
-                      className="rounded-xl bg-secondary border-0 pr-10 text-xs h-8 focus-visible:ring-0"
+                      className="rounded-xl bg-white/5 border-white/10 pr-10 text-xs h-8 text-white placeholder:text-white/30 focus-visible:ring-0"
                       onKeyDown={(e) => e.key === "Enter" && handleComment(post.id)}
                     />
                     {newComment.trim() && (
                       <button
                         onClick={() => handleComment(post.id)}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-primary hover:text-primary/80 transition-colors"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-orange-400 hover:text-orange-300 transition-colors"
                       >
                         <Send className="w-3.5 h-3.5" />
                       </button>
@@ -298,10 +278,10 @@ const FeedSection = () => {
       ))}
 
       {posts.length === 0 && (
-        <div className="bg-card rounded-2xl shadow-card p-10 text-center animate-fade-in">
+        <div className="bg-white/5 rounded-2xl p-10 text-center border border-white/5">
           <p className="text-3xl mb-2">🎉</p>
-          <p className="text-muted-foreground text-sm">Nenhuma publicação ainda.</p>
-          <p className="text-muted-foreground text-xs mt-1">Seja o primeiro a compartilhar!</p>
+          <p className="text-white/50 text-sm">Nenhuma publicação ainda.</p>
+          <p className="text-white/30 text-xs mt-1">Seja o primeiro a compartilhar!</p>
         </div>
       )}
     </section>
