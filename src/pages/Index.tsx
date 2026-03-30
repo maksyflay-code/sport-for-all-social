@@ -4,14 +4,24 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Users, Calendar, Trophy, Flame, TrendingUp } from "lucide-react";
 
 const trendingTopics = [
-  { label: "Natação Adaptada", count: "1.2k posts", emoji: "🏊" },
-  { label: "Basquete em Cadeira", count: "890 posts", emoji: "🏀" },
-  { label: "Corrida Inclusiva", count: "2.1k posts", emoji: "🏃" },
+  { label: "Futebol", count: "12.5k posts", emoji: "⚽" },
+  { label: "Basquete", count: "8.3k posts", emoji: "🏀" },
+  { label: "Natação", count: "5.1k posts", emoji: "🏊" },
+  { label: "Vôlei", count: "4.7k posts", emoji: "🏐" },
+  { label: "Corrida", count: "3.9k posts", emoji: "🏃" },
+  { label: "Tênis", count: "3.2k posts", emoji: "🎾" },
+  { label: "Ciclismo", count: "2.8k posts", emoji: "🚴" },
+  { label: "Artes Marciais", count: "2.5k posts", emoji: "🥋" },
+  { label: "Musculação", count: "2.3k posts", emoji: "🏋️" },
+  { label: "Surfe", count: "1.9k posts", emoji: "🏄" },
 ];
 
 const upcomingEvents = [
   { title: "Maratona Inclusiva SP", date: "15 Abr", emoji: "🏅" },
-  { title: "Torneio Basquete Adaptado", date: "22 Abr", emoji: "🏆" },
+  { title: "Torneio de Futebol Society", date: "20 Abr", emoji: "⚽" },
+  { title: "Campeonato de Natação", date: "22 Abr", emoji: "🏊" },
+  { title: "Copa de Vôlei Misto", date: "28 Abr", emoji: "🏐" },
+  { title: "Corrida de Rua 10km", date: "05 Mai", emoji: "🏃" },
 ];
 
 const Index = () => {
