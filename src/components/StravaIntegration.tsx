@@ -149,12 +149,20 @@ export const StravaActivities = ({ onPost }: { onPost: (content: string) => void
     if (!user || !connected) return;
     setLoading(true);
     try {
+      console.log("Fetching Strava activities for user:", user.id);
       const { data, error } = await supabase.functions.invoke("strava-activities", {
         body: { user_id: user.id },
       });
+      console.log("Strava activities response:", data, error);
       if (error) throw error;
+      if (data?.error) {
+        console.error("Strava API error:", data.error);
+        toast.error("Erro Strava: " + data.error);
+        return;
+      }
       setActivities(data?.activities || []);
-    } catch {
+    } catch (err: any) {
+      console.error("Strava activities error:", err);
       toast.error("Erro ao carregar atividades do Strava");
     } finally {
       setLoading(false);
