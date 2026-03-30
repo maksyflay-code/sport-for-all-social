@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import logoCidadelas from "@/assets/logo-cidadelas.jpeg";
+import logoCidadelas from "@/assets/logo.jpeg";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
