@@ -232,6 +232,9 @@ const FeedPage = () => {
             </div>
           </div>
 
+          {/* Suggested Users */}
+          <SuggestedUsers />
+
           {/* Feed */}
           <FeedSection />
 
