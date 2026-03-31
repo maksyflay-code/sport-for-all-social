@@ -112,9 +112,10 @@ const FeedSection = () => {
       content: newPost.trim() || " ",
       user_id: user.id,
       image_url: imageUrl,
-    });
+      location: location.trim() || null,
+    } as any);
     if (error) toast.error("Erro ao publicar");
-    else { setNewPost(""); clearMedia(); loadPosts(); toast.success("Publicado!"); }
+    else { setNewPost(""); clearMedia(); setLocation(""); setShowLocationInput(false); loadPosts(); toast.success("Publicado!"); }
     setPosting(false);
   };
 
