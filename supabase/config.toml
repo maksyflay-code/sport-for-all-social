@@ -1,1 +1,5 @@
 project_id = "lwrthvapgqljphsmcbeg"
+
+[auth]
+site_url = "https://cidadelas360.com.br"
+additional_redirect_urls = ["https://cidadelas360.com.br/reset-password", "https://cidadelas360.com.br"]
