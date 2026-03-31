@@ -308,6 +308,23 @@ const FeedSection = () => {
           {/* Post content */}
           <div className="px-4 py-3">
             <p className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed">{post.content}</p>
+            {(() => {
+              const ytMatch = post.content.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
+              if (ytMatch) {
+                return (
+                  <div className="mt-3 rounded-xl overflow-hidden aspect-video">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${ytMatch[1]}`}
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title="YouTube video"
+                    />
+                  </div>
+                );
+              }
+              return null;
+            })()}
             {post.image_url && (
               <div className="mt-3 rounded-xl overflow-hidden">
                 {post.image_url.match(/\.(mp4|webm|mov|avi)/) ? (
