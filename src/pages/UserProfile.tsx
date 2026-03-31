@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFollows } from "@/hooks/useFollows";
 import Header from "@/components/Header";
+import FollowersModal from "@/components/FollowersModal";
 import { Button } from "@/components/ui/button";
-import { UserPlus, UserCheck, Users, Medal, MessageCircle } from "lucide-react";
+import { UserPlus, UserCheck, Medal, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const UserProfile = () => {
@@ -14,6 +15,7 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const { isFollowing, followersCount, followingCount, toggleFollow, loading } = useFollows(userId);
+  const [modalType, setModalType] = useState<"followers" | "following" | null>(null);
 
   useEffect(() => {
     if (userId) {
@@ -32,6 +34,13 @@ const UserProfile = () => {
     toast.success(isFollowing ? "Deixou de seguir" : "Seguindo!");
   };
 
+  const handleMessage = async () => {
+    if (!user) { toast.error("Faça login primeiro"); return; }
+    const { data } = await supabase.rpc("get_or_create_conversation", { other_user_id: userId });
+    if (data) navigate(`/mensagens/${data}`);
+    else toast.error("Erro ao iniciar conversa");
+  };
+
   if (!profile) return (
     <div className="min-h-screen bg-[#1a1a2e]">
       <Header />
@@ -47,7 +56,6 @@ const UserProfile = () => {
     <div className="min-h-screen bg-[#1a1a2e]">
       <Header />
       <div className="container mx-auto px-4 py-6 max-w-2xl">
-        {/* Profile card */}
         <div className="bg-white/5 rounded-2xl overflow-hidden border border-white/5">
           <div className="h-32 bg-gradient-to-br from-orange-500/20 via-orange-400/10 to-[#16162a]" />
           <div className="px-6 pb-5 -mt-12">
@@ -75,11 +83,7 @@ const UserProfile = () => {
                     {isFollowing ? <><UserCheck className="w-4 h-4" /> Seguindo</> : <><UserPlus className="w-4 h-4" /> Seguir</>}
                   </Button>
                   <Button
-                    onClick={async () => {
-                      const { data } = await supabase.rpc("get_or_create_conversation", { other_user_id: userId });
-                      if (data) navigate(`/mensagens/${data}`);
-                      else toast.error("Erro ao iniciar conversa");
-                    }}
+                    onClick={handleMessage}
                     className="rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold gap-2 border border-white/10"
                   >
                     <MessageCircle className="w-4 h-4" /> Mensagem
@@ -92,21 +96,20 @@ const UserProfile = () => {
               {profile.bio && <p className="text-sm text-white/50 mt-1">{profile.bio}</p>}
             </div>
 
-            {/* Stats */}
+            {/* Stats - clickable */}
             <div className="flex gap-6 mt-4">
-              <div className="text-center">
+              <button onClick={() => setModalType("followers")} className="text-center hover:opacity-80 transition-opacity">
                 <p className="text-lg font-bold text-white">{followersCount}</p>
                 <p className="text-xs text-white/40">Seguidores</p>
-              </div>
-              <div className="text-center">
+              </button>
+              <button onClick={() => setModalType("following")} className="text-center hover:opacity-80 transition-opacity">
                 <p className="text-lg font-bold text-white">{followingCount}</p>
                 <p className="text-xs text-white/40">Seguindo</p>
-              </div>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Sports */}
         {profile.sports?.length > 0 && (
           <div className="bg-white/5 rounded-2xl p-5 border border-white/5 mt-4">
             <h3 className="text-sm font-bold text-white mb-3">Modalidades</h3>
@@ -120,7 +123,6 @@ const UserProfile = () => {
           </div>
         )}
 
-        {/* Achievements */}
         {profile.achievements?.length > 0 && (
           <div className="bg-white/5 rounded-2xl p-5 border border-white/5 mt-4">
             <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
@@ -136,6 +138,15 @@ const UserProfile = () => {
           </div>
         )}
       </div>
+
+      {userId && modalType && (
+        <FollowersModal
+          userId={userId}
+          type={modalType}
+          open={!!modalType}
+          onOpenChange={(open) => !open && setModalType(null)}
+        />
+      )}
     </div>
   );
 };
