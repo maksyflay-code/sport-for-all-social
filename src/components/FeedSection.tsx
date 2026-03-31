@@ -209,6 +209,13 @@ const FeedSection = () => {
                   >
                     <Image className="w-4.5 h-4.5" />
                   </button>
+                  <button
+                    onClick={() => setShowLocationInput(!showLocationInput)}
+                    className={`p-2 rounded-lg hover:bg-white/5 transition-colors ${showLocationInput || location ? "text-orange-400" : "text-white/30 hover:text-orange-400"}`}
+                    title="Adicionar localização"
+                  >
+                    <MapPin className="w-4.5 h-4.5" />
+                  </button>
                   <button className="p-2 rounded-lg hover:bg-white/5 transition-colors text-white/30 hover:text-orange-400">
                     <Smile className="w-4.5 h-4.5" />
                   </button>
