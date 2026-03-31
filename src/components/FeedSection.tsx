@@ -3,6 +3,7 @@ import { Heart, MessageCircle, Share2, Send, Image, Smile, X, MapPin, Trash2 } f
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { useAdmin } from "@/hooks/useAdmin";
 import { StravaActivities } from "@/components/StravaIntegration";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
