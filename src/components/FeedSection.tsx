@@ -26,6 +26,7 @@ interface Post {
 
 const FeedSection = () => {
   const { user } = useAuth();
+  const { isAdmin } = useAdmin();
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState("");
   const [posting, setPosting] = useState(false);
