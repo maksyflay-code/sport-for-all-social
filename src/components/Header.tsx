@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import logoCidadelas from "@/assets/logo.jpeg";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import SearchUsers from "@/components/SearchUsers";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
