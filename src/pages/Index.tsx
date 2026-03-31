@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import FeedSection from "@/components/FeedSection";
+import SuggestedUsers from "@/components/SuggestedUsers";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "@/hooks/useEvents";
