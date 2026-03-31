@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import FeedSection from "@/components/FeedSection";
+import SuggestedUsers from "@/components/SuggestedUsers";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "@/hooks/useEvents";
@@ -230,6 +231,9 @@ const FeedPage = () => {
               <p className="text-xs text-white/50">Eventos</p>
             </div>
           </div>
+
+          {/* Suggested Users */}
+          <SuggestedUsers />
 
           {/* Feed */}
           <FeedSection />

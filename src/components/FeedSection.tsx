@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Share2, Send, Image, Smile, X, MapPin, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +28,7 @@ interface Post {
 const FeedSection = () => {
   const { user } = useAuth();
   const { isAdmin } = useAdmin();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState("");
   const [posting, setPosting] = useState(false);
@@ -286,7 +288,10 @@ const FeedSection = () => {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white leading-tight truncate">{post.profiles?.display_name || "Anônimo"}</p>
+              <p
+                className="text-sm font-semibold text-white leading-tight truncate cursor-pointer hover:text-orange-400 transition-colors"
+                onClick={() => navigate(`/usuario/${post.user_id}`)}
+              >{post.profiles?.display_name || "Anônimo"}</p>
               <p className="text-xs text-white/40">
                 {(post as any).location && (
                   <span className="text-orange-400 mr-1.5"><MapPin className="w-3 h-3 inline" /> {(post as any).location} · </span>
