@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import logoCidadelas from "@/assets/logo.jpeg";
+import heroImage from "@/assets/hero-sports.jpg";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -57,8 +58,12 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a1a2e] flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen relative flex items-center justify-center px-4">
+      <div className="absolute inset-0 z-0">
+        <img src={heroImage} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-[#1a1a2e]/85 backdrop-blur-sm" />
+      </div>
+      <div className="w-full max-w-sm relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
           <img src={logoCidadelas} alt="Cidadelas 360" className="w-16 h-16 rounded-full object-cover mx-auto mb-4 shadow-lg" />

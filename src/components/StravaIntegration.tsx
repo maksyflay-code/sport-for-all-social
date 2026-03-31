@@ -83,7 +83,7 @@ export const StravaConnectButton = () => {
       const { data } = await supabase.functions.invoke("strava-config");
       const clientId = data?.client_id;
       if (!clientId) { toast.error("Strava não configurado"); return; }
-      const redirectUri = window.location.origin + "/profile";
+      const redirectUri = window.location.origin + "/perfil";
       const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=activity:read_all&approval_prompt=auto`;
       window.location.href = url;
     } catch {
