@@ -161,6 +161,14 @@ const Header = () => {
                 variant="ghost"
                 size="icon"
                 className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
+                onClick={() => navigate("/mensagens")}
+              >
+                <MessageCircle className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
                 onClick={() => navigate("/perfil")}
               >
                 <User className="w-5 h-5" />
