@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Heart, MessageCircle, Share2, Send, Image, Smile, Video, X } from "lucide-react";
+import { Heart, MessageCircle, Share2, Send, Image, Smile, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ interface Post {
   created_at: string;
   user_id: string;
   image_url: string | null;
+  location: string | null;
   profiles: { display_name: string | null; avatar_url: string | null } | null;
   likes_count: number;
   comments_count: number;
@@ -32,6 +33,8 @@ const FeedSection = () => {
   const [newComment, setNewComment] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const [location, setLocation] = useState("");
+  const [showLocationInput, setShowLocationInput] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { loadPosts(); }, [user]);
@@ -109,9 +112,10 @@ const FeedSection = () => {
       content: newPost.trim() || " ",
       user_id: user.id,
       image_url: imageUrl,
-    });
+      location: location.trim() || null,
+    } as any);
     if (error) toast.error("Erro ao publicar");
-    else { setNewPost(""); clearMedia(); loadPosts(); toast.success("Publicado!"); }
+    else { setNewPost(""); clearMedia(); setLocation(""); setShowLocationInput(false); loadPosts(); toast.success("Publicado!"); }
     setPosting(false);
   };
 
@@ -205,6 +209,13 @@ const FeedSection = () => {
                   >
                     <Image className="w-4.5 h-4.5" />
                   </button>
+                  <button
+                    onClick={() => setShowLocationInput(!showLocationInput)}
+                    className={`p-2 rounded-lg hover:bg-white/5 transition-colors ${showLocationInput || location ? "text-orange-400" : "text-white/30 hover:text-orange-400"}`}
+                    title="Adicionar localização"
+                  >
+                    <MapPin className="w-4.5 h-4.5" />
+                  </button>
                   <button className="p-2 rounded-lg hover:bg-white/5 transition-colors text-white/30 hover:text-orange-400">
                     <Smile className="w-4.5 h-4.5" />
                   </button>
@@ -218,6 +229,27 @@ const FeedSection = () => {
                   {posting ? "..." : "Publicar"}
                 </Button>
               </div>
+              {/* Location input */}
+              {showLocationInput && (
+                <div className="flex items-center gap-2 mt-2">
+                  <MapPin className="w-4 h-4 text-orange-400 shrink-0" />
+                  <Input
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="Ex: São Paulo, SP"
+                    maxLength={100}
+                    className="h-8 text-xs bg-white/5 border-white/10 text-white placeholder:text-white/30"
+                  />
+                  <button onClick={() => { setShowLocationInput(false); setLocation(""); }} className="text-white/30 hover:text-white">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+              {location && !showLocationInput && (
+                <p className="text-xs text-orange-400 mt-1 flex items-center gap-1">
+                  <MapPin className="w-3 h-3" /> {location}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -243,6 +275,9 @@ const FeedSection = () => {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-white leading-tight truncate">{post.profiles?.display_name || "Anônimo"}</p>
               <p className="text-xs text-white/40">
+                {(post as any).location && (
+                  <span className="text-orange-400 mr-1.5"><MapPin className="w-3 h-3 inline" /> {(post as any).location} · </span>
+                )}
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}
               </p>
             </div>
