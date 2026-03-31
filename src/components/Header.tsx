@@ -84,13 +84,7 @@ const Header = () => {
 
         {/* Search */}
         <div className="hidden md:block flex-1 max-w-md mx-auto">
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-            <Input
-              placeholder="Buscar pessoas, comunidades, eventos..."
-              className="pl-10 h-10 bg-white/5 border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus-visible:ring-orange-400/30"
-            />
-          </div>
+          <SearchUsers />
         </div>
 
         {/* Right actions */}
