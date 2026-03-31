@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import logoCidadelas from "@/assets/logo.jpeg";
+import heroImage from "@/assets/hero-sports.jpg";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
