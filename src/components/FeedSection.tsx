@@ -40,7 +40,10 @@ const FeedSection = () => {
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
   const [location, setLocation] = useState("");
   const [showLocationInput, setShowLocationInput] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const commonEmojis = ["😀","😂","🥰","😎","🤩","💪","🏆","🔥","⚽","🏀","🏊","🚴","🏃","🎾","🏋️","👏","❤️","🙌","✨","🎉"];
 
   useEffect(() => { loadPosts(); }, [user, feedTab]);
 
