@@ -229,6 +229,27 @@ const FeedSection = () => {
                   {posting ? "..." : "Publicar"}
                 </Button>
               </div>
+              {/* Location input */}
+              {showLocationInput && (
+                <div className="flex items-center gap-2 mt-2">
+                  <MapPin className="w-4 h-4 text-orange-400 shrink-0" />
+                  <Input
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="Ex: São Paulo, SP"
+                    maxLength={100}
+                    className="h-8 text-xs bg-white/5 border-white/10 text-white placeholder:text-white/30"
+                  />
+                  <button onClick={() => { setShowLocationInput(false); setLocation(""); }} className="text-white/30 hover:text-white">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+              {location && !showLocationInput && (
+                <p className="text-xs text-orange-400 mt-1 flex items-center gap-1">
+                  <MapPin className="w-3 h-3" /> {location}
+                </p>
+              )}
             </div>
           </div>
         </div>
