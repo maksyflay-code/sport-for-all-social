@@ -30,6 +30,7 @@ const FeedSection = () => {
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [feedTab, setFeedTab] = useState<"seguindo" | "todos">("todos");
   const [newPost, setNewPost] = useState("");
   const [posting, setPosting] = useState(false);
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
@@ -41,19 +42,18 @@ const FeedSection = () => {
   const [showLocationInput, setShowLocationInput] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => { loadPosts(); }, [user]);
+  useEffect(() => { loadPosts(); }, [user, feedTab]);
 
   const loadPosts = async () => {
     let postsData: any[] | null = null;
 
-    if (user) {
-      // Get list of users the current user follows
+    if (user && feedTab === "seguindo") {
       const { data: followingData } = await supabase
         .from("follows")
         .select("following_id")
         .eq("follower_id", user.id);
       const followingIds = followingData?.map((f) => f.following_id) || [];
-      followingIds.push(user.id); // include own posts
+      followingIds.push(user.id);
 
       const { data } = await supabase
         .from("posts")
