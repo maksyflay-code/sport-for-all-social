@@ -11,6 +11,7 @@ import { toast } from "sonner";
 const UserProfile = () => {
   const { userId } = useParams<{ userId: string }>();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const { isFollowing, followersCount, followingCount, toggleFollow, loading } = useFollows(userId);
 
