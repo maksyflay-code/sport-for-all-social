@@ -226,6 +226,13 @@ const Header = () => {
                     )}
                   </button>
                   <button
+                    onClick={() => { navigate("/mensagens"); setMobileOpen(false); }}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white hover:bg-white/5 transition-colors text-sm font-medium"
+                  >
+                    <MessageCircle className="w-5 h-5 text-orange-400" />
+                    Mensagens
+                  </button>
+                  <button
                     onClick={() => { navigate("/perfil"); setMobileOpen(false); }}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white hover:bg-white/5 transition-colors text-sm font-medium"
                   >
