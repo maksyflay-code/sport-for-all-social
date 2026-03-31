@@ -33,6 +33,8 @@ const FeedSection = () => {
   const [newComment, setNewComment] = useState("");
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const [location, setLocation] = useState("");
+  const [showLocationInput, setShowLocationInput] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { loadPosts(); }, [user]);
