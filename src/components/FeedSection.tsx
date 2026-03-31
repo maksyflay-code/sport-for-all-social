@@ -295,7 +295,34 @@ const FeedSection = () => {
       {/* Strava Activities */}
       {user && <StravaActivities onPost={(content) => { setNewPost(content); }} />}
 
+      {/* Feed tabs */}
+      {user && (
+        <div className="flex gap-1 bg-white/5 rounded-xl p-1 border border-white/5">
+          <button
+            onClick={() => setFeedTab("todos")}
+            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${
+              feedTab === "todos" ? "bg-orange-500 text-white shadow" : "text-white/40 hover:text-white/70"
+            }`}
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => setFeedTab("seguindo")}
+            className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${
+              feedTab === "seguindo" ? "bg-orange-500 text-white shadow" : "text-white/40 hover:text-white/70"
+            }`}
+          >
+            Seguindo
+          </button>
+        </div>
+      )}
+
       {/* Posts */}
+      {posts.length === 0 && (
+        <div className="text-center py-12 text-white/30">
+          <p className="text-sm">{feedTab === "seguindo" ? "Você ainda não segue ninguém. Siga pessoas para ver posts aqui!" : "Nenhuma publicação ainda."}</p>
+        </div>
+      )}
       {posts.map((post) => (
         <article key={post.id} className="bg-white/5 rounded-2xl border border-white/5">
           {/* Post header */}
