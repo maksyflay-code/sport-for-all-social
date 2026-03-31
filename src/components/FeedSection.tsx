@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Heart, MessageCircle, Share2, Send, Image, Smile, Video, X } from "lucide-react";
+import { Heart, MessageCircle, Share2, Send, Image, Smile, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
