@@ -298,6 +298,7 @@ const FeedSection = () => {
                 <Trash2 className="w-4 h-4" />
               </button>
             )}
+          </div>
 
           {/* Post content */}
           <div className="px-4 py-3">
