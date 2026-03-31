@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Heart, MessageCircle, Share2, Send, Image, Smile } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Heart, MessageCircle, Share2, Send, Image, Smile, Video, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ interface Post {
   content: string;
   created_at: string;
   user_id: string;
+  image_url: string | null;
   profiles: { display_name: string | null; avatar_url: string | null } | null;
   likes_count: number;
   comments_count: number;
@@ -29,6 +30,9 @@ const FeedSection = () => {
   const [expandedComments, setExpandedComments] = useState<string | null>(null);
   const [comments, setComments] = useState<Record<string, any[]>>({});
   const [newComment, setNewComment] = useState("");
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { loadPosts(); }, [user]);
 
@@ -68,13 +72,46 @@ const FeedSection = () => {
     })));
   };
 
+  const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    if (file.size > maxSize) { toast.error("Arquivo muito grande (máx 50MB)"); return; }
+    setMediaFile(file);
+    setMediaPreview(URL.createObjectURL(file));
+  };
+
+  const clearMedia = () => {
+    setMediaFile(null);
+    if (mediaPreview) URL.revokeObjectURL(mediaPreview);
+    setMediaPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handlePost = async () => {
     if (!user) { toast.error("Faça login para postar"); return; }
-    if (!newPost.trim()) return;
+    if (!newPost.trim() && !mediaFile) return;
     setPosting(true);
-    const { error } = await supabase.from("posts").insert({ content: newPost.trim(), user_id: user.id });
+
+    let imageUrl: string | null = null;
+    if (mediaFile) {
+      const ext = mediaFile.name.split(".").pop();
+      const path = `${user.id}/${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("post-media")
+        .upload(path, mediaFile, { contentType: mediaFile.type });
+      if (uploadError) { toast.error("Erro ao enviar mídia"); setPosting(false); return; }
+      const { data: urlData } = supabase.storage.from("post-media").getPublicUrl(path);
+      imageUrl = urlData.publicUrl;
+    }
+
+    const { error } = await supabase.from("posts").insert({
+      content: newPost.trim() || " ",
+      user_id: user.id,
+      image_url: imageUrl,
+    });
     if (error) toast.error("Erro ao publicar");
-    else { setNewPost(""); loadPosts(); toast.success("Publicado!"); }
+    else { setNewPost(""); clearMedia(); loadPosts(); toast.success("Publicado!"); }
     setPosting(false);
   };
 
@@ -138,9 +175,34 @@ const FeedSection = () => {
                 rows={2}
                 className="resize-none border-0 bg-transparent focus-visible:ring-0 text-sm p-0 min-h-[60px] text-white placeholder:text-white/30"
               />
+              {/* Media preview */}
+              {mediaPreview && mediaFile && (
+                <div className="relative mt-2 rounded-xl overflow-hidden border border-white/10 max-h-60">
+                  {mediaFile.type.startsWith("video/") ? (
+                    <video src={mediaPreview} className="w-full max-h-60 object-cover" controls />
+                  ) : (
+                    <img src={mediaPreview} alt="Preview" className="w-full max-h-60 object-cover" />
+                  )}
+                  <button onClick={clearMedia} className="absolute top-2 right-2 bg-black/60 rounded-full p-1 hover:bg-black/80 transition-colors">
+                    <X className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              )}
+
               <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/10">
                 <div className="flex items-center gap-1">
-                  <button className="p-2 rounded-lg hover:bg-white/5 transition-colors text-white/30 hover:text-orange-400">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={handleMediaSelect}
+                    className="hidden"
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-2 rounded-lg hover:bg-white/5 transition-colors text-white/30 hover:text-orange-400"
+                    title="Enviar foto ou vídeo"
+                  >
                     <Image className="w-4.5 h-4.5" />
                   </button>
                   <button className="p-2 rounded-lg hover:bg-white/5 transition-colors text-white/30 hover:text-orange-400">
@@ -189,6 +251,15 @@ const FeedSection = () => {
           {/* Post content */}
           <div className="px-4 py-3">
             <p className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed">{post.content}</p>
+            {post.image_url && (
+              <div className="mt-3 rounded-xl overflow-hidden">
+                {post.image_url.match(/\.(mp4|webm|mov|avi)/) ? (
+                  <video src={post.image_url} className="w-full max-h-96 object-cover" controls />
+                ) : (
+                  <img src={post.image_url} alt="" className="w-full max-h-96 object-cover" loading="lazy" />
+                )}
+              </div>
+            )}
           </div>
 
           {/* Reactions count */}
