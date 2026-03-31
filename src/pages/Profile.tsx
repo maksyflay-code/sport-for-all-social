@@ -118,6 +118,10 @@ const Profile = () => {
             <div className="mt-3">
               <h2 className="text-xl font-bold text-white">{displayName || "Seu nome"}</h2>
               <p className="text-xs text-white/40">{user?.email}</p>
+              <div className="flex gap-4 mt-2">
+                <span className="text-sm text-white"><strong>{followersCount}</strong> <span className="text-white/40">seguidores</span></span>
+                <span className="text-sm text-white"><strong>{followingCount}</strong> <span className="text-white/40">seguindo</span></span>
+              </div>
               {uploading && <p className="text-xs text-orange-400 mt-1">Fazendo upload...</p>}
             </div>
           </div>
