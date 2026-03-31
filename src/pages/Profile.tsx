@@ -200,6 +200,15 @@ const Profile = () => {
           </Button>
         </div>
       </div>
+
+      {user && modalType && (
+        <FollowersModal
+          userId={user.id}
+          type={modalType}
+          open={!!modalType}
+          onOpenChange={(open) => !open && setModalType(null)}
+        />
+      )}
     </div>
   );
 };
