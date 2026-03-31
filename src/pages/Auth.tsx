@@ -63,7 +63,7 @@ const Auth = () => {
         <img src={heroImage} alt="" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-[#1a1a2e]/85 backdrop-blur-sm" />
       </div>
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-sm relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
           <img src={logoCidadelas} alt="Cidadelas 360" className="w-16 h-16 rounded-full object-cover mx-auto mb-4 shadow-lg" />
