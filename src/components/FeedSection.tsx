@@ -275,10 +275,11 @@ const FeedSection = () => {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-white leading-tight truncate">{post.profiles?.display_name || "Anônimo"}</p>
               <p className="text-xs text-white/40">
+                {(post as any).location && (
+                  <span className="text-orange-400 mr-1.5"><MapPin className="w-3 h-3 inline" /> {(post as any).location} · </span>
+                )}
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}
               </p>
-            </div>
-          </div>
 
           {/* Post content */}
           <div className="px-4 py-3">
