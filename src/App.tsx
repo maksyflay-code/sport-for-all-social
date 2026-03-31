@@ -27,6 +27,8 @@ const App = () => (
             <Route path="/perfil" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/usuario/:userId" element={<UserProfile />} />
+            <Route path="/mensagens" element={<ConversationsList />} />
+            <Route path="/mensagens/:conversationId" element={<ChatView />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
