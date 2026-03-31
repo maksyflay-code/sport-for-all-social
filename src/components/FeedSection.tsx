@@ -307,9 +307,18 @@ const FeedSection = () => {
 
           {/* Post content */}
           <div className="px-4 py-3">
-            <p className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed">{post.content}</p>
             {(() => {
-              const ytMatch = post.content.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
+              const ytRegex = /(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com\/watch[^\s]*|youtu\.be\/[^\s]*|youtube\.com\/shorts\/[^\s]*)/gi;
+              const ytMatch = post.content.match(/(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com\/watch\?[^\s]*v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
+              const cleanContent = ytMatch ? post.content.replace(ytRegex, '').trim() : post.content;
+              return (
+                <>
+                  {cleanContent && <p className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed">{cleanContent}</p>}
+                </>
+              );
+            })()}
+            {(() => {
+              const ytMatch = post.content.match(/(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com\/watch\?[^\s]*v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
               if (ytMatch) {
                 return (
                   <div className="mt-3 rounded-xl overflow-hidden aspect-video">
