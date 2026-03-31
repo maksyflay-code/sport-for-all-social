@@ -289,7 +289,15 @@ const FeedSection = () => {
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}
               </p>
             </div>
-          </div>
+            {user && user.id === post.user_id && (
+              <button
+                onClick={() => handleDeletePost(post.id)}
+                className="p-2 rounded-lg hover:bg-red-500/10 text-white/20 hover:text-red-400 transition-colors shrink-0"
+                title="Excluir publicação"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
 
           {/* Post content */}
           <div className="px-4 py-3">
