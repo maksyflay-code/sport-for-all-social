@@ -3,6 +3,7 @@ import { Heart, MessageCircle, Share2, Send, Image, Smile, X, MapPin, Trash2 } f
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { useAdmin } from "@/hooks/useAdmin";
 import { StravaActivities } from "@/components/StravaIntegration";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,6 +26,7 @@ interface Post {
 
 const FeedSection = () => {
   const { user } = useAuth();
+  const { isAdmin } = useAdmin();
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState("");
   const [posting, setPosting] = useState(false);
@@ -129,10 +131,13 @@ const FeedSection = () => {
     loadPosts();
   };
 
-  const handleDeletePost = async (postId: string) => {
+  const handleDeletePost = async (postId: string, postUserId: string) => {
     if (!user) return;
     if (!confirm("Tem certeza que deseja excluir esta publicação?")) return;
-    const { error } = await supabase.from("posts").delete().eq("id", postId).eq("user_id", user.id);
+    const query = isAdmin
+      ? supabase.from("posts").delete().eq("id", postId)
+      : supabase.from("posts").delete().eq("id", postId).eq("user_id", user.id);
+    const { error } = await query;
     if (error) toast.error("Erro ao excluir publicação");
     else { loadPosts(); toast.success("Publicação excluída"); }
   };
@@ -289,11 +294,11 @@ const FeedSection = () => {
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}
               </p>
             </div>
-            {user && user.id === post.user_id && (
+            {user && (user.id === post.user_id || isAdmin) && (
               <button
-                onClick={() => handleDeletePost(post.id)}
+                onClick={() => handleDeletePost(post.id, post.user_id)}
                 className="p-2 rounded-lg hover:bg-red-500/10 text-white/20 hover:text-red-400 transition-colors shrink-0"
-                title="Excluir publicação"
+                title={isAdmin && user.id !== post.user_id ? "Excluir como admin" : "Excluir publicação"}
               >
                 <Trash2 className="w-4 h-4" />
               </button>
