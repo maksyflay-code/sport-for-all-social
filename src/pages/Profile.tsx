@@ -34,7 +34,7 @@ const Profile = () => {
   const [newAchievement, setNewAchievement] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [modalType, setModalType] = useState<"followers" | "following" | null>(null);
   const { followersCount, followingCount } = useFollows(user?.id);
 
   useEffect(() => {
