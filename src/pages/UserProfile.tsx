@@ -62,17 +62,29 @@ const UserProfile = () => {
                 )}
               </div>
               {!isOwnProfile && user && (
-                <Button
-                  onClick={handleFollow}
-                  disabled={loading}
-                  className={`rounded-xl font-semibold gap-2 mb-1 ${
-                    isFollowing
-                      ? "bg-white/10 hover:bg-red-500/20 text-white hover:text-red-400 border border-white/10"
-                      : "bg-orange-500 hover:bg-orange-600 text-white"
-                  }`}
-                >
-                  {isFollowing ? <><UserCheck className="w-4 h-4" /> Seguindo</> : <><UserPlus className="w-4 h-4" /> Seguir</>}
-                </Button>
+                <div className="flex gap-2 mb-1">
+                  <Button
+                    onClick={handleFollow}
+                    disabled={loading}
+                    className={`rounded-xl font-semibold gap-2 ${
+                      isFollowing
+                        ? "bg-white/10 hover:bg-red-500/20 text-white hover:text-red-400 border border-white/10"
+                        : "bg-orange-500 hover:bg-orange-600 text-white"
+                    }`}
+                  >
+                    {isFollowing ? <><UserCheck className="w-4 h-4" /> Seguindo</> : <><UserPlus className="w-4 h-4" /> Seguir</>}
+                  </Button>
+                  <Button
+                    onClick={async () => {
+                      const { data } = await supabase.rpc("get_or_create_conversation", { other_user_id: userId });
+                      if (data) navigate(`/mensagens/${data}`);
+                      else toast.error("Erro ao iniciar conversa");
+                    }}
+                    className="rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold gap-2 border border-white/10"
+                  >
+                    <MessageCircle className="w-4 h-4" /> Mensagem
+                  </Button>
+                </div>
               )}
             </div>
             <div className="mt-3">
