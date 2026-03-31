@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useFollows } from "@/hooks/useFollows";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { UserPlus, UserCheck, Users, Medal } from "lucide-react";
+import { UserPlus, UserCheck, Users, Medal, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const UserProfile = () => {
