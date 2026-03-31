@@ -131,10 +131,13 @@ const FeedSection = () => {
     loadPosts();
   };
 
-  const handleDeletePost = async (postId: string) => {
+  const handleDeletePost = async (postId: string, postUserId: string) => {
     if (!user) return;
     if (!confirm("Tem certeza que deseja excluir esta publicação?")) return;
-    const { error } = await supabase.from("posts").delete().eq("id", postId).eq("user_id", user.id);
+    const query = isAdmin
+      ? supabase.from("posts").delete().eq("id", postId)
+      : supabase.from("posts").delete().eq("id", postId).eq("user_id", user.id);
+    const { error } = await query;
     if (error) toast.error("Erro ao excluir publicação");
     else { loadPosts(); toast.success("Publicação excluída"); }
   };
