@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import logoCidadelas from "@/assets/logo.jpeg";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import SearchUsers from "@/components/SearchUsers";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -83,13 +84,7 @@ const Header = () => {
 
         {/* Search */}
         <div className="hidden md:block flex-1 max-w-md mx-auto">
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-            <Input
-              placeholder="Buscar pessoas, comunidades, eventos..."
-              className="pl-10 h-10 bg-white/5 border-white/10 rounded-xl text-sm text-white placeholder:text-white/30 focus-visible:ring-orange-400/30"
-            />
-          </div>
+          <SearchUsers />
         </div>
 
         {/* Right actions */}
@@ -209,9 +204,8 @@ const Header = () => {
             className="md:hidden overflow-hidden bg-[#16162a] border-t border-white/5"
           >
             <nav className="flex flex-col p-3 gap-1">
-              <div className="relative mb-2">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                <Input placeholder="Buscar..." className="pl-10 h-10 bg-white/5 border-white/10 rounded-xl text-sm text-white placeholder:text-white/30" />
+              <div className="mb-2">
+                <SearchUsers />
               </div>
               {user ? (
                 <>
