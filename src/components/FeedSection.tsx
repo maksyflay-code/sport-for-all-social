@@ -280,6 +280,8 @@ const FeedSection = () => {
                 )}
                 {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ptBR })}
               </p>
+            </div>
+          </div>
 
           {/* Post content */}
           <div className="px-4 py-3">
