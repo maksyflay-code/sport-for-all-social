@@ -34,6 +34,7 @@ const Profile = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const { followersCount, followingCount } = useFollows(user?.id);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
