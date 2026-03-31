@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Camera, Save, Trophy, Medal } from "lucide-react";
 import { StravaConnectButton } from "@/components/StravaIntegration";
+import { useFollows } from "@/hooks/useFollows";
 
 const SPORTS_OPTIONS = [
   "Futebol", "Basquete", "Natação", "Vôlei", "Tênis", "Corrida",
