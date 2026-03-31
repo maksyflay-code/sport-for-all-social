@@ -288,7 +288,10 @@ const FeedSection = () => {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white leading-tight truncate">{post.profiles?.display_name || "Anônimo"}</p>
+              <p
+                className="text-sm font-semibold text-white leading-tight truncate cursor-pointer hover:text-orange-400 transition-colors"
+                onClick={() => navigate(`/usuario/${post.user_id}`)}
+              >{post.profiles?.display_name || "Anônimo"}</p>
               <p className="text-xs text-white/40">
                 {(post as any).location && (
                   <span className="text-orange-400 mr-1.5"><MapPin className="w-3 h-3 inline" /> {(post as any).location} · </span>
