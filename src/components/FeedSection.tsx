@@ -44,7 +44,29 @@ const FeedSection = () => {
   useEffect(() => { loadPosts(); }, [user]);
 
   const loadPosts = async () => {
-    const { data: postsData } = await supabase.from("posts").select("*").order("created_at", { ascending: false }).limit(20);
+    let postsData: any[] | null = null;
+
+    if (user) {
+      // Get list of users the current user follows
+      const { data: followingData } = await supabase
+        .from("follows")
+        .select("following_id")
+        .eq("follower_id", user.id);
+      const followingIds = followingData?.map((f) => f.following_id) || [];
+      followingIds.push(user.id); // include own posts
+
+      const { data } = await supabase
+        .from("posts")
+        .select("*")
+        .in("user_id", followingIds)
+        .order("created_at", { ascending: false })
+        .limit(20);
+      postsData = data;
+    } else {
+      const { data } = await supabase.from("posts").select("*").order("created_at", { ascending: false }).limit(20);
+      postsData = data;
+    }
+
     if (!postsData || postsData.length === 0) { setPosts([]); return; }
 
     const postIds = postsData.map((p) => p.id);
