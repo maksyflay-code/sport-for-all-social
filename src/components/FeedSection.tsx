@@ -256,9 +256,27 @@ const FeedSection = () => {
                   >
                     <MapPin className="w-4.5 h-4.5" />
                   </button>
-                  <button className="p-2 rounded-lg hover:bg-white/5 transition-colors text-white/30 hover:text-orange-400">
-                    <Smile className="w-4.5 h-4.5" />
-                  </button>
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                      className={`p-2 rounded-lg hover:bg-white/5 transition-colors ${showEmojiPicker ? "text-orange-400" : "text-white/30 hover:text-orange-400"}`}
+                    >
+                      <Smile className="w-4.5 h-4.5" />
+                    </button>
+                    {showEmojiPicker && (
+                      <div className="absolute bottom-full left-0 mb-2 bg-[#1a1a2e] border border-white/10 rounded-xl p-2 grid grid-cols-5 gap-1 z-50 shadow-xl">
+                        {commonEmojis.map((emoji) => (
+                          <button
+                            key={emoji}
+                            onClick={() => { setNewPost((prev) => prev + emoji); setShowEmojiPicker(false); }}
+                            className="text-lg p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <Button
                   onClick={handlePost}
