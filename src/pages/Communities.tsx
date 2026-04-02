@@ -194,27 +194,23 @@ const CommunityCard = ({
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white/5 rounded-2xl p-4 border border-white/5 hover:border-orange-400/20 transition-colors">
+    <div
+      className="bg-white/5 rounded-2xl p-4 border border-white/5 hover:border-orange-400/20 transition-colors cursor-pointer"
+      onClick={() => navigate(`/comunidades/${community.id}`)}
+    >
       <div className="flex items-start gap-3">
         <span className="text-3xl">{community.emoji}</span>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="text-sm font-bold text-white truncate">{community.name}</h3>
-            {community.created_by === community.user_id && (
-              <Crown className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-            )}
-          </div>
+          <h3 className="text-sm font-bold text-white truncate">{community.name}</h3>
           <p className="text-xs text-orange-400/70 font-medium">{community.sport}</p>
           {community.description && (
             <p className="text-xs text-white/40 mt-1 line-clamp-2">{community.description}</p>
           )}
-          <div className="flex items-center gap-3 mt-2">
-            <span className="text-xs text-white/30 flex items-center gap-1">
-              <Users className="w-3.5 h-3.5" /> {community.member_count} {community.member_count === 1 ? "membro" : "membros"}
-            </span>
-          </div>
+          <span className="text-xs text-white/30 flex items-center gap-1 mt-2">
+            <Users className="w-3.5 h-3.5" /> {community.member_count} {community.member_count === 1 ? "membro" : "membros"}
+          </span>
         </div>
-        <div className="shrink-0">
+        <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
           {isMember ? (
             <Button
               onClick={onLeave}
