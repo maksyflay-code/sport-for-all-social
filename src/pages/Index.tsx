@@ -47,6 +47,7 @@ const formatEventDate = (dateStr: string) => {
 const LandingPage = () => {
   const navigate = useNavigate();
   const { events } = useEvents();
+  const stats = usePlatformStats();
 
   return (
     <div className="min-h-screen bg-[#1a1a2e]">
@@ -110,17 +111,17 @@ const LandingPage = () => {
           <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
             <div className="text-center">
               <Users className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-              <p className="text-3xl font-black text-white">4.2k</p>
-              <p className="text-sm text-white/50">Membros</p>
+              <p className="text-3xl font-black text-white">{stats.athletes}</p>
+              <p className="text-sm text-white/50">Atletas</p>
             </div>
             <div className="text-center">
-              <Trophy className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-              <p className="text-3xl font-black text-white">12</p>
-              <p className="text-sm text-white/50">Comunidades</p>
+              <FileText className="w-8 h-8 text-orange-400 mx-auto mb-2" />
+              <p className="text-3xl font-black text-white">{stats.posts}</p>
+              <p className="text-sm text-white/50">Publicações</p>
             </div>
             <div className="text-center">
               <Calendar className="w-8 h-8 text-orange-400 mx-auto mb-2" />
-              <p className="text-3xl font-black text-white">{events.length}</p>
+              <p className="text-3xl font-black text-white">{stats.events}</p>
               <p className="text-sm text-white/50">Eventos</p>
             </div>
           </div>
@@ -218,17 +219,17 @@ const FeedPage = () => {
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
               <Users className="w-5 h-5 text-orange-400 mx-auto mb-1.5" />
-              <p className="text-lg font-bold text-white">4.2k</p>
-              <p className="text-xs text-white/50">Membros</p>
+              <p className="text-lg font-bold text-white">{stats.athletes}</p>
+              <p className="text-xs text-white/50">Atletas</p>
             </div>
             <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
-              <Trophy className="w-5 h-5 text-orange-400 mx-auto mb-1.5" />
-              <p className="text-lg font-bold text-white">12</p>
-              <p className="text-xs text-white/50">Comunidades</p>
+              <FileText className="w-5 h-5 text-orange-400 mx-auto mb-1.5" />
+              <p className="text-lg font-bold text-white">{stats.posts}</p>
+              <p className="text-xs text-white/50">Publicações</p>
             </div>
             <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
               <Calendar className="w-5 h-5 text-orange-400 mx-auto mb-1.5" />
-              <p className="text-lg font-bold text-white">{events.length}</p>
+              <p className="text-lg font-bold text-white">{stats.events}</p>
               <p className="text-xs text-white/50">Eventos</p>
             </div>
           </div>
