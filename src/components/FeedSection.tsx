@@ -264,16 +264,18 @@ const FeedSection = () => {
                       <Smile className="w-4.5 h-4.5" />
                     </button>
                     {showEmojiPicker && (
-                      <div className="absolute bottom-full left-0 mb-2 bg-[#1a1a2e] border border-white/10 rounded-xl p-2 grid grid-cols-5 gap-1 z-50 shadow-xl">
-                        {commonEmojis.map((emoji) => (
-                          <button
-                            key={emoji}
-                            onClick={() => { setNewPost((prev) => prev + emoji); setShowEmojiPicker(false); }}
-                            className="text-lg p-1.5 rounded-lg hover:bg-white/10 transition-colors"
-                          >
-                            {emoji}
-                          </button>
-                        ))}
+                      <div className="absolute bottom-full left-0 mb-2 bg-[#1a1a2e] border border-white/10 rounded-xl p-2 z-50 shadow-xl min-w-[220px]">
+                        <div className="grid grid-cols-5 gap-1">
+                          {commonEmojis.map((emoji) => (
+                            <button
+                              key={emoji}
+                              onClick={() => { setNewPost((prev) => prev + emoji); setShowEmojiPicker(false); }}
+                              className="w-9 h-9 text-lg flex items-center justify-center rounded-lg hover:bg-white/10 transition-colors"
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
