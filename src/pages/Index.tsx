@@ -209,6 +209,7 @@ const LandingPage = () => {
 // Feed page for logged-in users
 const FeedPage = () => {
   const { events } = useEvents();
+  const stats = usePlatformStats();
 
   return (
     <div className="min-h-screen bg-[#1a1a2e]">
