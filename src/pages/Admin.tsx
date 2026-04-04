@@ -186,14 +186,27 @@ const Admin = () => {
                       Desde {new Date(u.created_at).toLocaleDateString("pt-BR")}
                     </p>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleAdmin(u.user_id, u.isAdmin)}
-                    className={`rounded-xl gap-1.5 text-xs ${u.isAdmin ? "text-destructive hover:text-destructive" : "text-primary hover:text-primary"}`}
-                  >
-                    {u.isAdmin ? <><ShieldX className="w-4 h-4" /> Remover Admin</> : <><ShieldCheck className="w-4 h-4" /> Tornar Admin</>}
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleAdmin(u.user_id, u.isAdmin)}
+                      className={`rounded-xl gap-1.5 text-xs ${u.isAdmin ? "text-destructive hover:text-destructive" : "text-primary hover:text-primary"}`}
+                    >
+                      {u.isAdmin ? <><ShieldX className="w-4 h-4" /> Remover Admin</> : <><ShieldCheck className="w-4 h-4" /> Tornar Admin</>}
+                    </Button>
+                    {u.user_id !== user?.id && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeUser(u.user_id)}
+                        className="rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                        title="Remover usuário"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
