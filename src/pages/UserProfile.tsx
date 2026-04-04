@@ -285,7 +285,7 @@ const UserProfile = () => {
         {/* User posts */}
         <div className="mt-4">
           <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-orange-400" /> Publicações
+            <Calendar className="w-4 h-4 text-primary" /> Publicações
           </h3>
           {postsLoading ? (
             <p className="text-sm text-muted-foreground text-center py-8">Carregando...</p>
