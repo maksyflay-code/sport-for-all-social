@@ -93,6 +93,29 @@ const Admin = () => {
     loadUsers();
   };
 
+  const removeUser = async (userId: string) => {
+    if (userId === user?.id) { toast.error("Você não pode remover a si mesmo"); return; }
+    const confirmed = window.confirm("Remover este usuário e todos os seus dados?");
+    if (!confirmed) return;
+
+    await Promise.all([
+      supabase.from("likes").delete().eq("user_id", userId),
+      supabase.from("comments").delete().eq("user_id", userId),
+      supabase.from("community_members").delete().eq("user_id", userId),
+      supabase.from("community_posts").delete().eq("user_id", userId),
+    ]);
+    await supabase.from("posts").delete().eq("user_id", userId);
+    await supabase.from("follows").delete().eq("follower_id", userId);
+    await supabase.from("follows").delete().eq("following_id", userId);
+    await supabase.from("notifications").delete().eq("user_id", userId);
+    await supabase.from("notifications").delete().eq("actor_id", userId);
+    await supabase.from("user_roles").delete().eq("user_id", userId);
+    await supabase.from("profiles").delete().eq("user_id", userId);
+
+    toast.success("Usuário removido");
+    loadUsers();
+  };
+
   const createEvent = async () => {
     if (!eventTitle || !eventDate) { toast.error("Preencha título e data"); return; }
     const { error } = await supabase.from("events").insert({
