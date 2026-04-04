@@ -10,6 +10,7 @@ import logoCidadelas from "@/assets/logo.jpeg";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import SearchUsers from "@/components/SearchUsers";
+import { useAdmin } from "@/hooks/useAdmin";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
