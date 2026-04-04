@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, X, Search, Bell, LogOut, User, MessageCircle, Users } from "lucide-react";
+import { Menu, X, Search, Bell, LogOut, User, MessageCircle, Users, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "framer-motion";
@@ -10,6 +10,7 @@ import logoCidadelas from "@/assets/logo.jpeg";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import SearchUsers from "@/components/SearchUsers";
+import { useAdmin } from "@/hooks/useAdmin";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -17,6 +18,7 @@ const Header = () => {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -152,6 +154,18 @@ const Header = () => {
                 </AnimatePresence>
               </div>
 
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-xl text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 w-10 h-10"
+                  onClick={() => navigate("/admin")}
+                  title="Painel Admin"
+                >
+                  <Shield className="w-5 h-5" />
+                </Button>
+              )}
+
               <Button
                 variant="ghost"
                 size="icon"
@@ -218,6 +232,15 @@ const Header = () => {
               </div>
               {user ? (
                 <>
+                  {isAdmin && (
+                    <button
+                      onClick={() => { navigate("/admin"); setMobileOpen(false); }}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-orange-400 hover:bg-orange-500/10 transition-colors text-sm font-bold"
+                    >
+                      <Shield className="w-5 h-5" />
+                      Painel Admin
+                    </button>
+                  )}
                   <button
                     onClick={() => { handleBellClick(); setMobileOpen(false); }}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white hover:bg-white/5 transition-colors text-sm font-medium"

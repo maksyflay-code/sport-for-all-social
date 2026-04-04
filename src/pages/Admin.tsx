@@ -93,6 +93,29 @@ const Admin = () => {
     loadUsers();
   };
 
+  const removeUser = async (userId: string) => {
+    if (userId === user?.id) { toast.error("Você não pode remover a si mesmo"); return; }
+    const confirmed = window.confirm("Remover este usuário e todos os seus dados?");
+    if (!confirmed) return;
+
+    await Promise.all([
+      supabase.from("likes").delete().eq("user_id", userId),
+      supabase.from("comments").delete().eq("user_id", userId),
+      supabase.from("community_members").delete().eq("user_id", userId),
+      supabase.from("community_posts").delete().eq("user_id", userId),
+    ]);
+    await supabase.from("posts").delete().eq("user_id", userId);
+    await supabase.from("follows").delete().eq("follower_id", userId);
+    await supabase.from("follows").delete().eq("following_id", userId);
+    await supabase.from("notifications").delete().eq("user_id", userId);
+    await supabase.from("notifications").delete().eq("actor_id", userId);
+    await supabase.from("user_roles").delete().eq("user_id", userId);
+    await supabase.from("profiles").delete().eq("user_id", userId);
+
+    toast.success("Usuário removido");
+    loadUsers();
+  };
+
   const createEvent = async () => {
     if (!eventTitle || !eventDate) { toast.error("Preencha título e data"); return; }
     const { error } = await supabase.from("events").insert({
@@ -163,14 +186,27 @@ const Admin = () => {
                       Desde {new Date(u.created_at).toLocaleDateString("pt-BR")}
                     </p>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleAdmin(u.user_id, u.isAdmin)}
-                    className={`rounded-xl gap-1.5 text-xs ${u.isAdmin ? "text-destructive hover:text-destructive" : "text-primary hover:text-primary"}`}
-                  >
-                    {u.isAdmin ? <><ShieldX className="w-4 h-4" /> Remover Admin</> : <><ShieldCheck className="w-4 h-4" /> Tornar Admin</>}
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleAdmin(u.user_id, u.isAdmin)}
+                      className={`rounded-xl gap-1.5 text-xs ${u.isAdmin ? "text-destructive hover:text-destructive" : "text-primary hover:text-primary"}`}
+                    >
+                      {u.isAdmin ? <><ShieldX className="w-4 h-4" /> Remover Admin</> : <><ShieldCheck className="w-4 h-4" /> Tornar Admin</>}
+                    </Button>
+                    {u.user_id !== user?.id && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeUser(u.user_id)}
+                        className="rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+                        title="Remover usuário"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
