@@ -237,11 +237,11 @@ const UserProfile = () => {
               <div className="mt-3 flex items-center gap-2">
                 <div className="flex -space-x-2">
                   {mutualFollowers.slice(0, 3).map((m) => (
-                    <div key={m.user_id} className="w-6 h-6 rounded-full bg-orange-500/20 border-2 border-background flex items-center justify-center overflow-hidden">
+                    <div key={m.user_id} className="w-6 h-6 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center overflow-hidden">
                       {m.avatar_url ? (
                         <img src={m.avatar_url} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-[8px] font-bold text-orange-400">{m.display_name?.charAt(0)?.toUpperCase()}</span>
+                        <span className="text-[8px] font-bold text-primary">{m.display_name?.charAt(0)?.toUpperCase()}</span>
                       )}
                     </div>
                   ))}
