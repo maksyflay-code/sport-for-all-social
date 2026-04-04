@@ -274,7 +274,7 @@ const UserProfile = () => {
             </h3>
             <div className="flex flex-wrap gap-2">
               {profile.achievements.map((a: string, i: number) => (
-                <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-orange-500/10 text-orange-300 text-xs font-medium border border-orange-400/20">
+                <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-primary/10 text-primary text-xs font-medium border border-primary/20">
                   <Medal className="w-3 h-3" /> {a}
                 </span>
               ))}
