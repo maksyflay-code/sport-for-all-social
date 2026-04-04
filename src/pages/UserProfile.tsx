@@ -270,7 +270,7 @@ const UserProfile = () => {
         {profile.achievements?.length > 0 && (
           <div className="bg-card rounded-2xl p-5 border border-border mt-4 shadow-card">
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-              <Medal className="w-4 h-4 text-orange-400" /> Conquistas
+              <Medal className="w-4 h-4 text-primary" /> Conquistas
             </h3>
             <div className="flex flex-wrap gap-2">
               {profile.achievements.map((a: string, i: number) => (
