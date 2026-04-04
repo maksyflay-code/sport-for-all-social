@@ -154,6 +154,18 @@ const Header = () => {
                 </AnimatePresence>
               </div>
 
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-xl text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 w-10 h-10"
+                  onClick={() => navigate("/admin")}
+                  title="Painel Admin"
+                >
+                  <Shield className="w-5 h-5" />
+                </Button>
+              )}
+
               <Button
                 variant="ghost"
                 size="icon"
