@@ -166,7 +166,7 @@ const UserProfile = () => {
       <Header />
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="bg-card rounded-2xl overflow-hidden border border-border shadow-card">
-          <div className="h-32 bg-gradient-to-br from-orange-500/20 via-orange-400/10 to-background" />
+          <div className="h-32 bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
           <div className="px-6 pb-5 -mt-12">
             <div className="flex items-end gap-4">
               <div className="w-24 h-24 rounded-2xl bg-muted border-4 border-background flex items-center justify-center overflow-hidden shadow-lg shrink-0">
