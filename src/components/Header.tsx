@@ -232,6 +232,15 @@ const Header = () => {
               </div>
               {user ? (
                 <>
+                  {isAdmin && (
+                    <button
+                      onClick={() => { navigate("/admin"); setMobileOpen(false); }}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-orange-400 hover:bg-orange-500/10 transition-colors text-sm font-bold"
+                    >
+                      <Shield className="w-5 h-5" />
+                      Painel Admin
+                    </button>
+                  )}
                   <button
                     onClick={() => { handleBellClick(); setMobileOpen(false); }}
                     className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white hover:bg-white/5 transition-colors text-sm font-medium"
