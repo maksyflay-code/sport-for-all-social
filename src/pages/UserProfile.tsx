@@ -166,7 +166,7 @@ const UserProfile = () => {
       <Header />
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="bg-card rounded-2xl overflow-hidden border border-border shadow-card">
-          <div className="h-32 bg-gradient-to-br from-orange-500/20 via-orange-400/10 to-background" />
+          <div className="h-32 bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
           <div className="px-6 pb-5 -mt-12">
             <div className="flex items-end gap-4">
               <div className="w-24 h-24 rounded-2xl bg-muted border-4 border-background flex items-center justify-center overflow-hidden shadow-lg shrink-0">
@@ -186,7 +186,7 @@ const UserProfile = () => {
                     className={`rounded-xl font-semibold gap-2 ${
                       isFollowing
                         ? "bg-muted hover:bg-destructive/20 text-foreground hover:text-destructive border border-border"
-                        : "bg-orange-500 hover:bg-orange-600 text-white"
+                        : "bg-primary hover:bg-primary/90 text-primary-foreground"
                     }`}
                   >
                     {isFollowing ? <><UserCheck className="w-4 h-4" /> Seguindo</> : <><UserPlus className="w-4 h-4" /> Seguir</>}
@@ -237,11 +237,11 @@ const UserProfile = () => {
               <div className="mt-3 flex items-center gap-2">
                 <div className="flex -space-x-2">
                   {mutualFollowers.slice(0, 3).map((m) => (
-                    <div key={m.user_id} className="w-6 h-6 rounded-full bg-orange-500/20 border-2 border-background flex items-center justify-center overflow-hidden">
+                    <div key={m.user_id} className="w-6 h-6 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center overflow-hidden">
                       {m.avatar_url ? (
                         <img src={m.avatar_url} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-[8px] font-bold text-orange-400">{m.display_name?.charAt(0)?.toUpperCase()}</span>
+                        <span className="text-[8px] font-bold text-primary">{m.display_name?.charAt(0)?.toUpperCase()}</span>
                       )}
                     </div>
                   ))}
@@ -259,7 +259,7 @@ const UserProfile = () => {
             <h3 className="text-sm font-bold text-foreground mb-3">Modalidades</h3>
             <div className="flex flex-wrap gap-2">
               {profile.sports.map((s: string) => (
-                <span key={s} className="px-3 py-1.5 rounded-xl text-xs font-medium bg-orange-500/10 text-orange-300 border border-orange-400/20">
+                <span key={s} className="px-3 py-1.5 rounded-xl text-xs font-medium bg-primary/10 text-primary border border-primary/20">
                   {s}
                 </span>
               ))}
@@ -270,11 +270,11 @@ const UserProfile = () => {
         {profile.achievements?.length > 0 && (
           <div className="bg-card rounded-2xl p-5 border border-border mt-4 shadow-card">
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-              <Medal className="w-4 h-4 text-orange-400" /> Conquistas
+              <Medal className="w-4 h-4 text-primary" /> Conquistas
             </h3>
             <div className="flex flex-wrap gap-2">
               {profile.achievements.map((a: string, i: number) => (
-                <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-orange-500/10 text-orange-300 text-xs font-medium border border-orange-400/20">
+                <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-primary/10 text-primary text-xs font-medium border border-primary/20">
                   <Medal className="w-3 h-3" /> {a}
                 </span>
               ))}
@@ -285,7 +285,7 @@ const UserProfile = () => {
         {/* User posts */}
         <div className="mt-4">
           <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-orange-400" /> Publicações
+            <Calendar className="w-4 h-4 text-primary" /> Publicações
           </h3>
           {postsLoading ? (
             <p className="text-sm text-muted-foreground text-center py-8">Carregando...</p>
@@ -299,7 +299,7 @@ const UserProfile = () => {
                 <article key={post.id} className="bg-card rounded-2xl border border-border p-4 shadow-card">
                   <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{post.content}</p>
                   {post.location && (
-                    <p className="text-xs text-orange-400 mt-1 flex items-center gap-1">
+                    <p className="text-xs text-primary mt-1 flex items-center gap-1">
                       <MapPin className="w-3 h-3" /> {post.location}
                     </p>
                   )}
@@ -315,9 +315,9 @@ const UserProfile = () => {
                   <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
                     <button
                       onClick={() => handleLike(post.id, post.user_liked)}
-                      className={`flex items-center gap-1 transition-colors ${post.user_liked ? "text-orange-400" : "hover:text-foreground"}`}
+                      className={`flex items-center gap-1 transition-colors ${post.user_liked ? "text-primary" : "hover:text-foreground"}`}
                     >
-                      <Heart className={`w-3.5 h-3.5 ${post.user_liked ? "fill-orange-400" : ""}`} />
+                      <Heart className={`w-3.5 h-3.5 ${post.user_liked ? "fill-primary" : ""}`} />
                       {post.likes_count > 0 && post.likes_count}
                     </button>
                     <span className="flex items-center gap-1">
