@@ -315,9 +315,9 @@ const UserProfile = () => {
                   <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
                     <button
                       onClick={() => handleLike(post.id, post.user_liked)}
-                      className={`flex items-center gap-1 transition-colors ${post.user_liked ? "text-orange-400" : "hover:text-foreground"}`}
+                      className={`flex items-center gap-1 transition-colors ${post.user_liked ? "text-primary" : "hover:text-foreground"}`}
                     >
-                      <Heart className={`w-3.5 h-3.5 ${post.user_liked ? "fill-orange-400" : ""}`} />
+                      <Heart className={`w-3.5 h-3.5 ${post.user_liked ? "fill-primary" : ""}`} />
                       {post.likes_count > 0 && post.likes_count}
                     </button>
                     <span className="flex items-center gap-1">
