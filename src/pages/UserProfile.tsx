@@ -299,7 +299,7 @@ const UserProfile = () => {
                 <article key={post.id} className="bg-card rounded-2xl border border-border p-4 shadow-card">
                   <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{post.content}</p>
                   {post.location && (
-                    <p className="text-xs text-orange-400 mt-1 flex items-center gap-1">
+                    <p className="text-xs text-primary mt-1 flex items-center gap-1">
                       <MapPin className="w-3 h-3" /> {post.location}
                     </p>
                   )}
