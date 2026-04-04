@@ -186,7 +186,7 @@ const UserProfile = () => {
                     className={`rounded-xl font-semibold gap-2 ${
                       isFollowing
                         ? "bg-muted hover:bg-destructive/20 text-foreground hover:text-destructive border border-border"
-                        : "bg-orange-500 hover:bg-orange-600 text-white"
+                        : "bg-primary hover:bg-primary/90 text-primary-foreground"
                     }`}
                   >
                     {isFollowing ? <><UserCheck className="w-4 h-4" /> Seguindo</> : <><UserPlus className="w-4 h-4" /> Seguir</>}
