@@ -259,7 +259,7 @@ const UserProfile = () => {
             <h3 className="text-sm font-bold text-foreground mb-3">Modalidades</h3>
             <div className="flex flex-wrap gap-2">
               {profile.sports.map((s: string) => (
-                <span key={s} className="px-3 py-1.5 rounded-xl text-xs font-medium bg-orange-500/10 text-orange-300 border border-orange-400/20">
+                <span key={s} className="px-3 py-1.5 rounded-xl text-xs font-medium bg-primary/10 text-primary border border-primary/20">
                   {s}
                 </span>
               ))}
