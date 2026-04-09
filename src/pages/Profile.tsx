@@ -124,13 +124,22 @@ const Profile = () => {
                 <button onClick={() => setModalType("followers")} className="text-sm text-white hover:opacity-80 transition-opacity"><strong>{followersCount}</strong> <span className="text-white/40">seguidores</span></button>
                 <button onClick={() => setModalType("following")} className="text-sm text-white hover:opacity-80 transition-opacity"><strong>{followingCount}</strong> <span className="text-white/40">seguindo</span></button>
               </div>
-              <Button
-                onClick={() => navigate("/rede")}
-                variant="ghost"
-                className="mt-2 rounded-xl text-orange-400 hover:bg-orange-500/10 gap-2 px-3 h-8 text-xs font-semibold"
-              >
-                <Users className="w-3.5 h-3.5" /> Ver minha rede completa
-              </Button>
+              <div className="flex gap-2 mt-2">
+                <Button
+                  onClick={() => navigate("/rede")}
+                  variant="ghost"
+                  className="rounded-xl text-orange-400 hover:bg-orange-500/10 gap-2 px-3 h-8 text-xs font-semibold"
+                >
+                  <Users className="w-3.5 h-3.5" /> Minha rede
+                </Button>
+                <Button
+                  onClick={() => navigate(`/usuario/${user!.id}`)}
+                  variant="ghost"
+                  className="rounded-xl text-orange-400 hover:bg-orange-500/10 gap-2 px-3 h-8 text-xs font-semibold"
+                >
+                  <User className="w-3.5 h-3.5" /> Ver meu perfil público
+                </Button>
+              </div>
               {uploading && <p className="text-xs text-orange-400 mt-1">Fazendo upload...</p>}
             </div>
           </div>
