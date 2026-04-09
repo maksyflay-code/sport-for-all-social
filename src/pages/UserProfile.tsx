@@ -7,9 +7,9 @@ import { useAdmin } from "@/hooks/useAdmin";
 import Header from "@/components/Header";
 import FollowersModal from "@/components/FollowersModal";
 import { Button } from "@/components/ui/button";
-import { UserPlus, UserCheck, Medal, MessageCircle, Heart, MessageCircle as CommentIcon, MapPin, Calendar, Trash2, Shield } from "lucide-react";
+import { UserPlus, UserCheck, Medal, MessageCircle, Heart, MessageCircle as CommentIcon, MapPin, Calendar, Trash2, Mail, Clock } from "lucide-react";
 import { toast } from "sonner";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const UserProfile = () => {
@@ -24,6 +24,7 @@ const UserProfile = () => {
   const [posts, setPosts] = useState<any[]>([]);
   const [postsLoading, setPostsLoading] = useState(false);
   const [mutualFollowers, setMutualFollowers] = useState<any[]>([]);
+  const [communitiesCount, setCommunitiesCount] = useState(0);
 
   useEffect(() => {
     if (userId) {
@@ -33,15 +34,24 @@ const UserProfile = () => {
         .select("*")
         .eq("user_id", userId)
         .single()
-        .then(({ data, error }) => {
-          console.log("Profile load result:", { data, error, userId });
+        .then(({ data }) => {
           setProfile(data);
           setProfileLoading(false);
         });
       loadPosts();
+      loadCommunitiesCount();
       if (user && user.id !== userId) loadMutualFollowers();
     }
   }, [userId, user]);
+
+  const loadCommunitiesCount = async () => {
+    if (!userId) return;
+    const { count } = await supabase
+      .from("community_members")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId);
+    setCommunitiesCount(count || 0);
+  };
 
   const loadPosts = async () => {
     if (!userId) return;
@@ -120,10 +130,8 @@ const UserProfile = () => {
 
   const handleRemoveUser = async () => {
     if (!isAdmin || !userId) return;
-    const confirmed = window.confirm(`Remover este usuário e todos os seus dados? Esta ação não pode ser desfeita.`);
+    const confirmed = window.confirm("Remover este usuário e todos os seus dados? Esta ação não pode ser desfeita.");
     if (!confirmed) return;
-
-    // Delete user's data in order
     await Promise.all([
       supabase.from("likes").delete().eq("user_id", userId),
       supabase.from("comments").delete().eq("user_id", userId),
@@ -136,7 +144,6 @@ const UserProfile = () => {
     await supabase.from("notifications").delete().eq("user_id", userId);
     await supabase.from("notifications").delete().eq("actor_id", userId);
     await supabase.from("profiles").delete().eq("user_id", userId);
-
     toast.success("Usuário removido com sucesso");
     navigate("/");
   };
@@ -160,20 +167,25 @@ const UserProfile = () => {
   );
 
   const isOwnProfile = user?.id === userId;
+  const memberSince = profile.created_at ? format(new Date(profile.created_at), "MMMM 'de' yyyy", { locale: ptBR }) : null;
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container mx-auto px-4 py-6 max-w-2xl">
-        <div className="bg-card rounded-2xl overflow-hidden border border-border shadow-card">
-          <div className="h-32 bg-gradient-to-br from-primary/20 via-primary/10 to-background" />
-          <div className="px-6 pb-5 -mt-12">
+        {/* Profile Card */}
+        <div className="bg-card rounded-2xl overflow-hidden border border-border shadow-sm">
+          {/* Banner */}
+          <div className="h-28 bg-gradient-to-r from-primary/30 via-primary/15 to-accent" />
+          
+          <div className="px-6 pb-6 -mt-14">
+            {/* Avatar + Actions */}
             <div className="flex items-end gap-4">
-              <div className="w-24 h-24 rounded-2xl bg-muted border-4 border-background flex items-center justify-center overflow-hidden shadow-lg shrink-0">
+              <div className="w-24 h-24 rounded-full bg-card border-4 border-card flex items-center justify-center overflow-hidden shadow-md shrink-0">
                 {profile.avatar_url ? (
                   <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-3xl font-bold text-muted-foreground">
+                  <span className="text-3xl font-bold text-primary">
                     {profile.display_name?.charAt(0)?.toUpperCase() || "?"}
                   </span>
                 )}
@@ -183,9 +195,10 @@ const UserProfile = () => {
                   <Button
                     onClick={handleFollow}
                     disabled={loading}
-                    className={`rounded-xl font-semibold gap-2 ${
+                    size="sm"
+                    className={`rounded-full font-semibold gap-1.5 ${
                       isFollowing
-                        ? "bg-muted hover:bg-destructive/20 text-foreground hover:text-destructive border border-border"
+                        ? "bg-secondary hover:bg-destructive/10 text-foreground hover:text-destructive border border-border"
                         : "bg-primary hover:bg-primary/90 text-primary-foreground"
                     }`}
                   >
@@ -193,20 +206,29 @@ const UserProfile = () => {
                   </Button>
                   <Button
                     onClick={handleMessage}
-                    className="rounded-xl bg-muted hover:bg-accent text-foreground font-semibold gap-2 border border-border"
+                    size="sm"
+                    variant="outline"
+                    className="rounded-full font-semibold gap-1.5"
                   >
                     <MessageCircle className="w-4 h-4" /> Mensagem
                   </Button>
                 </div>
               )}
             </div>
+
+            {/* Name & Bio */}
             <div className="mt-3">
-              <h2 className="text-xl font-bold text-foreground">{profile.display_name || "Anônimo"}</h2>
-              {profile.bio && <p className="text-sm text-muted-foreground mt-1">{profile.bio}</p>}
+              <h1 className="text-xl font-bold text-foreground">{profile.display_name || "Anônimo"}</h1>
+              {profile.bio && <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{profile.bio}</p>}
+              {memberSince && (
+                <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+                  <Clock className="w-3 h-3" /> Membro desde {memberSince}
+                </p>
+              )}
             </div>
 
             {/* Stats */}
-            <div className="flex gap-6 mt-4">
+            <div className="flex gap-5 mt-4 py-3 border-t border-border">
               <button onClick={() => setModalType("followers")} className="text-center hover:opacity-80 transition-opacity">
                 <p className="text-lg font-bold text-foreground">{followersCount}</p>
                 <p className="text-xs text-muted-foreground">Seguidores</p>
@@ -219,29 +241,34 @@ const UserProfile = () => {
                 <p className="text-lg font-bold text-foreground">{posts.length}</p>
                 <p className="text-xs text-muted-foreground">Publicações</p>
               </div>
+              <div className="text-center">
+                <p className="text-lg font-bold text-foreground">{communitiesCount}</p>
+                <p className="text-xs text-muted-foreground">Comunidades</p>
+              </div>
             </div>
 
-            {/* Admin: remove user button */}
+            {/* Admin button */}
             {isAdmin && !isOwnProfile && (
               <Button
                 onClick={handleRemoveUser}
                 variant="ghost"
-                className="mt-3 rounded-xl text-destructive hover:bg-destructive/10 gap-2 text-xs font-semibold"
+                size="sm"
+                className="mt-2 rounded-full text-destructive hover:bg-destructive/10 gap-1.5 text-xs font-semibold"
               >
-                <Trash2 className="w-4 h-4" /> Remover usuário (Admin)
+                <Trash2 className="w-3.5 h-3.5" /> Remover usuário (Admin)
               </Button>
             )}
 
             {/* Mutual followers */}
             {mutualFollowers.length > 0 && (
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-3 flex items-center gap-2 pt-3 border-t border-border">
                 <div className="flex -space-x-2">
                   {mutualFollowers.slice(0, 3).map((m) => (
-                    <div key={m.user_id} className="w-6 h-6 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center overflow-hidden">
+                    <div key={m.user_id} className="w-6 h-6 rounded-full bg-accent border-2 border-card flex items-center justify-center overflow-hidden">
                       {m.avatar_url ? (
                         <img src={m.avatar_url} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-[8px] font-bold text-primary">{m.display_name?.charAt(0)?.toUpperCase()}</span>
+                        <span className="text-[8px] font-bold text-accent-foreground">{m.display_name?.charAt(0)?.toUpperCase()}</span>
                       )}
                     </div>
                   ))}
@@ -254,12 +281,13 @@ const UserProfile = () => {
           </div>
         </div>
 
+        {/* Sports */}
         {profile.sports?.length > 0 && (
-          <div className="bg-card rounded-2xl p-5 border border-border mt-4 shadow-card">
-            <h3 className="text-sm font-bold text-foreground mb-3">Modalidades</h3>
+          <div className="bg-card rounded-2xl p-5 border border-border mt-4 shadow-sm">
+            <h3 className="text-sm font-bold text-foreground mb-3">🏅 Modalidades</h3>
             <div className="flex flex-wrap gap-2">
               {profile.sports.map((s: string) => (
-                <span key={s} className="px-3 py-1.5 rounded-xl text-xs font-medium bg-primary/10 text-primary border border-primary/20">
+                <span key={s} className="px-3 py-1.5 rounded-full text-xs font-medium bg-accent text-accent-foreground">
                   {s}
                 </span>
               ))}
@@ -267,14 +295,15 @@ const UserProfile = () => {
           </div>
         )}
 
+        {/* Achievements */}
         {profile.achievements?.length > 0 && (
-          <div className="bg-card rounded-2xl p-5 border border-border mt-4 shadow-card">
+          <div className="bg-card rounded-2xl p-5 border border-border mt-4 shadow-sm">
             <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <Medal className="w-4 h-4 text-primary" /> Conquistas
             </h3>
             <div className="flex flex-wrap gap-2">
               {profile.achievements.map((a: string, i: number) => (
-                <span key={i} className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-primary/10 text-primary text-xs font-medium border border-primary/20">
+                <span key={i} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-xs font-medium">
                   <Medal className="w-3 h-3" /> {a}
                 </span>
               ))}
@@ -282,7 +311,14 @@ const UserProfile = () => {
           </div>
         )}
 
-        {/* User posts */}
+        {/* No info message */}
+        {!profile.bio && (!profile.sports || profile.sports.length === 0) && (!profile.achievements || profile.achievements.length === 0) && (
+          <div className="bg-card rounded-2xl p-6 border border-border mt-4 shadow-sm text-center">
+            <p className="text-sm text-muted-foreground">Este usuário ainda não preencheu as informações do perfil.</p>
+          </div>
+        )}
+
+        {/* Posts */}
         <div className="mt-4">
           <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
             <Calendar className="w-4 h-4 text-primary" /> Publicações
@@ -290,13 +326,13 @@ const UserProfile = () => {
           {postsLoading ? (
             <p className="text-sm text-muted-foreground text-center py-8">Carregando...</p>
           ) : posts.length === 0 ? (
-            <div className="bg-card rounded-2xl p-8 border border-border text-center shadow-card">
+            <div className="bg-card rounded-2xl p-8 border border-border text-center shadow-sm">
               <p className="text-sm text-muted-foreground">Nenhuma publicação ainda.</p>
             </div>
           ) : (
             <div className="space-y-3">
               {posts.map((post) => (
-                <article key={post.id} className="bg-card rounded-2xl border border-border p-4 shadow-card">
+                <article key={post.id} className="bg-card rounded-2xl border border-border p-4 shadow-sm">
                   <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{post.content}</p>
                   {post.location && (
                     <p className="text-xs text-primary mt-1 flex items-center gap-1">
