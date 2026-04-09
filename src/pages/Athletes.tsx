@@ -32,58 +32,60 @@ const Athletes = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#1a1a2e]">
       <Header />
-      <div className="container mx-auto px-4 py-6 max-w-3xl">
+      <div className="container mx-auto px-4 py-6 max-w-2xl">
         <div className="flex items-center gap-3 mb-6">
-          <Users className="w-6 h-6 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">Atletas</h1>
-          <span className="text-sm text-muted-foreground">({profiles.length} cadastrados)</span>
+          <Users className="w-6 h-6 text-orange-400" />
+          <h1 className="text-xl font-bold text-white">Atletas</h1>
+          <span className="text-sm text-white/40">({profiles.length} cadastrados)</span>
         </div>
 
         <div className="relative mb-5">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
           <Input
             placeholder="Buscar por nome ou modalidade..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 rounded-full bg-card border-border"
+            className="pl-10 rounded-full bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-orange-400/50"
           />
         </div>
 
         {loading ? (
-          <p className="text-sm text-muted-foreground text-center py-12">Carregando atletas...</p>
+          <p className="text-sm text-white/30 text-center py-12">Carregando atletas...</p>
         ) : filtered.length === 0 ? (
-          <p className="text-sm text-muted-foreground text-center py-12">Nenhum atleta encontrado.</p>
+          <p className="text-sm text-white/30 text-center py-12">Nenhum atleta encontrado.</p>
         ) : (
-          <div className="grid gap-3">
+          <div className="space-y-2">
             {filtered.map((p) => (
               <button
                 key={p.user_id}
                 onClick={() => navigate(`/usuario/${p.user_id}`)}
-                className="flex items-center gap-4 p-4 bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-sm transition-all text-left w-full"
+                className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-orange-400/30 hover:bg-white/[0.07] transition-all text-left w-full"
               >
-                <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center overflow-hidden shrink-0">
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center overflow-hidden shrink-0">
                   {p.avatar_url ? (
                     <img src={p.avatar_url} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-lg font-bold text-primary">
+                    <span className="text-lg font-bold text-orange-400">
                       {p.display_name?.charAt(0)?.toUpperCase() || "?"}
                     </span>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground truncate">{p.display_name || "Anônimo"}</p>
-                  {p.bio && <p className="text-xs text-muted-foreground truncate mt-0.5">{p.bio}</p>}
+                  <p className="font-semibold text-white text-sm truncate">{p.display_name || "Anônimo"}</p>
+                  {p.bio && (
+                    <p className="text-xs text-white/40 mt-0.5 line-clamp-1">{p.bio}</p>
+                  )}
                   {p.sports?.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-1.5">
                       {p.sports.slice(0, 3).map((s: string) => (
-                        <span key={s} className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-accent text-accent-foreground">
+                        <span key={s} className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-500/10 text-orange-400 border border-orange-500/20">
                           {s}
                         </span>
                       ))}
                       {p.sports.length > 3 && (
-                        <span className="text-[10px] text-muted-foreground">+{p.sports.length - 3}</span>
+                        <span className="text-[10px] text-white/30">+{p.sports.length - 3}</span>
                       )}
                     </div>
                   )}
