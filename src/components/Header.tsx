@@ -170,6 +170,15 @@ const Header = () => {
                 variant="ghost"
                 size="icon"
                 className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
+                onClick={() => navigate("/atletas")}
+                title="Atletas"
+              >
+                <UserSearch className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
                 onClick={() => navigate("/comunidades")}
                 title="Comunidades"
               >
@@ -250,6 +259,13 @@ const Header = () => {
                     {unreadCount > 0 && (
                       <span className="ml-auto bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{unreadCount}</span>
                     )}
+                  </button>
+                  <button
+                    onClick={() => { navigate("/atletas"); setMobileOpen(false); }}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white hover:bg-white/5 transition-colors text-sm font-medium"
+                  >
+                    <UserSearch className="w-5 h-5 text-orange-400" />
+                    Atletas
                   </button>
                   <button
                     onClick={() => { navigate("/comunidades"); setMobileOpen(false); }}
