@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Camera, Save, Trophy, Medal, Users } from "lucide-react";
+import { Camera, Save, Trophy, Medal, Users, User } from "lucide-react";
 import { StravaConnectButton } from "@/components/StravaIntegration";
 import { useFollows } from "@/hooks/useFollows";
 
