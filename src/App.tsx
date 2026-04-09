@@ -61,6 +61,7 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/usuario/:userId" element={<UserProfile />} />
             <Route path="/rede" element={<MyNetwork />} />
+            <Route path="/atletas" element={<Athletes />} />
             <Route path="/mensagens" element={<ConversationsList />} />
             <Route path="/comunidades" element={<Communities />} />
             <Route path="/comunidades/:communityId" element={<CommunityDetail />} />
