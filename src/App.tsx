@@ -13,6 +13,7 @@ import Admin from "./pages/Admin.tsx";
 import UserProfile from "./pages/UserProfile.tsx";
 import MyNetwork from "./pages/MyNetwork.tsx";
 import Communities from "./pages/Communities.tsx";
+import Athletes from "./pages/Athletes.tsx";
 import CommunityDetail from "./pages/CommunityDetail.tsx";
 import { ConversationsList, ChatView } from "./pages/Messages.tsx";
 import NotFound from "./pages/NotFound.tsx";
