@@ -1,35 +1,80 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import { Input } from "@/components/ui/input";
-import { Search, Users } from "lucide-react";
+import { Search, Users, Loader2 } from "lucide-react";
+
+const PAGE_SIZE = 20;
 
 const Athletes = () => {
   const [profiles, setProfiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState("");
+  const [total, setTotal] = useState(0);
   const navigate = useNavigate();
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    loadProfiles();
+    loadInitial();
   }, []);
 
-  const loadProfiles = async () => {
+  const loadInitial = async () => {
     setLoading(true);
+    const [{ data }, { count }] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("user_id, display_name, avatar_url, bio, sports")
+        .order("created_at", { ascending: false })
+        .range(0, PAGE_SIZE - 1),
+      supabase
+        .from("profiles")
+        .select("*", { count: "exact", head: true }),
+    ]);
+    setProfiles(data || []);
+    setTotal(count || 0);
+    setHasMore((data?.length || 0) >= PAGE_SIZE);
+    setLoading(false);
+  };
+
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !hasMore || search) return;
+    setLoadingMore(true);
+    const from = profiles.length;
     const { data } = await supabase
       .from("profiles")
       .select("user_id, display_name, avatar_url, bio, sports")
       .order("created_at", { ascending: false })
-      .limit(100);
-    setProfiles(data || []);
-    setLoading(false);
-  };
+      .range(from, from + PAGE_SIZE - 1);
+    if (data) {
+      setProfiles((prev) => [...prev, ...data]);
+      setHasMore(data.length >= PAGE_SIZE);
+    }
+    setLoadingMore(false);
+  }, [profiles.length, loadingMore, hasMore, search]);
 
-  const filtered = profiles.filter((p) =>
-    (p.display_name || "").toLowerCase().includes(search.toLowerCase()) ||
-    (p.sports || []).some((s: string) => s.toLowerCase().includes(search.toLowerCase()))
-  );
+  useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { threshold: 0.1 }
+    );
+    if (sentinelRef.current) observerRef.current.observe(sentinelRef.current);
+    return () => observerRef.current?.disconnect();
+  }, [loadMore]);
+
+  const filtered = search
+    ? profiles.filter(
+        (p) =>
+          (p.display_name || "").toLowerCase().includes(search.toLowerCase()) ||
+          (p.sports || []).some((s: string) => s.toLowerCase().includes(search.toLowerCase()))
+      )
+    : profiles;
 
   return (
     <div className="min-h-screen bg-[#1a1a2e]">
@@ -38,7 +83,7 @@ const Athletes = () => {
         <div className="flex items-center gap-3 mb-6">
           <Users className="w-6 h-6 text-orange-400" />
           <h1 className="text-xl font-bold text-white">Atletas</h1>
-          <span className="text-sm text-white/40">({profiles.length} cadastrados)</span>
+          <span className="text-sm text-white/40">({total} cadastrados)</span>
         </div>
 
         <div className="relative mb-5">
@@ -92,6 +137,13 @@ const Athletes = () => {
                 </div>
               </button>
             ))}
+
+            {/* Sentinel for infinite scroll */}
+            {!search && hasMore && (
+              <div ref={sentinelRef} className="flex justify-center py-4">
+                {loadingMore && <Loader2 className="w-5 h-5 text-orange-400 animate-spin" />}
+              </div>
+            )}
           </div>
         )}
       </div>

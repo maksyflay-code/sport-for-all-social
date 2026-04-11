@@ -7,7 +7,7 @@ import { useAdmin } from "@/hooks/useAdmin";
 import Header from "@/components/Header";
 import FollowersModal from "@/components/FollowersModal";
 import { Button } from "@/components/ui/button";
-import { UserPlus, UserCheck, Medal, MessageCircle, Heart, MessageCircle as CommentIcon, MapPin, Calendar, Trash2, Mail, Clock } from "lucide-react";
+import { UserPlus, UserCheck, Medal, MessageCircle, Heart, MessageCircle as CommentIcon, MapPin, Calendar, Trash2, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -149,19 +149,19 @@ const UserProfile = () => {
   };
 
   if (profileLoading) return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#1a1a2e]">
       <Header />
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Carregando perfil...</p>
+        <p className="text-white/40">Carregando perfil...</p>
       </div>
     </div>
   );
 
   if (!profile) return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#1a1a2e]">
       <Header />
       <div className="flex items-center justify-center h-64">
-        <p className="text-muted-foreground">Perfil não encontrado.</p>
+        <p className="text-white/40">Perfil não encontrado.</p>
       </div>
     </div>
   );
@@ -170,22 +170,22 @@ const UserProfile = () => {
   const memberSince = profile.created_at ? format(new Date(profile.created_at), "MMMM 'de' yyyy", { locale: ptBR }) : null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#1a1a2e]">
       <Header />
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         {/* Profile Card */}
-        <div className="bg-card rounded-2xl overflow-hidden border border-border shadow-sm">
+        <div className="bg-white/5 rounded-2xl overflow-hidden border border-white/10">
           {/* Banner */}
-          <div className="h-28 bg-gradient-to-r from-primary/30 via-primary/15 to-accent" />
+          <div className="h-28 bg-gradient-to-r from-orange-500/30 via-orange-400/15 to-white/5" />
           
           <div className="px-6 pb-6 -mt-14">
             {/* Avatar + Actions */}
             <div className="flex items-end gap-4">
-              <div className="w-24 h-24 rounded-full bg-card border-4 border-card flex items-center justify-center overflow-hidden shadow-md shrink-0">
+              <div className="w-24 h-24 rounded-full bg-[#1a1a2e] border-4 border-[#1a1a2e] flex items-center justify-center overflow-hidden shadow-md shrink-0">
                 {profile.avatar_url ? (
                   <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-3xl font-bold text-primary">
+                  <span className="text-3xl font-bold text-orange-400">
                     {profile.display_name?.charAt(0)?.toUpperCase() || "?"}
                   </span>
                 )}
@@ -198,8 +198,8 @@ const UserProfile = () => {
                     size="sm"
                     className={`rounded-full font-semibold gap-1.5 ${
                       isFollowing
-                        ? "bg-secondary hover:bg-destructive/10 text-foreground hover:text-destructive border border-border"
-                        : "bg-primary hover:bg-primary/90 text-primary-foreground"
+                        ? "bg-white/10 hover:bg-red-500/20 text-white hover:text-red-400 border border-white/10"
+                        : "bg-orange-500 hover:bg-orange-600 text-white"
                     }`}
                   >
                     {isFollowing ? <><UserCheck className="w-4 h-4" /> Seguindo</> : <><UserPlus className="w-4 h-4" /> Seguir</>}
@@ -207,8 +207,7 @@ const UserProfile = () => {
                   <Button
                     onClick={handleMessage}
                     size="sm"
-                    variant="outline"
-                    className="rounded-full font-semibold gap-1.5"
+                    className="rounded-full font-semibold gap-1.5 bg-white/10 hover:bg-white/15 text-white border border-white/10"
                   >
                     <MessageCircle className="w-4 h-4" /> Mensagem
                   </Button>
@@ -218,32 +217,32 @@ const UserProfile = () => {
 
             {/* Name & Bio */}
             <div className="mt-3">
-              <h1 className="text-xl font-bold text-foreground">{profile.display_name || "Anônimo"}</h1>
-              {profile.bio && <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{profile.bio}</p>}
+              <h1 className="text-xl font-bold text-white">{profile.display_name || "Anônimo"}</h1>
+              {profile.bio && <p className="text-sm text-white/50 mt-1 leading-relaxed">{profile.bio}</p>}
               {memberSince && (
-                <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+                <p className="text-xs text-white/30 mt-2 flex items-center gap-1">
                   <Clock className="w-3 h-3" /> Membro desde {memberSince}
                 </p>
               )}
             </div>
 
             {/* Stats */}
-            <div className="flex gap-5 mt-4 py-3 border-t border-border">
+            <div className="flex gap-5 mt-4 py-3 border-t border-white/10">
               <button onClick={() => setModalType("followers")} className="text-center hover:opacity-80 transition-opacity">
-                <p className="text-lg font-bold text-foreground">{followersCount}</p>
-                <p className="text-xs text-muted-foreground">Seguidores</p>
+                <p className="text-lg font-bold text-white">{followersCount}</p>
+                <p className="text-xs text-white/40">Seguidores</p>
               </button>
               <button onClick={() => setModalType("following")} className="text-center hover:opacity-80 transition-opacity">
-                <p className="text-lg font-bold text-foreground">{followingCount}</p>
-                <p className="text-xs text-muted-foreground">Seguindo</p>
+                <p className="text-lg font-bold text-white">{followingCount}</p>
+                <p className="text-xs text-white/40">Seguindo</p>
               </button>
               <div className="text-center">
-                <p className="text-lg font-bold text-foreground">{posts.length}</p>
-                <p className="text-xs text-muted-foreground">Publicações</p>
+                <p className="text-lg font-bold text-white">{posts.length}</p>
+                <p className="text-xs text-white/40">Publicações</p>
               </div>
               <div className="text-center">
-                <p className="text-lg font-bold text-foreground">{communitiesCount}</p>
-                <p className="text-xs text-muted-foreground">Comunidades</p>
+                <p className="text-lg font-bold text-white">{communitiesCount}</p>
+                <p className="text-xs text-white/40">Comunidades</p>
               </div>
             </div>
 
@@ -253,7 +252,7 @@ const UserProfile = () => {
                 onClick={handleRemoveUser}
                 variant="ghost"
                 size="sm"
-                className="mt-2 rounded-full text-destructive hover:bg-destructive/10 gap-1.5 text-xs font-semibold"
+                className="mt-2 rounded-full text-red-400 hover:bg-red-500/10 gap-1.5 text-xs font-semibold"
               >
                 <Trash2 className="w-3.5 h-3.5" /> Remover usuário (Admin)
               </Button>
@@ -261,19 +260,19 @@ const UserProfile = () => {
 
             {/* Mutual followers */}
             {mutualFollowers.length > 0 && (
-              <div className="mt-3 flex items-center gap-2 pt-3 border-t border-border">
+              <div className="mt-3 flex items-center gap-2 pt-3 border-t border-white/10">
                 <div className="flex -space-x-2">
                   {mutualFollowers.slice(0, 3).map((m) => (
-                    <div key={m.user_id} className="w-6 h-6 rounded-full bg-accent border-2 border-card flex items-center justify-center overflow-hidden">
+                    <div key={m.user_id} className="w-6 h-6 rounded-full bg-white/10 border-2 border-[#1a1a2e] flex items-center justify-center overflow-hidden">
                       {m.avatar_url ? (
                         <img src={m.avatar_url} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-[8px] font-bold text-accent-foreground">{m.display_name?.charAt(0)?.toUpperCase()}</span>
+                        <span className="text-[8px] font-bold text-orange-400">{m.display_name?.charAt(0)?.toUpperCase()}</span>
                       )}
                     </div>
                   ))}
                 </div>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-[11px] text-white/40">
                   Seguido por {mutualFollowers[0]?.display_name}{mutualFollowers.length > 1 ? ` e mais ${mutualFollowers.length - 1}` : ""} que você segue
                 </p>
               </div>
@@ -283,11 +282,11 @@ const UserProfile = () => {
 
         {/* Sports */}
         {profile.sports?.length > 0 && (
-          <div className="bg-card rounded-2xl p-5 border border-border mt-4 shadow-sm">
-            <h3 className="text-sm font-bold text-foreground mb-3">🏅 Modalidades</h3>
+          <div className="bg-white/5 rounded-2xl p-5 border border-white/10 mt-4">
+            <h3 className="text-sm font-bold text-white mb-3">🏅 Modalidades</h3>
             <div className="flex flex-wrap gap-2">
               {profile.sports.map((s: string) => (
-                <span key={s} className="px-3 py-1.5 rounded-full text-xs font-medium bg-accent text-accent-foreground">
+                <span key={s} className="px-3 py-1.5 rounded-full text-xs font-medium bg-orange-500/10 text-orange-400 border border-orange-500/20">
                   {s}
                 </span>
               ))}
@@ -297,13 +296,13 @@ const UserProfile = () => {
 
         {/* Achievements */}
         {profile.achievements?.length > 0 && (
-          <div className="bg-card rounded-2xl p-5 border border-border mt-4 shadow-sm">
-            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-              <Medal className="w-4 h-4 text-primary" /> Conquistas
+          <div className="bg-white/5 rounded-2xl p-5 border border-white/10 mt-4">
+            <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+              <Medal className="w-4 h-4 text-orange-400" /> Conquistas
             </h3>
             <div className="flex flex-wrap gap-2">
               {profile.achievements.map((a: string, i: number) => (
-                <span key={i} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-accent text-accent-foreground text-xs font-medium">
+                <span key={i} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20 text-xs font-medium">
                   <Medal className="w-3 h-3" /> {a}
                 </span>
               ))}
@@ -313,29 +312,29 @@ const UserProfile = () => {
 
         {/* No info message */}
         {!profile.bio && (!profile.sports || profile.sports.length === 0) && (!profile.achievements || profile.achievements.length === 0) && (
-          <div className="bg-card rounded-2xl p-6 border border-border mt-4 shadow-sm text-center">
-            <p className="text-sm text-muted-foreground">Este usuário ainda não preencheu as informações do perfil.</p>
+          <div className="bg-white/5 rounded-2xl p-6 border border-white/10 mt-4 text-center">
+            <p className="text-sm text-white/40">Este usuário ainda não preencheu as informações do perfil.</p>
           </div>
         )}
 
         {/* Posts */}
         <div className="mt-4">
-          <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-primary" /> Publicações
+          <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-orange-400" /> Publicações
           </h3>
           {postsLoading ? (
-            <p className="text-sm text-muted-foreground text-center py-8">Carregando...</p>
+            <p className="text-sm text-white/40 text-center py-8">Carregando...</p>
           ) : posts.length === 0 ? (
-            <div className="bg-card rounded-2xl p-8 border border-border text-center shadow-sm">
-              <p className="text-sm text-muted-foreground">Nenhuma publicação ainda.</p>
+            <div className="bg-white/5 rounded-2xl p-8 border border-white/10 text-center">
+              <p className="text-sm text-white/40">Nenhuma publicação ainda.</p>
             </div>
           ) : (
             <div className="space-y-3">
               {posts.map((post) => (
-                <article key={post.id} className="bg-card rounded-2xl border border-border p-4 shadow-sm">
-                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{post.content}</p>
+                <article key={post.id} className="bg-white/5 rounded-2xl border border-white/10 p-4">
+                  <p className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed">{post.content}</p>
                   {post.location && (
-                    <p className="text-xs text-primary mt-1 flex items-center gap-1">
+                    <p className="text-xs text-orange-400 mt-1 flex items-center gap-1">
                       <MapPin className="w-3 h-3" /> {post.location}
                     </p>
                   )}
@@ -348,12 +347,12 @@ const UserProfile = () => {
                       )}
                     </div>
                   )}
-                  <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-4 mt-3 text-xs text-white/40">
                     <button
                       onClick={() => handleLike(post.id, post.user_liked)}
-                      className={`flex items-center gap-1 transition-colors ${post.user_liked ? "text-primary" : "hover:text-foreground"}`}
+                      className={`flex items-center gap-1 transition-colors ${post.user_liked ? "text-orange-400" : "hover:text-white"}`}
                     >
-                      <Heart className={`w-3.5 h-3.5 ${post.user_liked ? "fill-primary" : ""}`} />
+                      <Heart className={`w-3.5 h-3.5 ${post.user_liked ? "fill-orange-400" : ""}`} />
                       {post.likes_count > 0 && post.likes_count}
                     </button>
                     <span className="flex items-center gap-1">
