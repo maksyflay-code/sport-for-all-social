@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, MessageCircle, Share2, Send, Image, Smile, X, MapPin, Trash2 } from "lucide-react";
+import { Heart, MessageCircle, Share2, Send, Image, Smile, X, MapPin, Trash2, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -463,6 +463,20 @@ const FeedSection = () => {
             >
               <Share2 className="w-[18px] h-[18px]" /> Compartilhar
             </button>
+            {user && user.id !== post.user_id && (
+              <button
+                onClick={async () => {
+                  const { error } = await supabase.from("post_reports").insert({ post_id: post.id, reporter_id: user.id, reason: "spam" } as any);
+                  if (error?.code === "23505") toast.info("Você já denunciou este post");
+                  else if (error) toast.error("Erro ao denunciar");
+                  else toast.success("Denúncia enviada! Nossos moderadores irão analisar.");
+                }}
+                className="flex items-center gap-1.5 py-2 px-3 rounded-xl text-sm font-medium text-white/40 hover:bg-red-500/10 hover:text-red-400 transition-all"
+                title="Denunciar spam"
+              >
+                <Flag className="w-[18px] h-[18px]" />
+              </button>
+            )}
           </div>
 
           {/* Comments section */}
