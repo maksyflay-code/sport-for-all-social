@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX, Calendar, Plus, Edit } from "lucide-react";
+import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX, Calendar, Plus, Edit, Flag, CheckCircle, XCircle } from "lucide-react";
 
 interface UserProfile {
   user_id: string;
@@ -26,14 +26,27 @@ interface PostItem {
   profileName: string | null;
 }
 
+interface ReportItem {
+  id: string;
+  post_id: string;
+  reporter_id: string;
+  reason: string;
+  status: string;
+  created_at: string;
+  postContent: string | null;
+  postAuthor: string | null;
+  reporterName: string | null;
+}
+
 const Admin = () => {
   const { user } = useAuth();
   const { isAdmin, loading } = useAdmin();
   const { events, reload: reloadEvents } = useEvents();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"users" | "posts" | "events">("users");
+  const [tab, setTab] = useState<"users" | "posts" | "events" | "reports">("users");
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [posts, setPosts] = useState<PostItem[]>([]);
+  const [reports, setReports] = useState<ReportItem[]>([]);
 
   // New event form
   const [showEventForm, setShowEventForm] = useState(false);
@@ -47,7 +60,7 @@ const Admin = () => {
   }, [loading, isAdmin, navigate]);
 
   useEffect(() => {
-    if (isAdmin) { loadUsers(); loadPosts(); }
+    if (isAdmin) { loadUsers(); loadPosts(); loadReports(); }
   }, [isAdmin]);
 
   const loadUsers = async () => {
@@ -73,6 +86,37 @@ const Admin = () => {
     const nameMap: Record<string, string | null> = {};
     profiles?.forEach((p) => { nameMap[p.user_id] = p.display_name; });
     setPosts(data.map((p) => ({ ...p, profileName: nameMap[p.user_id] || "Anônimo" })));
+  };
+
+  const loadReports = async () => {
+    const { data } = await supabase.from("post_reports").select("*").eq("status", "pending").order("created_at", { ascending: false }) as any;
+    if (!data || data.length === 0) { setReports([]); return; }
+    const postIds = [...new Set(data.map((r: any) => r.post_id))];
+    const userIds = [...new Set([...data.map((r: any) => r.reporter_id)])];
+    const { data: postsData } = await supabase.from("posts").select("id, content, user_id").in("id", postIds);
+    const postUserIds = postsData?.map((p) => p.user_id) || [];
+    const allUserIds = [...new Set([...userIds, ...postUserIds])];
+    const { data: profiles } = await supabase.from("profiles").select("user_id, display_name").in("user_id", allUserIds);
+    const nameMap: Record<string, string | null> = {};
+    profiles?.forEach((p) => { nameMap[p.user_id] = p.display_name; });
+    const postMap: Record<string, any> = {};
+    postsData?.forEach((p) => { postMap[p.id] = p; });
+    setReports(data.map((r: any) => ({
+      ...r,
+      postContent: postMap[r.post_id]?.content || "[Post removido]",
+      postAuthor: nameMap[postMap[r.post_id]?.user_id] || "Anônimo",
+      reporterName: nameMap[r.reporter_id] || "Anônimo",
+    })));
+  };
+
+  const handleReportAction = async (reportId: string, postId: string, action: "delete" | "dismiss") => {
+    if (action === "delete") {
+      await supabase.from("posts").delete().eq("id", postId);
+      toast.success("Post removido por spam");
+    }
+    await (supabase.from("post_reports") as any).update({ status: action === "delete" ? "reviewed" : "dismissed" }).eq("id", reportId);
+    loadReports();
+    loadPosts();
   };
 
   const deletePost = async (postId: string) => {
@@ -162,6 +206,9 @@ const Admin = () => {
             </Button>
             <Button variant={tab === "events" ? "default" : "outline"} onClick={() => setTab("events")} className="rounded-xl gap-2">
               <Calendar className="w-4 h-4" /> Eventos ({events.length})
+            </Button>
+            <Button variant={tab === "reports" ? "default" : "outline"} onClick={() => setTab("reports")} className="rounded-xl gap-2">
+              <Flag className="w-4 h-4" /> Denúncias ({reports.length})
             </Button>
           </div>
 
@@ -285,6 +332,48 @@ const Admin = () => {
                   <p className="text-sm text-muted-foreground text-center py-4">Nenhum evento cadastrado</p>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* Reports tab */}
+          {tab === "reports" && (
+            <div className="space-y-2">
+              {reports.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-8">Nenhuma denúncia pendente 🎉</p>
+              )}
+              {reports.map((r) => (
+                <div key={r.id} className="bg-card rounded-2xl shadow-card p-4 space-y-2">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-muted-foreground">
+                        Denunciado por <span className="font-semibold text-foreground">{r.reporterName}</span> • {new Date(r.created_at).toLocaleDateString("pt-BR")}
+                      </p>
+                      <p className="text-xs text-orange-400 font-medium mt-0.5">Autor: {r.postAuthor}</p>
+                      <p className="text-sm text-foreground mt-1 line-clamp-3 bg-muted/50 rounded-lg p-2">{r.postContent}</p>
+                    </div>
+                    <div className="flex gap-1 shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleReportAction(r.id, r.post_id, "delete")}
+                        className="rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10"
+                        title="Excluir post (spam)"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleReportAction(r.id, r.post_id, "dismiss")}
+                        className="rounded-xl text-green-500 hover:text-green-500 hover:bg-green-500/10"
+                        title="Ignorar denúncia"
+                      >
+                        <CheckCircle className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
