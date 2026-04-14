@@ -91,8 +91,8 @@ const Admin = () => {
   const loadReports = async () => {
     const { data } = await supabase.from("post_reports").select("*").eq("status", "pending").order("created_at", { ascending: false }) as any;
     if (!data || data.length === 0) { setReports([]); return; }
-    const postIds = [...new Set(data.map((r: any) => r.post_id))];
-    const userIds = [...new Set([...data.map((r: any) => r.reporter_id)])];
+    const postIds = [...new Set(data.map((r: any) => r.post_id))] as string[];
+    const userIds = [...new Set(data.map((r: any) => r.reporter_id))] as string[];
     const { data: postsData } = await supabase.from("posts").select("id, content, user_id").in("id", postIds);
     const postUserIds = postsData?.map((p) => p.user_id) || [];
     const allUserIds = [...new Set([...userIds, ...postUserIds])];
