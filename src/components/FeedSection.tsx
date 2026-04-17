@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Share2, Send, Image, Smile, X, MapPin, Trash2, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useAdmin } from "@/hooks/useAdmin";
 import { StravaActivities } from "@/components/StravaIntegration";
@@ -11,6 +10,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import MentionTextarea from "@/components/MentionTextarea";
+import { renderRichText, buildMentionMap } from "@/lib/textParser";
 
 interface Post {
   id: string;
@@ -41,6 +42,7 @@ const FeedSection = () => {
   const [location, setLocation] = useState("");
   const [showLocationInput, setShowLocationInput] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [mentionMap, setMentionMap] = useState<Map<string, string>>(new Map());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const commonEmojis = ["😀","😂","🥰","😎","🤩","💪","🏆","🔥","⚽","🏀","🏊","🚴","🏃","🎾","🏋️","👏","❤️","🙌","✨","🎉"];
@@ -83,6 +85,7 @@ const FeedSection = () => {
 
     const profilesMap: Record<string, { display_name: string | null; avatar_url: string | null }> = {};
     profilesData?.forEach((p) => { profilesMap[p.user_id] = p; });
+    setMentionMap(buildMentionMap(profilesData || []));
 
     const likesMap: Record<string, { count: number; userLiked: boolean }> = {};
     const commentsMap: Record<string, number> = {};
@@ -212,10 +215,10 @@ const FeedSection = () => {
               </span>
             </div>
             <div className="flex-1">
-              <Textarea
+              <MentionTextarea
                 value={newPost}
-                onChange={(e) => setNewPost(e.target.value)}
-                placeholder={`O que está acontecendo, ${getUserName().split(" ")[0]}?`}
+                onChange={setNewPost}
+                placeholder={`O que está acontecendo, ${getUserName().split(" ")[0]}? Use @ para mencionar e # para tags`}
                 rows={2}
                 className="resize-none border-0 bg-transparent focus-visible:ring-0 text-sm p-0 min-h-[60px] text-white placeholder:text-white/30"
               />
@@ -390,7 +393,11 @@ const FeedSection = () => {
               const cleanContent = ytMatch ? post.content.replace(ytRegex, '').trim() : post.content;
               return (
                 <>
-                  {cleanContent && <p className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed">{cleanContent}</p>}
+                  {cleanContent && (
+                    <p className="text-sm text-white/90 whitespace-pre-wrap leading-relaxed">
+                      {renderRichText(cleanContent, mentionMap)}
+                    </p>
+                  )}
                 </>
               );
             })()}
@@ -491,7 +498,7 @@ const FeedSection = () => {
                   </div>
                   <div className="bg-white/5 rounded-2xl px-3 py-2 max-w-[85%]">
                     <p className="text-xs font-semibold text-white">{comment.profiles?.display_name || "Anônimo"}</p>
-                    <p className="text-xs text-white/70 mt-0.5">{comment.content}</p>
+                    <p className="text-xs text-white/70 mt-0.5">{renderRichText(comment.content, mentionMap)}</p>
                   </div>
                 </div>
               ))}
@@ -503,17 +510,18 @@ const FeedSection = () => {
                     </span>
                   </div>
                   <div className="flex-1 relative">
-                    <Input
+                    <MentionTextarea
                       value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="Escreva um comentário..."
+                      onChange={setNewComment}
+                      placeholder="Comentar... use @ para mencionar"
+                      multiline={false}
                       className="rounded-xl bg-white/5 border-white/10 pr-10 text-xs h-8 text-white placeholder:text-white/30 focus-visible:ring-0"
                       onKeyDown={(e) => e.key === "Enter" && handleComment(post.id)}
                     />
                     {newComment.trim() && (
                       <button
                         onClick={() => handleComment(post.id)}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-orange-400 hover:text-orange-300 transition-colors"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-orange-400 hover:text-orange-300 transition-colors z-10"
                       >
                         <Send className="w-3.5 h-3.5" />
                       </button>
