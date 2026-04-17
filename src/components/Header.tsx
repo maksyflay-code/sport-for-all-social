@@ -11,6 +11,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import SearchUsers from "@/components/SearchUsers";
 import { useAdmin } from "@/hooks/useAdmin";
+import { toast } from "sonner";
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -23,7 +24,32 @@ const Header = () => {
   const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (user) loadNotifications();
+    if (!user) return;
+    loadNotifications();
+
+    // Realtime subscription for new notifications
+    const channel = supabase
+      .channel(`notifications-${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          const newNotif = payload.new as any;
+          setNotifications((prev) => [newNotif, ...prev].slice(0, 20));
+          setUnreadCount((c) => c + 1);
+          toast(newNotif.message, { icon: "🔔" });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   // Close dropdown on outside click
