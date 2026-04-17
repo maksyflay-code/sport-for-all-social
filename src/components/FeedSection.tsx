@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, MessageCircle, Share2, Send, Image, Smile, X, MapPin, Trash2, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useAdmin } from "@/hooks/useAdmin";
 import { StravaActivities } from "@/components/StravaIntegration";
@@ -11,6 +10,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import MentionTextarea from "@/components/MentionTextarea";
+import { renderRichText, buildMentionMap } from "@/lib/textParser";
 
 interface Post {
   id: string;
@@ -41,6 +42,7 @@ const FeedSection = () => {
   const [location, setLocation] = useState("");
   const [showLocationInput, setShowLocationInput] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [mentionMap, setMentionMap] = useState<Map<string, string>>(new Map());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const commonEmojis = ["😀","😂","🥰","😎","🤩","💪","🏆","🔥","⚽","🏀","🏊","🚴","🏃","🎾","🏋️","👏","❤️","🙌","✨","🎉"];
@@ -83,6 +85,7 @@ const FeedSection = () => {
 
     const profilesMap: Record<string, { display_name: string | null; avatar_url: string | null }> = {};
     profilesData?.forEach((p) => { profilesMap[p.user_id] = p; });
+    setMentionMap(buildMentionMap(profilesData || []));
 
     const likesMap: Record<string, { count: number; userLiked: boolean }> = {};
     const commentsMap: Record<string, number> = {};
