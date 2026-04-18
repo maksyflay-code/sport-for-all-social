@@ -228,6 +228,21 @@ const StoryViewer = ({ groups, initialUserIndex, open, onOpenChange, onDeleted }
 
           {/* Footer: reactions counter (own) OR reply + emoji bar (others) */}
           <div className="relative z-20 bg-gradient-to-t from-black via-black/90 to-transparent px-4 pt-6 pb-3 space-y-2">
+            {/* Public aggregated reaction counts (visible to everyone) */}
+            {publicTotal > 0 && (
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                {publicCounts.map((c) => (
+                  <span
+                    key={c.emoji}
+                    className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-sm rounded-full px-2.5 py-0.5 text-xs font-semibold text-white"
+                  >
+                    <span className="text-sm leading-none">{c.emoji}</span>
+                    {c.count}
+                  </span>
+                ))}
+              </div>
+            )}
+
             {isOwn ? (
               <button
                 onClick={() => { setPaused(true); setShowReactionsList(true); }}
