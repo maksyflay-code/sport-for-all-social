@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEvents } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSuggestedUsers } from "@/hooks/useFollows";
+import { useOnlinePresence } from "@/hooks/useOnlinePresence";
 import VerifiedBadge from "@/components/VerifiedBadge";
-import { Calendar, UserPlus, UserCheck, Trophy, Activity, ArrowRight, Cake, BarChart3 } from "lucide-react";
+import { Calendar, UserPlus, UserCheck, Trophy, Activity, ArrowRight, Cake, BarChart3, Circle } from "lucide-react";
 import { toast } from "sonner";
 
 interface TopAthlete {
