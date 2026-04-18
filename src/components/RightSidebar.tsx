@@ -103,6 +103,41 @@ const RightSidebar = () => {
           }))
         );
       }
+
+      // Aniversariantes (perfis criados há ≥1 ano no mesmo dia/mês de hoje)
+      const today = new Date();
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const dd = String(today.getDate()).padStart(2, "0");
+      const { data: allProfs } = await supabase
+        .from("profiles")
+        .select("user_id, display_name, avatar_url, created_at");
+      if (allProfs) {
+        const annivs = allProfs
+          .filter((p: any) => {
+            const c = new Date(p.created_at);
+            const cmm = String(c.getMonth() + 1).padStart(2, "0");
+            const cdd = String(c.getDate()).padStart(2, "0");
+            const years = today.getFullYear() - c.getFullYear();
+            return cmm === mm && cdd === dd && years >= 1;
+          })
+          .map((p: any) => ({
+            user_id: p.user_id,
+            display_name: p.display_name,
+            avatar_url: p.avatar_url,
+            years: today.getFullYear() - new Date(p.created_at).getFullYear(),
+          }))
+          .slice(0, 4);
+        setAnniversaries(annivs);
+      }
+
+      // Atividade da semana (últimos 7 dias)
+      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      const [{ count: pCount }, { count: uCount }, { count: eCount }] = await Promise.all([
+        supabase.from("posts").select("*", { count: "exact", head: true }).gte("created_at", weekAgo),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).gte("created_at", weekAgo),
+        supabase.from("events").select("*", { count: "exact", head: true }).gte("created_at", weekAgo),
+      ]);
+      setWeekStats({ posts: pCount || 0, newUsers: uCount || 0, events: eCount || 0 });
     })();
   }, []);
 
