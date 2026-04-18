@@ -9,6 +9,7 @@ import type { StoryGroup } from "@/hooks/useStories";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useStoryReactions, REACTION_EMOJIS } from "@/hooks/useStoryReactions";
+import { useStoryReactionCounts } from "@/hooks/useStoryReactionCounts";
 import StoryReactionsList from "./StoryReactionsList";
 
 interface Props {
