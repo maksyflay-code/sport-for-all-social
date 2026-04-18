@@ -140,6 +140,15 @@ const Admin = () => {
     loadUsers();
   };
 
+  const toggleVerified = async (userId: string, currentlyVerified: boolean) => {
+    const { error } = await (supabase.from("profiles") as any)
+      .update({ is_verified: !currentlyVerified })
+      .eq("user_id", userId);
+    if (error) { toast.error("Erro ao alterar selo verificado"); return; }
+    toast.success(currentlyVerified ? "Selo verificado removido" : "Selo verificado concedido ✓");
+    loadUsers();
+  };
+
   const removeUser = async (userId: string) => {
     if (userId === user?.id) { toast.error("Você não pode remover a si mesmo"); return; }
     const confirmed = window.confirm("Remover este usuário e todos os seus dados?");
