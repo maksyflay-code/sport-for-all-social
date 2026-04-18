@@ -46,6 +46,7 @@ const RightSidebar = () => {
   const navigate = useNavigate();
   const { events } = useEvents();
   const suggested = useSuggestedUsers();
+  const onlineUsers = useOnlinePresence();
   const [topAthletes, setTopAthletes] = useState<TopAthlete[]>([]);
   const [activeStories, setActiveStories] = useState<ActiveStory[]>([]);
   const [anniversaries, setAnniversaries] = useState<AnniversaryUser[]>([]);
