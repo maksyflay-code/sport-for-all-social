@@ -5,7 +5,7 @@ import { useEvents } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSuggestedUsers } from "@/hooks/useFollows";
 import VerifiedBadge from "@/components/VerifiedBadge";
-import { Calendar, UserPlus, UserCheck, Trophy, Activity, ArrowRight } from "lucide-react";
+import { Calendar, UserPlus, UserCheck, Trophy, Activity, ArrowRight, Cake, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 
 interface TopAthlete {
@@ -22,6 +22,19 @@ interface ActiveStory {
   avatar_url: string | null;
 }
 
+interface AnniversaryUser {
+  user_id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  years: number;
+}
+
+interface WeekStats {
+  posts: number;
+  newUsers: number;
+  events: number;
+}
+
 const formatEventDate = (s: string) => {
   const d = new Date(s + "T00:00:00");
   return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
@@ -34,6 +47,8 @@ const RightSidebar = () => {
   const suggested = useSuggestedUsers();
   const [topAthletes, setTopAthletes] = useState<TopAthlete[]>([]);
   const [activeStories, setActiveStories] = useState<ActiveStory[]>([]);
+  const [anniversaries, setAnniversaries] = useState<AnniversaryUser[]>([]);
+  const [weekStats, setWeekStats] = useState<WeekStats>({ posts: 0, newUsers: 0, events: 0 });
   const [followedIds, setFollowedIds] = useState<Set<string>>(new Set());
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
@@ -88,6 +103,41 @@ const RightSidebar = () => {
           }))
         );
       }
+
+      // Aniversariantes (perfis criados há ≥1 ano no mesmo dia/mês de hoje)
+      const today = new Date();
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const dd = String(today.getDate()).padStart(2, "0");
+      const { data: allProfs } = await supabase
+        .from("profiles")
+        .select("user_id, display_name, avatar_url, created_at");
+      if (allProfs) {
+        const annivs = allProfs
+          .filter((p: any) => {
+            const c = new Date(p.created_at);
+            const cmm = String(c.getMonth() + 1).padStart(2, "0");
+            const cdd = String(c.getDate()).padStart(2, "0");
+            const years = today.getFullYear() - c.getFullYear();
+            return cmm === mm && cdd === dd && years >= 1;
+          })
+          .map((p: any) => ({
+            user_id: p.user_id,
+            display_name: p.display_name,
+            avatar_url: p.avatar_url,
+            years: today.getFullYear() - new Date(p.created_at).getFullYear(),
+          }))
+          .slice(0, 4);
+        setAnniversaries(annivs);
+      }
+
+      // Atividade da semana (últimos 7 dias)
+      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      const [{ count: pCount }, { count: uCount }, { count: eCount }] = await Promise.all([
+        supabase.from("posts").select("*", { count: "exact", head: true }).gte("created_at", weekAgo),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).gte("created_at", weekAgo),
+        supabase.from("events").select("*", { count: "exact", head: true }).gte("created_at", weekAgo),
+      ]);
+      setWeekStats({ posts: pCount || 0, newUsers: uCount || 0, events: eCount || 0 });
     })();
   }, []);
 
@@ -268,6 +318,63 @@ const RightSidebar = () => {
           </div>
         </div>
       )}
+
+      {/* Aniversariantes */}
+      {anniversaries.length > 0 && (
+        <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+          <h3 className="text-xs font-bold text-white flex items-center gap-1.5 mb-3">
+            <Cake className="w-3.5 h-3.5 text-orange-400" /> Aniversariantes
+          </h3>
+          <div className="space-y-2">
+            {anniversaries.map((a) => (
+              <button
+                key={a.user_id}
+                onClick={() => navigate(`/usuario/${a.user_id}`)}
+                className="w-full flex items-center gap-2 group text-left"
+              >
+                <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center overflow-hidden shrink-0">
+                  {a.avatar_url ? (
+                    <img src={a.avatar_url} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[11px] font-bold text-orange-400">
+                      {a.display_name?.charAt(0)?.toUpperCase() || "?"}
+                    </span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-white truncate group-hover:text-orange-400">
+                    {a.display_name || "Anônimo"}
+                  </p>
+                  <p className="text-[10px] text-white/40">
+                    {a.years} {a.years === 1 ? "ano" : "anos"} na rede 🎉
+                  </p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Atividade da semana */}
+      <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+        <h3 className="text-xs font-bold text-white flex items-center gap-1.5 mb-3">
+          <BarChart3 className="w-3.5 h-3.5 text-orange-400" /> Atividade da semana
+        </h3>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-white/60">📝 Posts</span>
+            <span className="font-bold text-orange-400">{weekStats.posts}</span>
+          </div>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-white/60">👥 Novos atletas</span>
+            <span className="font-bold text-orange-400">{weekStats.newUsers}</span>
+          </div>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-white/60">📅 Eventos</span>
+            <span className="font-bold text-orange-400">{weekStats.events}</span>
+          </div>
+        </div>
+      </div>
     </aside>
   );
 };

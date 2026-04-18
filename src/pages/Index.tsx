@@ -1,30 +1,16 @@
 import Header from "@/components/Header";
 import FeedSection from "@/components/FeedSection";
-import SuggestedUsers from "@/components/SuggestedUsers";
 import StoriesBar from "@/components/StoriesBar";
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSidebar from "@/components/RightSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "@/hooks/useEvents";
-import { Users, Calendar, FileText, Flame, TrendingUp, ArrowRight } from "lucide-react";
+import { Users, Calendar, FileText, ArrowRight } from "lucide-react";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-sports.jpg";
 import logoCidadelas from "@/assets/logo.jpeg";
-
-const trendingTopics = [
-  { label: "Futebol", count: "12.5k posts", emoji: "⚽" },
-  { label: "Basquete", count: "8.3k posts", emoji: "🏀" },
-  { label: "Natação", count: "5.1k posts", emoji: "🏊" },
-  { label: "Vôlei", count: "4.7k posts", emoji: "🏐" },
-  { label: "Corrida", count: "3.9k posts", emoji: "🏃" },
-  { label: "Tênis", count: "3.2k posts", emoji: "🎾" },
-  { label: "Ciclismo", count: "2.8k posts", emoji: "🚴" },
-  { label: "Artes Marciais", count: "2.5k posts", emoji: "🥋" },
-  { label: "Musculação", count: "2.3k posts", emoji: "🏋️" },
-  { label: "Surfe", count: "1.9k posts", emoji: "🏄" },
-];
 
 const sports = [
   { name: "Futebol", emoji: "⚽" },
@@ -211,9 +197,6 @@ const LandingPage = () => {
 
 // Feed page for logged-in users
 const FeedPage = () => {
-  const { events } = useEvents();
-  const stats = usePlatformStats();
-
   return (
     <div className="min-h-screen bg-[#1a1a2e]">
       <Header />
@@ -228,83 +211,8 @@ const FeedPage = () => {
 
           {/* Coluna central */}
           <div className="max-w-2xl mx-auto xl:mx-0 w-full space-y-6">
-          {/* Quick stats */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
-              <Users className="w-5 h-5 text-orange-400 mx-auto mb-1.5" />
-              <p className="text-lg font-bold text-white">{stats.athletes}</p>
-              <p className="text-xs text-white/50">Atletas</p>
-            </div>
-            <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
-              <FileText className="w-5 h-5 text-orange-400 mx-auto mb-1.5" />
-              <p className="text-lg font-bold text-white">{stats.posts}</p>
-              <p className="text-xs text-white/50">Publicações</p>
-            </div>
-            <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
-              <Calendar className="w-5 h-5 text-orange-400 mx-auto mb-1.5" />
-              <p className="text-lg font-bold text-white">{stats.events}</p>
-              <p className="text-xs text-white/50">Eventos</p>
-            </div>
-          </div>
-
-          {/* Stories */}
           <StoriesBar />
-
-          {/* Suggested Users */}
-          <SuggestedUsers />
-
-          {/* Feed */}
           <FeedSection />
-
-          {/* Trending */}
-          <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
-              <Flame className="w-4 h-4 text-orange-400" /> Em alta
-            </h3>
-            <div className="space-y-3">
-              {trendingTopics.map((topic) => (
-                <div key={topic.label} className="flex items-center gap-3 group cursor-pointer">
-                  <span className="text-xl">{topic.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white group-hover:text-orange-400 transition-colors">{topic.label}</p>
-                    <p className="text-xs text-white/40">{topic.count}</p>
-                  </div>
-                  <TrendingUp className="w-4 h-4 text-white/30" />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Upcoming events - Dynamic */}
-          <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-orange-400" /> Próximos eventos
-              </h3>
-              <button
-                onClick={() => window.location.assign("/eventos")}
-                className="text-xs font-semibold text-orange-400 hover:text-orange-300"
-              >
-                Ver todos
-              </button>
-            </div>
-            <div className="space-y-3">
-              {events.length > 0 ? events.slice(0, 5).map((event) => (
-                <a key={event.id} href="/eventos" className="flex items-center gap-3 group cursor-pointer">
-                  <span className="text-xl">{event.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white group-hover:text-orange-400 transition-colors">{event.title}</p>
-                    <p className="text-xs text-white/40">
-                      {formatEventDate(event.event_date)}
-                      {event.location && ` • ${event.location}`}
-                    </p>
-                  </div>
-                </a>
-              )) : (
-                <p className="text-sm text-white/30">Nenhum evento próximo</p>
-              )}
-            </div>
-          </div>
 
           {/* Footer */}
           <div className="text-center py-6 space-y-2">
