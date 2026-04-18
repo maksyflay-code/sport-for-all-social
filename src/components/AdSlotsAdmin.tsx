@@ -149,12 +149,53 @@ const AdSlotsAdmin = () => {
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-muted-foreground">URL da imagem</label>
-            <Input
-              value={editing.image_url || ""}
-              onChange={(e) => setEditing({ ...editing, image_url: e.target.value })}
-              placeholder="https://..."
-              className="rounded-xl mt-1"
+            <label className="text-xs font-semibold text-muted-foreground">Imagem do anúncio</label>
+            {editing.image_url ? (
+              <div className="mt-1 relative inline-block">
+                <img
+                  src={editing.image_url}
+                  alt="Preview"
+                  className="w-full max-w-xs h-32 object-cover rounded-xl border border-border"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-1 right-1 w-7 h-7 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center shadow-md hover:bg-destructive/90"
+                  title="Remover imagem"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="mt-1 w-full h-32 rounded-xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground disabled:opacity-50"
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span className="text-xs">Enviando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-5 h-5" />
+                    <span className="text-xs font-semibold">Clique para enviar imagem</span>
+                    <span className="text-[10px]">JPG, PNG, WebP até 5MB</span>
+                  </>
+                )}
+              </button>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleFileUpload(f);
+              }}
             />
           </div>
           <div>
