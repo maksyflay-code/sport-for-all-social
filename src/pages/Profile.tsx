@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { Camera, Save, Trophy, Medal, Users, User } from "lucide-react";
 import { StravaConnectButton } from "@/components/StravaIntegration";
 import { useFollows } from "@/hooks/useFollows";
+import BadgeGrid from "@/components/BadgeGrid";
 
 const SPORTS_OPTIONS = [
   "Futebol", "Basquete", "Natação", "Vôlei", "Tênis", "Corrida",
@@ -143,6 +144,14 @@ const Profile = () => {
               {uploading && <p className="text-xs text-orange-400 mt-1">Fazendo upload...</p>}
             </div>
           </div>
+        </div>
+
+        {/* Conquistas (badges automáticas) */}
+        <div className="bg-white/5 rounded-2xl p-5 border border-white/5 mb-4">
+          <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-orange-400" /> Conquistas desbloqueadas
+          </h3>
+          <BadgeGrid userId={user?.id} />
         </div>
 
         {/* Strava Connection */}
