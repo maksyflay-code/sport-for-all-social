@@ -1,30 +1,16 @@
 import Header from "@/components/Header";
 import FeedSection from "@/components/FeedSection";
-import SuggestedUsers from "@/components/SuggestedUsers";
 import StoriesBar from "@/components/StoriesBar";
 import LeftSidebar from "@/components/LeftSidebar";
 import RightSidebar from "@/components/RightSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "@/hooks/useEvents";
-import { Users, Calendar, FileText, Flame, TrendingUp, ArrowRight } from "lucide-react";
+import { Users, Calendar, FileText, ArrowRight } from "lucide-react";
 import { usePlatformStats } from "@/hooks/usePlatformStats";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-sports.jpg";
 import logoCidadelas from "@/assets/logo.jpeg";
-
-const trendingTopics = [
-  { label: "Futebol", count: "12.5k posts", emoji: "⚽" },
-  { label: "Basquete", count: "8.3k posts", emoji: "🏀" },
-  { label: "Natação", count: "5.1k posts", emoji: "🏊" },
-  { label: "Vôlei", count: "4.7k posts", emoji: "🏐" },
-  { label: "Corrida", count: "3.9k posts", emoji: "🏃" },
-  { label: "Tênis", count: "3.2k posts", emoji: "🎾" },
-  { label: "Ciclismo", count: "2.8k posts", emoji: "🚴" },
-  { label: "Artes Marciais", count: "2.5k posts", emoji: "🥋" },
-  { label: "Musculação", count: "2.3k posts", emoji: "🏋️" },
-  { label: "Surfe", count: "1.9k posts", emoji: "🏄" },
-];
 
 const sports = [
   { name: "Futebol", emoji: "⚽" },
