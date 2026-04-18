@@ -9,6 +9,7 @@ import FollowersModal from "@/components/FollowersModal";
 import { Button } from "@/components/ui/button";
 import { UserPlus, UserCheck, Medal, MessageCircle, Heart, MessageCircle as CommentIcon, MapPin, Calendar, Trash2, Clock, Trophy } from "lucide-react";
 import BadgeGrid from "@/components/BadgeGrid";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import { toast } from "sonner";
 import { formatDistanceToNow, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -218,7 +219,10 @@ const UserProfile = () => {
 
             {/* Name & Bio */}
             <div className="mt-3">
-              <h1 className="text-xl font-bold text-white">{profile.display_name || "Anônimo"}</h1>
+              <h1 className="text-xl font-bold text-white flex items-center gap-1.5">
+                {profile.display_name || "Anônimo"}
+                <VerifiedBadge verified={profile.is_verified} size="md" />
+              </h1>
               {profile.bio && <p className="text-sm text-white/50 mt-1 leading-relaxed">{profile.bio}</p>}
               {memberSince && (
                 <p className="text-xs text-white/30 mt-2 flex items-center gap-1">

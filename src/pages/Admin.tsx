@@ -8,7 +8,8 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX, Calendar, Plus, Edit, Flag, CheckCircle, XCircle } from "lucide-react";
+import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX, Calendar, Plus, Edit, Flag, CheckCircle, XCircle, BadgeCheck } from "lucide-react";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 interface UserProfile {
   user_id: string;
@@ -16,6 +17,7 @@ interface UserProfile {
   avatar_url: string | null;
   created_at: string;
   isAdmin: boolean;
+  isVerified: boolean;
 }
 
 interface PostItem {
@@ -74,6 +76,7 @@ const Admin = () => {
         avatar_url: p.avatar_url,
         created_at: p.created_at,
         isAdmin: adminIds.has(p.user_id),
+        isVerified: !!(p as any).is_verified,
       }))
     );
   };
