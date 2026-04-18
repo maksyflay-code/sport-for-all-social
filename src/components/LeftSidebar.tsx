@@ -7,8 +7,16 @@ import { supabase } from "@/integrations/supabase/client";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import {
   Home, Calendar, Users, UserSearch, MessageCircle, User,
-  Award, Trophy,
+  Award, Trophy, Flame,
 } from "lucide-react";
+
+const trendingSports = [
+  { label: "Futebol", emoji: "⚽", tag: "futebol" },
+  { label: "Corrida", emoji: "🏃", tag: "corrida" },
+  { label: "Natação", emoji: "🏊", tag: "natacao" },
+  { label: "Ciclismo", emoji: "🚴", tag: "ciclismo" },
+  { label: "Vôlei", emoji: "🏐", tag: "volei" },
+];
 
 interface ProfileData {
   display_name: string | null;
