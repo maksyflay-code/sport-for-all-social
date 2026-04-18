@@ -5,7 +5,7 @@ import { useEvents } from "@/hooks/useEvents";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSuggestedUsers } from "@/hooks/useFollows";
 import VerifiedBadge from "@/components/VerifiedBadge";
-import { Calendar, UserPlus, UserCheck, Trophy, Activity, ArrowRight } from "lucide-react";
+import { Calendar, UserPlus, UserCheck, Trophy, Activity, ArrowRight, Cake, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 
 interface TopAthlete {
