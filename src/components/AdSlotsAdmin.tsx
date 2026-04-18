@@ -1,11 +1,12 @@
 import { useState, useRef, useMemo } from "react";
 import { useAllAdSlots, type AdSlot } from "@/hooks/useAdSlots";
+import { useAdMetrics, type AdMetric } from "@/hooks/useAdMetrics";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Trash2, Megaphone, Eye, EyeOff, ExternalLink, Upload, Loader2, X, GripVertical } from "lucide-react";
+import { Plus, Trash2, Megaphone, Eye, EyeOff, ExternalLink, Upload, Loader2, X, GripVertical, MousePointerClick, BarChart3, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import {
   DndContext,
@@ -37,11 +38,13 @@ const blank = (): Omit<AdSlot, "id"> => ({
 
 const SortableAdRow = ({
   ad,
+  metric,
   onToggleActive,
   onEdit,
   onRemove,
 }: {
   ad: AdSlot;
+  metric?: AdMetric;
   onToggleActive: (ad: AdSlot) => void;
   onEdit: (ad: AdSlot) => void;
   onRemove: (id: string) => void;
@@ -81,10 +84,19 @@ const SortableAdRow = ({
           {ad.title}
           {!ad.active && <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">Inativo</span>}
         </p>
-        <p className="text-xs text-muted-foreground">
-          Ordem {ad.display_order}
+        <p className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
+          <span>Ordem {ad.display_order}</span>
+          <span className="inline-flex items-center gap-1" title="Impressões">
+            <Eye className="w-3 h-3" /> {metric?.impressions ?? 0}
+          </span>
+          <span className="inline-flex items-center gap-1" title="Cliques">
+            <MousePointerClick className="w-3 h-3" /> {metric?.clicks ?? 0}
+          </span>
+          <span className="inline-flex items-center gap-1" title="Taxa de cliques (CTR)">
+            <BarChart3 className="w-3 h-3" /> {metric?.ctr ?? 0}%
+          </span>
           {ad.link_url && (
-            <a href={ad.link_url} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-0.5 text-primary hover:underline">
+            <a href={ad.link_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-primary hover:underline">
               link <ExternalLink className="w-3 h-3" />
             </a>
           )}
@@ -116,6 +128,7 @@ const SortableAdRow = ({
 
 const AdSlotsAdmin = () => {
   const { ads, reload } = useAllAdSlots();
+  const { metrics, reload: reloadMetrics } = useAdMetrics();
   const [editing, setEditing] = useState<Partial<AdSlot> | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -258,6 +271,7 @@ const AdSlotsAdmin = () => {
                   <SortableAdRow
                     key={ad.id}
                     ad={ad}
+                    metric={metrics[ad.id]}
                     onToggleActive={toggleActive}
                     onEdit={startEdit}
                     onRemove={remove}
@@ -271,17 +285,57 @@ const AdSlotsAdmin = () => {
     );
   };
 
+  const totals = useMemo(() => {
+    const list = Object.values(metrics);
+    const impressions = list.reduce((s, m) => s + m.impressions, 0);
+    const clicks = list.reduce((s, m) => s + m.clicks, 0);
+    const ctr = impressions > 0 ? Math.round((clicks / impressions) * 10000) / 100 : 0;
+    return { impressions, clicks, ctr };
+  }, [metrics]);
+
   return (
     <div className="space-y-4">
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-card rounded-2xl shadow-card p-3 text-center">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Impressões</p>
+          <p className="text-xl font-bold text-foreground mt-1 inline-flex items-center gap-1">
+            <Eye className="w-4 h-4 text-primary" /> {totals.impressions}
+          </p>
+        </div>
+        <div className="bg-card rounded-2xl shadow-card p-3 text-center">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Cliques</p>
+          <p className="text-xl font-bold text-foreground mt-1 inline-flex items-center gap-1">
+            <MousePointerClick className="w-4 h-4 text-primary" /> {totals.clicks}
+          </p>
+        </div>
+        <div className="bg-card rounded-2xl shadow-card p-3 text-center">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">CTR médio</p>
+          <p className="text-xl font-bold text-foreground mt-1 inline-flex items-center gap-1">
+            <BarChart3 className="w-4 h-4 text-primary" /> {totals.ctr}%
+          </p>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <Button onClick={startNew} className="rounded-xl gap-2 bg-primary text-primary-foreground">
           <Plus className="w-4 h-4" /> Novo anúncio
         </Button>
-        {reordering && (
-          <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
-            <Loader2 className="w-3 h-3 animate-spin" /> Salvando ordem...
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => reloadMetrics()}
+            className="rounded-xl gap-1"
+            title="Atualizar métricas"
+          >
+            <RefreshCw className="w-3 h-3" /> Métricas
+          </Button>
+          {reordering && (
+            <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
+              <Loader2 className="w-3 h-3 animate-spin" /> Salvando ordem...
+            </span>
+          )}
+        </div>
       </div>
 
       {editing && (
