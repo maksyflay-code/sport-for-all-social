@@ -38,11 +38,13 @@ const blank = (): Omit<AdSlot, "id"> => ({
 
 const SortableAdRow = ({
   ad,
+  metric,
   onToggleActive,
   onEdit,
   onRemove,
 }: {
   ad: AdSlot;
+  metric?: AdMetric;
   onToggleActive: (ad: AdSlot) => void;
   onEdit: (ad: AdSlot) => void;
   onRemove: (id: string) => void;
