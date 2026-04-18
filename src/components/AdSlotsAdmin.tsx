@@ -128,6 +128,7 @@ const SortableAdRow = ({
 
 const AdSlotsAdmin = () => {
   const { ads, reload } = useAllAdSlots();
+  const { metrics, reload: reloadMetrics } = useAdMetrics();
   const [editing, setEditing] = useState<Partial<AdSlot> | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
