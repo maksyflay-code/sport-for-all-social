@@ -197,9 +197,6 @@ const LandingPage = () => {
 
 // Feed page for logged-in users
 const FeedPage = () => {
-  const { events } = useEvents();
-  const stats = usePlatformStats();
-
   return (
     <div className="min-h-screen bg-[#1a1a2e]">
       <Header />
@@ -214,11 +211,7 @@ const FeedPage = () => {
 
           {/* Coluna central */}
           <div className="max-w-2xl mx-auto xl:mx-0 w-full space-y-6">
-          {/* Quick stats */}
-          {/* Stories */}
           <StoriesBar />
-
-          {/* Feed */}
           <FeedSection />
 
           {/* Footer */}
