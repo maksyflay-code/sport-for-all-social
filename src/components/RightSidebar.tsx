@@ -163,6 +163,48 @@ const RightSidebar = () => {
 
   return (
     <aside className="space-y-4">
+      {/* Quem está online agora */}
+      <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+        <h3 className="text-xs font-bold text-white flex items-center gap-1.5 mb-3">
+          <Circle className="w-2.5 h-2.5 text-green-400 fill-green-400 animate-pulse" />
+          Online agora
+          <span className="ml-auto text-[10px] font-semibold text-green-400">
+            {onlineUsers.length}
+          </span>
+        </h3>
+        {onlineUsers.length === 0 ? (
+          <p className="text-[11px] text-white/30 text-center py-2">
+            Ninguém mais online no momento
+          </p>
+        ) : (
+          <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+            {onlineUsers.slice(0, 8).map((u) => (
+              <button
+                key={u.user_id}
+                onClick={() => navigate(`/usuario/${u.user_id}`)}
+                className="w-full flex items-center gap-2 group text-left"
+              >
+                <div className="relative shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-orange-500/20 flex items-center justify-center overflow-hidden">
+                    {u.avatar_url ? (
+                      <img src={u.avatar_url} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[10px] font-bold text-orange-400">
+                        {u.display_name?.charAt(0)?.toUpperCase() || "?"}
+                      </span>
+                    )}
+                  </div>
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-green-400 border border-[#1a1a2e]" />
+                </div>
+                <p className="text-xs font-semibold text-white truncate flex-1 group-hover:text-orange-400">
+                  {u.display_name || "Anônimo"}
+                </p>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Próximos eventos */}
       <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
         <div className="flex items-center justify-between mb-3">
