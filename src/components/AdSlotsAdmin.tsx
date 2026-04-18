@@ -84,10 +84,19 @@ const SortableAdRow = ({
           {ad.title}
           {!ad.active && <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">Inativo</span>}
         </p>
-        <p className="text-xs text-muted-foreground">
-          Ordem {ad.display_order}
+        <p className="text-xs text-muted-foreground flex items-center gap-2 flex-wrap">
+          <span>Ordem {ad.display_order}</span>
+          <span className="inline-flex items-center gap-1" title="Impressões">
+            <Eye className="w-3 h-3" /> {metric?.impressions ?? 0}
+          </span>
+          <span className="inline-flex items-center gap-1" title="Cliques">
+            <MousePointerClick className="w-3 h-3" /> {metric?.clicks ?? 0}
+          </span>
+          <span className="inline-flex items-center gap-1" title="Taxa de cliques (CTR)">
+            <BarChart3 className="w-3 h-3" /> {metric?.ctr ?? 0}%
+          </span>
           {ad.link_url && (
-            <a href={ad.link_url} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-0.5 text-primary hover:underline">
+            <a href={ad.link_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-primary hover:underline">
               link <ExternalLink className="w-3 h-3" />
             </a>
           )}
