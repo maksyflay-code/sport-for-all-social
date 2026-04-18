@@ -740,6 +740,13 @@ export type Database = {
         Args: { other_user_id: string }
         Returns: string
       }
+      get_story_reaction_counts: {
+        Args: { _story_id: string }
+        Returns: {
+          count: number
+          emoji: string
+        }[]
+      }
       grant_badge: {
         Args: { _code: string; _user_id: string }
         Returns: undefined

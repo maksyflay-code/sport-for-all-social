@@ -9,6 +9,7 @@ import type { StoryGroup } from "@/hooks/useStories";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useStoryReactions, REACTION_EMOJIS } from "@/hooks/useStoryReactions";
+import { useStoryReactionCounts } from "@/hooks/useStoryReactionCounts";
 import StoryReactionsList from "./StoryReactionsList";
 
 interface Props {
@@ -40,6 +41,7 @@ const StoryViewer = ({ groups, initialUserIndex, open, onOpenChange, onDeleted }
   const isOwn = user?.id === currentStory?.user_id;
 
   const { reactions, myEmoji, react } = useStoryReactions(currentStory?.id, isOwn);
+  const { counts: publicCounts, total: publicTotal, reload: reloadCounts } = useStoryReactionCounts(currentStory?.id, myEmoji);
 
   // Mark as viewed
   useEffect(() => {
@@ -107,6 +109,7 @@ const StoryViewer = ({ groups, initialUserIndex, open, onOpenChange, onDeleted }
   const handleReact = async (emoji: string) => {
     setPaused(true);
     await react(emoji);
+    reloadCounts();
     setTimeout(() => setPaused(false), 600);
   };
 
@@ -225,6 +228,21 @@ const StoryViewer = ({ groups, initialUserIndex, open, onOpenChange, onDeleted }
 
           {/* Footer: reactions counter (own) OR reply + emoji bar (others) */}
           <div className="relative z-20 bg-gradient-to-t from-black via-black/90 to-transparent px-4 pt-6 pb-3 space-y-2">
+            {/* Public aggregated reaction counts (visible to everyone) */}
+            {publicTotal > 0 && (
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                {publicCounts.map((c) => (
+                  <span
+                    key={c.emoji}
+                    className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-sm rounded-full px-2.5 py-0.5 text-xs font-semibold text-white"
+                  >
+                    <span className="text-sm leading-none">{c.emoji}</span>
+                    {c.count}
+                  </span>
+                ))}
+              </div>
+            )}
+
             {isOwn ? (
               <button
                 onClick={() => { setPaused(true); setShowReactionsList(true); }}
