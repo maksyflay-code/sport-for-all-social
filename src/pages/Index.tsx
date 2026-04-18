@@ -2,6 +2,8 @@ import Header from "@/components/Header";
 import FeedSection from "@/components/FeedSection";
 import SuggestedUsers from "@/components/SuggestedUsers";
 import StoriesBar from "@/components/StoriesBar";
+import LeftSidebar from "@/components/LeftSidebar";
+import RightSidebar from "@/components/RightSidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "@/hooks/useEvents";
@@ -216,7 +218,16 @@ const FeedPage = () => {
     <div className="min-h-screen bg-[#1a1a2e]">
       <Header />
       <div className="container mx-auto px-4 py-6">
-        <div className="max-w-2xl mx-auto space-y-6">
+        <div className="xl:grid xl:grid-cols-[260px_minmax(0,1fr)_300px] xl:gap-6 xl:max-w-[1280px] xl:mx-auto">
+          {/* Coluna esquerda — só ≥xl */}
+          <div className="hidden xl:block">
+            <div className="sticky top-20 max-h-[calc(100vh-5rem)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10">
+              <LeftSidebar />
+            </div>
+          </div>
+
+          {/* Coluna central */}
+          <div className="max-w-2xl mx-auto xl:mx-0 w-full space-y-6">
           {/* Quick stats */}
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
@@ -309,6 +320,15 @@ const FeedPage = () => {
                 Maksyflay Souza
               </a>
             </p>
+          </div>
+          </div>
+          {/* fim coluna central */}
+
+          {/* Coluna direita — só ≥xl */}
+          <div className="hidden xl:block">
+            <div className="sticky top-20 max-h-[calc(100vh-5rem)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10">
+              <RightSidebar />
+            </div>
           </div>
         </div>
       </div>
