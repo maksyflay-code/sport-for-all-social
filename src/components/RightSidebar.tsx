@@ -22,6 +22,19 @@ interface ActiveStory {
   avatar_url: string | null;
 }
 
+interface AnniversaryUser {
+  user_id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  years: number;
+}
+
+interface WeekStats {
+  posts: number;
+  newUsers: number;
+  events: number;
+}
+
 const formatEventDate = (s: string) => {
   const d = new Date(s + "T00:00:00");
   return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
@@ -34,6 +47,8 @@ const RightSidebar = () => {
   const suggested = useSuggestedUsers();
   const [topAthletes, setTopAthletes] = useState<TopAthlete[]>([]);
   const [activeStories, setActiveStories] = useState<ActiveStory[]>([]);
+  const [anniversaries, setAnniversaries] = useState<AnniversaryUser[]>([]);
+  const [weekStats, setWeekStats] = useState<WeekStats>({ posts: 0, newUsers: 0, events: 0 });
   const [followedIds, setFollowedIds] = useState<Set<string>>(new Set());
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
