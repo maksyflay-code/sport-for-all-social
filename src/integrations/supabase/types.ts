@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_events: {
+        Row: {
+          ad_id: string
+          created_at: string
+          event_type: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          ad_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          ad_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_events_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ad_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ad_slots: {
         Row: {
           active: boolean
@@ -736,6 +768,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_ad_metrics: {
+        Args: never
+        Returns: {
+          ad_id: string
+          clicks: number
+          ctr: number
+          impressions: number
+        }[]
+      }
       get_or_create_conversation: {
         Args: { other_user_id: string }
         Returns: string
