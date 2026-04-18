@@ -271,6 +271,7 @@ const AdSlotsAdmin = () => {
                   <SortableAdRow
                     key={ad.id}
                     ad={ad}
+                    metric={metrics[ad.id]}
                     onToggleActive={toggleActive}
                     onEdit={startEdit}
                     onRemove={remove}
