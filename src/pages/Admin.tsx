@@ -8,8 +8,9 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX, Calendar, Plus, Edit, Flag, CheckCircle, XCircle, BadgeCheck } from "lucide-react";
+import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX, Calendar, Plus, Edit, Flag, CheckCircle, XCircle, BadgeCheck, Megaphone } from "lucide-react";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import AdSlotsAdmin from "@/components/AdSlotsAdmin";
 
 interface UserProfile {
   user_id: string;
@@ -45,7 +46,7 @@ const Admin = () => {
   const { isAdmin, loading } = useAdmin();
   const { events, reload: reloadEvents } = useEvents();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"users" | "posts" | "events" | "reports">("users");
+  const [tab, setTab] = useState<"users" | "posts" | "events" | "reports" | "ads">("users");
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [reports, setReports] = useState<ReportItem[]>([]);
@@ -222,7 +223,12 @@ const Admin = () => {
             <Button variant={tab === "reports" ? "default" : "outline"} onClick={() => setTab("reports")} className="rounded-xl gap-2">
               <Flag className="w-4 h-4" /> Denúncias ({reports.length})
             </Button>
+            <Button variant={tab === "ads" ? "default" : "outline"} onClick={() => setTab("ads")} className="rounded-xl gap-2">
+              <Megaphone className="w-4 h-4" /> Anúncios
+            </Button>
           </div>
+
+          {tab === "ads" && <AdSlotsAdmin />}
 
           {/* Users tab */}
           {tab === "users" && (
