@@ -22,9 +22,42 @@ const AdSlotsAdmin = () => {
   const { ads, reload } = useAllAdSlots();
   const [editing, setEditing] = useState<Partial<AdSlot> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const startNew = () => setEditing(blank());
   const startEdit = (ad: AdSlot) => setEditing({ ...ad });
+
+  const handleFileUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione uma imagem");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Imagem deve ter no máximo 5MB");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("ads").upload(filename, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from("ads").getPublicUrl(filename);
+      setEditing((prev) => ({ ...(prev || blank()), image_url: pub.publicUrl }));
+      toast.success("Imagem enviada");
+    } catch (e: any) {
+      toast.error("Erro ao enviar imagem: " + (e.message || ""));
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const removeImage = () => setEditing((prev) => ({ ...(prev || blank()), image_url: "" }));
 
   const save = async () => {
     if (!editing?.title) { toast.error("Título obrigatório"); return; }
