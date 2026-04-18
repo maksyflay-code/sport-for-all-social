@@ -9,6 +9,7 @@ import {
   Home, Calendar, Users, UserSearch, MessageCircle, User,
   Award, Trophy, Flame,
 } from "lucide-react";
+import AdSlotCard from "@/components/AdSlotCard";
 
 const trendingSports = [
   { label: "Futebol", emoji: "⚽", tag: "futebol" },
@@ -195,6 +196,9 @@ const LeftSidebar = () => {
           </div>
         )}
       </div>
+
+      {/* Publicidade — fim da esquerda */}
+      <AdSlotCard position="sidebar_left" />
     </aside>
   );
 };

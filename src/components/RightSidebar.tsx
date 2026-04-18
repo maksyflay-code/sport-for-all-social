@@ -8,6 +8,7 @@ import { useOnlinePresence } from "@/hooks/useOnlinePresence";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { Calendar, UserPlus, UserCheck, Trophy, Activity, ArrowRight, Cake, BarChart3, Circle } from "lucide-react";
 import { toast } from "sonner";
+import AdSlotCard from "@/components/AdSlotCard";
 
 interface TopAthlete {
   user_id: string;
@@ -163,6 +164,9 @@ const RightSidebar = () => {
 
   return (
     <aside className="space-y-4">
+      {/* Publicidade — topo da direita */}
+      <AdSlotCard position="sidebar_right" />
+
       {/* Quem está online agora */}
       <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
         <h3 className="text-xs font-bold text-white flex items-center gap-1.5 mb-3">
