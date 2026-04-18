@@ -38,8 +38,11 @@ const Profile = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const [modalType, setModalType] = useState<"followers" | "following" | null>(null);
   const { followersCount, followingCount } = useFollows(user?.id);
+  const { connected: stravaConnected } = useStravaConnection();
+  const { data: stravaData, syncing, sync } = useStravaSync(user?.id);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -57,6 +60,7 @@ const Profile = () => {
       setSports(data.sports || []);
       setAchievements(data.achievements || []);
       setAvatarUrl(data.avatar_url);
+      setIsVerified((data as any).is_verified || false);
     }
   };
 
