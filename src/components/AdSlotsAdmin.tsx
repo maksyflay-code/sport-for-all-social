@@ -1,12 +1,29 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useAllAdSlots, type AdSlot } from "@/hooks/useAdSlots";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Trash2, Megaphone, Eye, EyeOff, ExternalLink, Upload, Loader2, X } from "lucide-react";
+import { Plus, Trash2, Megaphone, Eye, EyeOff, ExternalLink, Upload, Loader2, X, GripVertical } from "lucide-react";
 import { toast } from "sonner";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const blank = (): Omit<AdSlot, "id"> => ({
   position: "sidebar_right",
@@ -18,12 +35,103 @@ const blank = (): Omit<AdSlot, "id"> => ({
   display_order: 0,
 });
 
+const SortableAdRow = ({
+  ad,
+  onToggleActive,
+  onEdit,
+  onRemove,
+}: {
+  ad: AdSlot;
+  onToggleActive: (ad: AdSlot) => void;
+  onEdit: (ad: AdSlot) => void;
+  onRemove: (id: string) => void;
+}) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: ad.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="bg-card rounded-2xl shadow-card p-4 flex items-center gap-3"
+    >
+      <button
+        type="button"
+        {...attributes}
+        {...listeners}
+        className="touch-none cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground shrink-0 p-1 -ml-1"
+        title="Arraste para reordenar"
+        aria-label="Arraste para reordenar"
+      >
+        <GripVertical className="w-4 h-4" />
+      </button>
+      {ad.image_url ? (
+        <img src={ad.image_url} alt="" className="w-14 h-14 rounded-xl object-cover shrink-0" />
+      ) : (
+        <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+          <Megaphone className="w-5 h-5 text-primary" />
+        </div>
+      )}
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-foreground truncate flex items-center gap-2">
+          {ad.title}
+          {!ad.active && <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">Inativo</span>}
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Ordem {ad.display_order}
+          {ad.link_url && (
+            <a href={ad.link_url} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-0.5 text-primary hover:underline">
+              link <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </p>
+      </div>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => onToggleActive(ad)}
+        className="rounded-xl shrink-0"
+        title={ad.active ? "Desativar" : "Ativar"}
+      >
+        {ad.active ? <Eye className="w-4 h-4 text-primary" /> : <EyeOff className="w-4 h-4 text-muted-foreground" />}
+      </Button>
+      <Button variant="ghost" size="sm" onClick={() => onEdit(ad)} className="rounded-xl">
+        Editar
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => onRemove(ad.id)}
+        className="rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+      >
+        <Trash2 className="w-4 h-4" />
+      </Button>
+    </div>
+  );
+};
+
 const AdSlotsAdmin = () => {
   const { ads, reload } = useAllAdSlots();
   const [editing, setEditing] = useState<Partial<AdSlot> | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [reordering, setReordering] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const grouped = useMemo(() => {
+    const left = ads.filter((a) => a.position === "sidebar_left");
+    const right = ads.filter((a) => a.position === "sidebar_right");
+    return { left, right };
+  }, [ads]);
 
   const startNew = () => setEditing(blank());
   const startEdit = (ad: AdSlot) => setEditing({ ...ad });
@@ -95,11 +203,86 @@ const AdSlotsAdmin = () => {
     reload();
   };
 
+  const persistOrder = async (list: AdSlot[]) => {
+    setReordering(true);
+    try {
+      const updates = list.map((ad, idx) =>
+        (supabase.from("ad_slots" as any) as any)
+          .update({ display_order: idx })
+          .eq("id", ad.id)
+      );
+      const results = await Promise.all(updates);
+      const firstErr = results.find((r: any) => r?.error);
+      if (firstErr) {
+        toast.error("Erro ao salvar ordem");
+      } else {
+        toast.success("Ordem atualizada");
+      }
+    } finally {
+      setReordering(false);
+      reload();
+    }
+  };
+
+  const handleDragEnd = (position: "sidebar_left" | "sidebar_right") => (e: DragEndEvent) => {
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
+    const list = position === "sidebar_left" ? grouped.left : grouped.right;
+    const oldIdx = list.findIndex((a) => a.id === active.id);
+    const newIdx = list.findIndex((a) => a.id === over.id);
+    if (oldIdx === -1 || newIdx === -1) return;
+    const reordered = arrayMove(list, oldIdx, newIdx);
+    persistOrder(reordered);
+  };
+
+  const renderList = (position: "sidebar_left" | "sidebar_right", label: string) => {
+    const list = position === "sidebar_left" ? grouped.left : grouped.right;
+    return (
+      <div className="space-y-2">
+        <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground px-1">
+          {label} <span className="text-muted-foreground/60">({list.length})</span>
+        </h4>
+        {list.length === 0 ? (
+          <p className="text-xs text-muted-foreground text-center py-4 bg-muted/30 rounded-xl">
+            Nenhum anúncio nesta posição
+          </p>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd(position)}
+          >
+            <SortableContext items={list.map((a) => a.id)} strategy={verticalListSortingStrategy}>
+              <div className="space-y-2">
+                {list.map((ad) => (
+                  <SortableAdRow
+                    key={ad.id}
+                    ad={ad}
+                    onToggleActive={toggleActive}
+                    onEdit={startEdit}
+                    onRemove={remove}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-4">
-      <Button onClick={startNew} className="rounded-xl gap-2 bg-primary text-primary-foreground">
-        <Plus className="w-4 h-4" /> Novo anúncio
-      </Button>
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <Button onClick={startNew} className="rounded-xl gap-2 bg-primary text-primary-foreground">
+          <Plus className="w-4 h-4" /> Novo anúncio
+        </Button>
+        {reordering && (
+          <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
+            <Loader2 className="w-3 h-3 animate-spin" /> Salvando ordem...
+          </span>
+        )}
+      </div>
 
       {editing && (
         <div className="bg-card rounded-2xl shadow-card p-5 space-y-3 border-2 border-primary/40">
@@ -223,56 +406,17 @@ const AdSlotsAdmin = () => {
         </div>
       )}
 
-      <div className="space-y-2">
-        {ads.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-6">Nenhum anúncio cadastrado</p>
-        )}
-        {ads.map((ad) => (
-          <div key={ad.id} className="bg-card rounded-2xl shadow-card p-4 flex items-center gap-3">
-            {ad.image_url ? (
-              <img src={ad.image_url} alt="" className="w-14 h-14 rounded-xl object-cover shrink-0" />
-            ) : (
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                <Megaphone className="w-5 h-5 text-primary" />
-              </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate flex items-center gap-2">
-                {ad.title}
-                {!ad.active && <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">Inativo</span>}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {ad.position === "sidebar_left" ? "← Esquerda" : "Direita →"} • Ordem {ad.display_order}
-                {ad.link_url && (
-                  <a href={ad.link_url} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center gap-0.5 text-primary hover:underline">
-                    link <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
-              </p>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => toggleActive(ad)}
-              className="rounded-xl shrink-0"
-              title={ad.active ? "Desativar" : "Ativar"}
-            >
-              {ad.active ? <Eye className="w-4 h-4 text-primary" /> : <EyeOff className="w-4 h-4 text-muted-foreground" />}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => startEdit(ad)} className="rounded-xl">
-              Editar
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => remove(ad.id)}
-              className="rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
-        ))}
-      </div>
+      {ads.length === 0 ? (
+        <p className="text-sm text-muted-foreground text-center py-6">Nenhum anúncio cadastrado</p>
+      ) : (
+        <div className="space-y-5">
+          <p className="text-xs text-muted-foreground px-1">
+            💡 Arraste pelo ícone <GripVertical className="w-3 h-3 inline -mt-0.5" /> para reordenar
+          </p>
+          {renderList("sidebar_left", "← Sidebar esquerda")}
+          {renderList("sidebar_right", "Sidebar direita →")}
+        </div>
+      )}
     </div>
   );
 };
