@@ -8,7 +8,8 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX, Calendar, Plus, Edit, Flag, CheckCircle, XCircle } from "lucide-react";
+import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX, Calendar, Plus, Edit, Flag, CheckCircle, XCircle, BadgeCheck } from "lucide-react";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 interface UserProfile {
   user_id: string;
@@ -16,6 +17,7 @@ interface UserProfile {
   avatar_url: string | null;
   created_at: string;
   isAdmin: boolean;
+  isVerified: boolean;
 }
 
 interface PostItem {
@@ -74,6 +76,7 @@ const Admin = () => {
         avatar_url: p.avatar_url,
         created_at: p.created_at,
         isAdmin: adminIds.has(p.user_id),
+        isVerified: !!(p as any).is_verified,
       }))
     );
   };
@@ -134,6 +137,15 @@ const Admin = () => {
       await supabase.from("user_roles").insert({ user_id: userId, role: "admin" } as any);
       toast.success("Admin adicionado");
     }
+    loadUsers();
+  };
+
+  const toggleVerified = async (userId: string, currentlyVerified: boolean) => {
+    const { error } = await (supabase.from("profiles") as any)
+      .update({ is_verified: !currentlyVerified })
+      .eq("user_id", userId);
+    if (error) { toast.error("Erro ao alterar selo verificado"); return; }
+    toast.success(currentlyVerified ? "Selo verificado removido" : "Selo verificado concedido ✓");
     loadUsers();
   };
 
@@ -227,13 +239,26 @@ const Admin = () => {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground truncate">{u.display_name || "Sem nome"}</p>
+                    <p className="text-sm font-semibold text-foreground truncate flex items-center gap-1">
+                      {u.display_name || "Sem nome"}
+                      <VerifiedBadge verified={u.isVerified} size="sm" />
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {u.isAdmin && <span className="text-primary font-medium">Admin • </span>}
                       Desde {new Date(u.created_at).toLocaleDateString("pt-BR")}
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleVerified(u.user_id, u.isVerified)}
+                      className={`rounded-xl gap-1.5 text-xs ${u.isVerified ? "text-[#1d9bf0] hover:text-[#1d9bf0]" : "text-muted-foreground hover:text-[#1d9bf0]"}`}
+                      title={u.isVerified ? "Remover selo verificado" : "Conceder selo verificado"}
+                    >
+                      <BadgeCheck className={`w-4 h-4 ${u.isVerified ? "fill-[#1d9bf0]/20" : ""}`} />
+                      {u.isVerified ? "Verificado" : "Verificar"}
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"

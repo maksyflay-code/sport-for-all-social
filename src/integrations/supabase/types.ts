@@ -466,6 +466,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          is_verified: boolean
           sports: string[] | null
           updated_at: string
           user_id: string
@@ -477,6 +478,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          is_verified?: boolean
           sports?: string[] | null
           updated_at?: string
           user_id: string
@@ -488,6 +490,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          is_verified?: boolean
           sports?: string[] | null
           updated_at?: string
           user_id?: string
@@ -552,6 +555,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      strava_distance: {
+        Row: {
+          last_synced_at: string
+          total_km: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          last_synced_at?: string
+          total_km?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          last_synced_at?: string
+          total_km?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       strava_tokens: {
         Row: {
@@ -659,6 +683,10 @@ export type Database = {
       is_community_member: {
         Args: { _community_id: string; _user_id: string }
         Returns: boolean
+      }
+      upsert_strava_distance: {
+        Args: { _total_km: number; _user_id: string }
+        Returns: undefined
       }
     }
     Enums: {

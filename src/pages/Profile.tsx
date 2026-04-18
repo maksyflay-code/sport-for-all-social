@@ -9,10 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Camera, Save, Trophy, Medal, Users, User } from "lucide-react";
-import { StravaConnectButton } from "@/components/StravaIntegration";
+import { Camera, Save, Trophy, Medal, Users, User, RefreshCw, Activity } from "lucide-react";
+import { StravaConnectButton, useStravaConnection } from "@/components/StravaIntegration";
 import { useFollows } from "@/hooks/useFollows";
+import { useStravaSync } from "@/hooks/useStravaSync";
 import BadgeGrid from "@/components/BadgeGrid";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 const SPORTS_OPTIONS = [
   "Futebol", "Basquete", "Natação", "Vôlei", "Tênis", "Corrida",
@@ -36,8 +38,11 @@ const Profile = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const [modalType, setModalType] = useState<"followers" | "following" | null>(null);
   const { followersCount, followingCount } = useFollows(user?.id);
+  const { connected: stravaConnected } = useStravaConnection();
+  const { data: stravaData, syncing, sync } = useStravaSync(user?.id);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth");
@@ -55,6 +60,7 @@ const Profile = () => {
       setSports(data.sports || []);
       setAchievements(data.achievements || []);
       setAvatarUrl(data.avatar_url);
+      setIsVerified((data as any).is_verified || false);
     }
   };
 
@@ -119,7 +125,10 @@ const Profile = () => {
               </label>
             </div>
             <div className="mt-3">
-              <h2 className="text-xl font-bold text-white">{displayName || "Seu nome"}</h2>
+              <h2 className="text-xl font-bold text-white flex items-center gap-1.5">
+                {displayName || "Seu nome"}
+                <VerifiedBadge verified={isVerified} size="md" />
+              </h2>
               <p className="text-xs text-white/40">{user?.email}</p>
               <div className="flex items-center gap-4 mt-2">
                 <button onClick={() => setModalType("followers")} className="text-sm text-white hover:opacity-80 transition-opacity"><strong>{followersCount}</strong> <span className="text-white/40">seguidores</span></button>
@@ -159,8 +168,39 @@ const Profile = () => {
           <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
             🏃 Integração Strava
           </h3>
-          <p className="text-xs text-white/40 mb-3">Conecte sua conta Strava para compartilhar atividades no feed.</p>
+          <p className="text-xs text-white/40 mb-3">Conecte sua conta Strava para compartilhar atividades e desbloquear badges por km acumulados.</p>
           <StravaConnectButton />
+
+          {stravaConnected && (
+            <div className="mt-4 pt-4 border-t border-white/5">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs text-white/40">Distância acumulada</p>
+                  <p className="text-2xl font-bold text-white flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-[#FC4C02]" />
+                    {stravaData ? `${stravaData.total_km} km` : "—"}
+                  </p>
+                  {stravaData?.last_synced_at && (
+                    <p className="text-[10px] text-white/30 mt-1">
+                      Sincronizado em {new Date(stravaData.last_synced_at).toLocaleString("pt-BR")}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  onClick={sync}
+                  disabled={syncing}
+                  size="sm"
+                  className="rounded-xl bg-[#FC4C02] hover:bg-[#E34402] text-white gap-1.5"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${syncing ? "animate-spin" : ""}`} />
+                  {syncing ? "Sincronizando..." : "Sincronizar agora"}
+                </Button>
+              </div>
+              <div className="flex gap-2 mt-3 text-[10px] text-white/40">
+                <span>Marcos: 10 km · 50 km · 100 km</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Edit Form */}
