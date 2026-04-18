@@ -321,6 +321,14 @@ const FeedPage = () => {
               </a>
             </p>
           </div>
+          {/* fim coluna central */}
+
+          {/* Coluna direita — só ≥xl */}
+          <div className="hidden xl:block">
+            <div className="sticky top-20 max-h-[calc(100vh-5rem)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10">
+              <RightSidebar />
+            </div>
+          </div>
         </div>
       </div>
     </div>
