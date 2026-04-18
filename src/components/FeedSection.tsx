@@ -12,6 +12,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import MentionTextarea from "@/components/MentionTextarea";
 import { renderRichText, buildMentionMap } from "@/lib/textParser";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 interface Post {
   id: string;
@@ -20,7 +21,7 @@ interface Post {
   user_id: string;
   image_url: string | null;
   location: string | null;
-  profiles: { display_name: string | null; avatar_url: string | null } | null;
+  profiles: { display_name: string | null; avatar_url: string | null; is_verified?: boolean | null } | null;
   likes_count: number;
   comments_count: number;
   user_liked: boolean;
@@ -78,12 +79,12 @@ const FeedSection = () => {
     const userIds = [...new Set(postsData.map((p) => p.user_id))];
 
     const [{ data: profilesData }, { data: likesData }, { data: commentsData }] = await Promise.all([
-      supabase.from("profiles").select("user_id, display_name, avatar_url").in("user_id", userIds),
+      supabase.from("profiles").select("user_id, display_name, avatar_url, is_verified").in("user_id", userIds),
       supabase.from("likes").select("post_id, user_id").in("post_id", postIds),
       supabase.from("comments").select("post_id").in("post_id", postIds),
     ]);
 
-    const profilesMap: Record<string, { display_name: string | null; avatar_url: string | null }> = {};
+    const profilesMap: Record<string, { display_name: string | null; avatar_url: string | null; is_verified?: boolean | null }> = {};
     profilesData?.forEach((p) => { profilesMap[p.user_id] = p; });
     setMentionMap(buildMentionMap(profilesData || []));
 
@@ -364,9 +365,12 @@ const FeedSection = () => {
             </div>
             <div className="flex-1 min-w-0">
               <p
-                className="text-sm font-semibold text-white leading-tight truncate cursor-pointer hover:text-orange-400 transition-colors"
+                className="text-sm font-semibold text-white leading-tight truncate cursor-pointer hover:text-orange-400 transition-colors flex items-center gap-1"
                 onClick={() => navigate(`/usuario/${post.user_id}`)}
-              >{post.profiles?.display_name || "Anônimo"}</p>
+              >
+                <span className="truncate">{post.profiles?.display_name || "Anônimo"}</span>
+                <VerifiedBadge verified={(post.profiles as any)?.is_verified} />
+              </p>
               <p className="text-xs text-white/40">
                 {(post as any).location && (
                   <span className="text-orange-400 mr-1.5"><MapPin className="w-3 h-3 inline" /> {(post as any).location} · </span>
