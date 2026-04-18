@@ -41,6 +41,7 @@ const StoryViewer = ({ groups, initialUserIndex, open, onOpenChange, onDeleted }
   const isOwn = user?.id === currentStory?.user_id;
 
   const { reactions, myEmoji, react } = useStoryReactions(currentStory?.id, isOwn);
+  const { counts: publicCounts, total: publicTotal, reload: reloadCounts } = useStoryReactionCounts(currentStory?.id, myEmoji);
 
   // Mark as viewed
   useEffect(() => {
