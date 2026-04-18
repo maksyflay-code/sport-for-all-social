@@ -239,13 +239,26 @@ const Admin = () => {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground truncate">{u.display_name || "Sem nome"}</p>
+                    <p className="text-sm font-semibold text-foreground truncate flex items-center gap-1">
+                      {u.display_name || "Sem nome"}
+                      <VerifiedBadge verified={u.isVerified} size="sm" />
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {u.isAdmin && <span className="text-primary font-medium">Admin • </span>}
                       Desde {new Date(u.created_at).toLocaleDateString("pt-BR")}
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleVerified(u.user_id, u.isVerified)}
+                      className={`rounded-xl gap-1.5 text-xs ${u.isVerified ? "text-[#1d9bf0] hover:text-[#1d9bf0]" : "text-muted-foreground hover:text-[#1d9bf0]"}`}
+                      title={u.isVerified ? "Remover selo verificado" : "Conceder selo verificado"}
+                    >
+                      <BadgeCheck className={`w-4 h-4 ${u.isVerified ? "fill-[#1d9bf0]/20" : ""}`} />
+                      {u.isVerified ? "Verificado" : "Verificar"}
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"
