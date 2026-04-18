@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAllAdSlots, type AdSlot } from "@/hooks/useAdSlots";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Trash2, Megaphone, Eye, EyeOff, ExternalLink } from "lucide-react";
+import { Plus, Trash2, Megaphone, Eye, EyeOff, ExternalLink, Upload, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 
 const blank = (): Omit<AdSlot, "id"> => ({
@@ -22,9 +22,42 @@ const AdSlotsAdmin = () => {
   const { ads, reload } = useAllAdSlots();
   const [editing, setEditing] = useState<Partial<AdSlot> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const startNew = () => setEditing(blank());
   const startEdit = (ad: AdSlot) => setEditing({ ...ad });
+
+  const handleFileUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione uma imagem");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Imagem deve ter no máximo 5MB");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("ads").upload(filename, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from("ads").getPublicUrl(filename);
+      setEditing((prev) => ({ ...(prev || blank()), image_url: pub.publicUrl }));
+      toast.success("Imagem enviada");
+    } catch (e: any) {
+      toast.error("Erro ao enviar imagem: " + (e.message || ""));
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const removeImage = () => setEditing((prev) => ({ ...(prev || blank()), image_url: "" }));
 
   const save = async () => {
     if (!editing?.title) { toast.error("Título obrigatório"); return; }
@@ -116,12 +149,53 @@ const AdSlotsAdmin = () => {
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-muted-foreground">URL da imagem</label>
-            <Input
-              value={editing.image_url || ""}
-              onChange={(e) => setEditing({ ...editing, image_url: e.target.value })}
-              placeholder="https://..."
-              className="rounded-xl mt-1"
+            <label className="text-xs font-semibold text-muted-foreground">Imagem do anúncio</label>
+            {editing.image_url ? (
+              <div className="mt-1 relative inline-block">
+                <img
+                  src={editing.image_url}
+                  alt="Preview"
+                  className="w-full max-w-xs h-32 object-cover rounded-xl border border-border"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-1 right-1 w-7 h-7 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center shadow-md hover:bg-destructive/90"
+                  title="Remover imagem"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="mt-1 w-full h-32 rounded-xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground disabled:opacity-50"
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span className="text-xs">Enviando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-5 h-5" />
+                    <span className="text-xs font-semibold">Clique para enviar imagem</span>
+                    <span className="text-[10px]">JPG, PNG, WebP até 5MB</span>
+                  </>
+                )}
+              </button>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleFileUpload(f);
+              }}
             />
           </div>
           <div>
