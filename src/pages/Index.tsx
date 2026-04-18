@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import FeedSection from "@/components/FeedSection";
 import SuggestedUsers from "@/components/SuggestedUsers";
+import StoriesBar from "@/components/StoriesBar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEvents } from "@/hooks/useEvents";
@@ -235,6 +236,9 @@ const FeedPage = () => {
             </div>
           </div>
 
+          {/* Stories */}
+          <StoriesBar />
+
           {/* Suggested Users */}
           <SuggestedUsers />
 
@@ -262,12 +266,20 @@ const FeedPage = () => {
 
           {/* Upcoming events - Dynamic */}
           <div className="bg-white/5 rounded-2xl p-5 border border-white/5">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
-              <Calendar className="w-4 h-4 text-orange-400" /> Próximos eventos
-            </h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-orange-400" /> Próximos eventos
+              </h3>
+              <button
+                onClick={() => window.location.assign("/eventos")}
+                className="text-xs font-semibold text-orange-400 hover:text-orange-300"
+              >
+                Ver todos
+              </button>
+            </div>
             <div className="space-y-3">
-              {events.length > 0 ? events.map((event) => (
-                <div key={event.id} className="flex items-center gap-3 group cursor-pointer">
+              {events.length > 0 ? events.slice(0, 5).map((event) => (
+                <a key={event.id} href="/eventos" className="flex items-center gap-3 group cursor-pointer">
                   <span className="text-xl">{event.emoji}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-white group-hover:text-orange-400 transition-colors">{event.title}</p>
@@ -276,7 +288,7 @@ const FeedPage = () => {
                       {event.location && ` • ${event.location}`}
                     </p>
                   </div>
-                </div>
+                </a>
               )) : (
                 <p className="text-sm text-white/30">Nenhum evento próximo</p>
               )}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, X, Search, Bell, LogOut, User, MessageCircle, Users, Shield, UserSearch } from "lucide-react";
+import { Menu, X, Search, Bell, LogOut, User, MessageCircle, Users, Shield, UserSearch, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "framer-motion";
@@ -214,6 +214,15 @@ const Header = () => {
                 variant="ghost"
                 size="icon"
                 className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
+                onClick={() => navigate("/eventos")}
+                title="Eventos"
+              >
+                <Calendar className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
                 onClick={() => navigate("/mensagens")}
               >
                 <MessageCircle className="w-5 h-5" />
@@ -299,6 +308,13 @@ const Header = () => {
                   >
                     <Users className="w-5 h-5 text-orange-400" />
                     Comunidades
+                  </button>
+                  <button
+                    onClick={() => { navigate("/eventos"); setMobileOpen(false); }}
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-white hover:bg-white/5 transition-colors text-sm font-medium"
+                  >
+                    <Calendar className="w-5 h-5 text-orange-400" />
+                    Eventos
                   </button>
                   <button
                     onClick={() => { navigate("/mensagens"); setMobileOpen(false); }}

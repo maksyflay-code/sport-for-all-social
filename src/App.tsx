@@ -17,6 +17,7 @@ import Athletes from "./pages/Athletes.tsx";
 import CommunityDetail from "./pages/CommunityDetail.tsx";
 import { ConversationsList, ChatView } from "./pages/Messages.tsx";
 import Tag from "./pages/Tag.tsx";
+import Events from "./pages/Events.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="/comunidades/:communityId" element={<CommunityDetail />} />
             <Route path="/mensagens/:conversationId" element={<ChatView />} />
             <Route path="/tag/:tagName" element={<Tag />} />
+            <Route path="/eventos" element={<Events />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
