@@ -285,17 +285,57 @@ const AdSlotsAdmin = () => {
     );
   };
 
+  const totals = useMemo(() => {
+    const list = Object.values(metrics);
+    const impressions = list.reduce((s, m) => s + m.impressions, 0);
+    const clicks = list.reduce((s, m) => s + m.clicks, 0);
+    const ctr = impressions > 0 ? Math.round((clicks / impressions) * 10000) / 100 : 0;
+    return { impressions, clicks, ctr };
+  }, [metrics]);
+
   return (
     <div className="space-y-4">
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-card rounded-2xl shadow-card p-3 text-center">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Impressões</p>
+          <p className="text-xl font-bold text-foreground mt-1 inline-flex items-center gap-1">
+            <Eye className="w-4 h-4 text-primary" /> {totals.impressions}
+          </p>
+        </div>
+        <div className="bg-card rounded-2xl shadow-card p-3 text-center">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Cliques</p>
+          <p className="text-xl font-bold text-foreground mt-1 inline-flex items-center gap-1">
+            <MousePointerClick className="w-4 h-4 text-primary" /> {totals.clicks}
+          </p>
+        </div>
+        <div className="bg-card rounded-2xl shadow-card p-3 text-center">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">CTR médio</p>
+          <p className="text-xl font-bold text-foreground mt-1 inline-flex items-center gap-1">
+            <BarChart3 className="w-4 h-4 text-primary" /> {totals.ctr}%
+          </p>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <Button onClick={startNew} className="rounded-xl gap-2 bg-primary text-primary-foreground">
           <Plus className="w-4 h-4" /> Novo anúncio
         </Button>
-        {reordering && (
-          <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
-            <Loader2 className="w-3 h-3 animate-spin" /> Salvando ordem...
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => reloadMetrics()}
+            className="rounded-xl gap-1"
+            title="Atualizar métricas"
+          >
+            <RefreshCw className="w-3 h-3" /> Métricas
+          </Button>
+          {reordering && (
+            <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
+              <Loader2 className="w-3 h-3 animate-spin" /> Salvando ordem...
+            </span>
+          )}
+        </div>
       </div>
 
       {editing && (
