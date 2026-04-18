@@ -1,11 +1,12 @@
 import { useState, useRef, useMemo } from "react";
 import { useAllAdSlots, type AdSlot } from "@/hooks/useAdSlots";
+import { useAdMetrics, type AdMetric } from "@/hooks/useAdMetrics";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Trash2, Megaphone, Eye, EyeOff, ExternalLink, Upload, Loader2, X, GripVertical } from "lucide-react";
+import { Plus, Trash2, Megaphone, Eye, EyeOff, ExternalLink, Upload, Loader2, X, GripVertical, MousePointerClick, BarChart3, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import {
   DndContext,
