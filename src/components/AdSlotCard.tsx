@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { useAdSlots } from "@/hooks/useAdSlots";
 import { Megaphone } from "lucide-react";
+import { trackAdImpression, trackAdClick } from "@/lib/adTracking";
 
 interface Props {
   position: "sidebar_left" | "sidebar_right";
@@ -7,6 +9,11 @@ interface Props {
 
 const AdSlotCard = ({ position }: Props) => {
   const { ads, loading } = useAdSlots(position);
+
+  useEffect(() => {
+    if (loading) return;
+    ads.forEach((ad) => { trackAdImpression(ad.id); });
+  }, [ads, loading]);
 
   if (loading || ads.length === 0) return null;
 
@@ -42,6 +49,8 @@ const AdSlotCard = ({ position }: Props) => {
             target="_blank"
             rel="noopener noreferrer sponsored"
             className="block"
+            onClick={() => { trackAdClick(ad.id); }}
+            onAuxClick={(e) => { if (e.button === 1) trackAdClick(ad.id); }}
           >
             {content}
           </a>
