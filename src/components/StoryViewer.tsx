@@ -109,6 +109,7 @@ const StoryViewer = ({ groups, initialUserIndex, open, onOpenChange, onDeleted }
   const handleReact = async (emoji: string) => {
     setPaused(true);
     await react(emoji);
+    reloadCounts();
     setTimeout(() => setPaused(false), 600);
   };
 
