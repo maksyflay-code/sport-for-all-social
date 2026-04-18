@@ -318,6 +318,63 @@ const RightSidebar = () => {
           </div>
         </div>
       )}
+
+      {/* Aniversariantes */}
+      {anniversaries.length > 0 && (
+        <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+          <h3 className="text-xs font-bold text-white flex items-center gap-1.5 mb-3">
+            <Cake className="w-3.5 h-3.5 text-orange-400" /> Aniversariantes
+          </h3>
+          <div className="space-y-2">
+            {anniversaries.map((a) => (
+              <button
+                key={a.user_id}
+                onClick={() => navigate(`/usuario/${a.user_id}`)}
+                className="w-full flex items-center gap-2 group text-left"
+              >
+                <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center overflow-hidden shrink-0">
+                  {a.avatar_url ? (
+                    <img src={a.avatar_url} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[11px] font-bold text-orange-400">
+                      {a.display_name?.charAt(0)?.toUpperCase() || "?"}
+                    </span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-white truncate group-hover:text-orange-400">
+                    {a.display_name || "Anônimo"}
+                  </p>
+                  <p className="text-[10px] text-white/40">
+                    {a.years} {a.years === 1 ? "ano" : "anos"} na rede 🎉
+                  </p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Atividade da semana */}
+      <div className="bg-white/5 rounded-2xl p-4 border border-white/5">
+        <h3 className="text-xs font-bold text-white flex items-center gap-1.5 mb-3">
+          <BarChart3 className="w-3.5 h-3.5 text-orange-400" /> Atividade da semana
+        </h3>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-white/60">📝 Posts</span>
+            <span className="font-bold text-orange-400">{weekStats.posts}</span>
+          </div>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-white/60">👥 Novos atletas</span>
+            <span className="font-bold text-orange-400">{weekStats.newUsers}</span>
+          </div>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-white/60">📅 Eventos</span>
+            <span className="font-bold text-orange-400">{weekStats.events}</span>
+          </div>
+        </div>
+      </div>
     </aside>
   );
 };
