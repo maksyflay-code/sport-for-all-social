@@ -321,6 +321,7 @@ const FeedPage = () => {
               </a>
             </p>
           </div>
+          </div>
           {/* fim coluna central */}
 
           {/* Coluna direita — só ≥xl */}
