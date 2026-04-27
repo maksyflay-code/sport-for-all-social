@@ -204,7 +204,7 @@ const FeedPage = () => {
         <div className="xl:grid xl:grid-cols-[260px_minmax(0,1fr)_300px] xl:gap-6 xl:max-w-[1280px] xl:mx-auto">
           {/* Coluna esquerda — só ≥xl */}
           <div className="hidden xl:block">
-            <div className="sticky top-20 max-h-[calc(100vh-5rem)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10">
+            <div className="sticky top-20 max-h-[calc(100vh-5rem)] overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <LeftSidebar />
             </div>
           </div>
@@ -234,7 +234,7 @@ const FeedPage = () => {
 
           {/* Coluna direita — só ≥xl */}
           <div className="hidden xl:block">
-            <div className="sticky top-20 max-h-[calc(100vh-5rem)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10">
+            <div className="sticky top-20 max-h-[calc(100vh-5rem)] overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <RightSidebar />
             </div>
           </div>
