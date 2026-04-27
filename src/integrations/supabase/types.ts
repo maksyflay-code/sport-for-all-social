@@ -777,6 +777,19 @@ export type Database = {
           impressions: number
         }[]
       }
+      get_email_domain_stats: {
+        Args: never
+        Returns: {
+          activation_rate: number
+          active_users: number
+          confirmed_users: number
+          domain: string
+          is_suspicious: boolean
+          last_signup: string
+          rejection_rate: number
+          total_users: number
+        }[]
+      }
       get_or_create_conversation: {
         Args: { other_user_id: string }
         Returns: string
@@ -786,6 +799,19 @@ export type Database = {
         Returns: {
           count: number
           emoji: string
+        }[]
+      }
+      get_users_by_email_domain: {
+        Args: { _domain: string }
+        Returns: {
+          avatar_url: string
+          bio: string
+          confirmed: boolean
+          created_at: string
+          display_name: string
+          email: string
+          has_activity: boolean
+          user_id: string
         }[]
       }
       grant_badge: {
@@ -801,6 +827,10 @@ export type Database = {
       }
       is_community_member: {
         Args: { _community_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_suspicious_email_domain: {
+        Args: { _domain: string }
         Returns: boolean
       }
       upsert_strava_distance: {
