@@ -8,9 +8,10 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX, Calendar, Plus, Edit, Flag, CheckCircle, XCircle, BadgeCheck, Megaphone } from "lucide-react";
+import { Shield, Users, FileText, Trash2, ShieldCheck, ShieldX, Calendar, Plus, Edit, Flag, CheckCircle, XCircle, BadgeCheck, Megaphone, Mail } from "lucide-react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import AdSlotsAdmin from "@/components/AdSlotsAdmin";
+import EmailDomainsAdmin from "@/components/EmailDomainsAdmin";
 
 interface UserProfile {
   user_id: string;
@@ -46,7 +47,7 @@ const Admin = () => {
   const { isAdmin, loading } = useAdmin();
   const { events, reload: reloadEvents } = useEvents();
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"users" | "posts" | "events" | "reports" | "ads">("users");
+  const [tab, setTab] = useState<"users" | "posts" | "events" | "reports" | "ads" | "domains">("users");
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [reports, setReports] = useState<ReportItem[]>([]);
@@ -226,9 +227,13 @@ const Admin = () => {
             <Button variant={tab === "ads" ? "default" : "outline"} onClick={() => setTab("ads")} className="rounded-xl gap-2">
               <Megaphone className="w-4 h-4" /> Anúncios
             </Button>
+            <Button variant={tab === "domains" ? "default" : "outline"} onClick={() => setTab("domains")} className="rounded-xl gap-2">
+              <Mail className="w-4 h-4" /> Domínios
+            </Button>
           </div>
 
           {tab === "ads" && <AdSlotsAdmin />}
+          {tab === "domains" && <EmailDomainsAdmin />}
 
           {/* Users tab */}
           {tab === "users" && (
