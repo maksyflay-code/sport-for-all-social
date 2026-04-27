@@ -67,11 +67,29 @@ export const useSuggestedUsers = () => {
       const { data: profiles } = await supabase
         .from("profiles")
         .select("user_id, display_name, avatar_url, bio, sports")
-        .limit(20);
+        .limit(50);
 
-      if (profiles) {
-        setUsers(profiles.filter((p) => !followingIds.includes(p.user_id)));
-      }
+      if (!profiles) return;
+
+      // Buscar IDs de usuários com pelo menos 1 post (sinal de atividade real)
+      const { data: postedRows } = await supabase
+        .from("posts")
+        .select("user_id");
+      const activeUserIds = new Set((postedRows || []).map((p: any) => p.user_id));
+
+      // Filtro anti-bot: tem que ter sinal mínimo de atividade real
+      // (avatar customizado OU bio OU esportes OU pelo menos 1 post)
+      const filtered = profiles
+        .filter((p) => !followingIds.includes(p.user_id))
+        .filter((p) => {
+          const hasAvatar = !!p.avatar_url;
+          const hasBio = !!(p.bio && p.bio.trim().length > 0);
+          const hasSports = Array.isArray(p.sports) && p.sports.length > 0;
+          const hasPosted = activeUserIds.has(p.user_id);
+          return hasAvatar || hasBio || hasSports || hasPosted;
+        });
+
+      setUsers(filtered);
     };
     load();
   }, [user]);
