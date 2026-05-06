@@ -99,13 +99,20 @@ const FeedSection = () => {
 
     commentsData?.forEach((c) => { commentsMap[c.post_id] = (commentsMap[c.post_id] || 0) + 1; });
 
-    setPosts(postsData.map((p) => ({
-      ...p,
-      profiles: profilesMap[p.user_id] || null,
-      likes_count: likesMap[p.id]?.count || 0,
-      comments_count: commentsMap[p.id] || 0,
-      user_liked: likesMap[p.id]?.userLiked || false,
-    })));
+    setPosts(
+      postsData
+        .filter((p) => {
+          const prof = profilesMap[p.user_id];
+          return prof && prof.display_name && prof.display_name.trim().length > 0;
+        })
+        .map((p) => ({
+          ...p,
+          profiles: profilesMap[p.user_id] || null,
+          likes_count: likesMap[p.id]?.count || 0,
+          comments_count: commentsMap[p.id] || 0,
+          user_liked: likesMap[p.id]?.userLiked || false,
+        }))
+    );
   };
 
   const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
