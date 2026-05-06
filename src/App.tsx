@@ -5,6 +5,9 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { ReactNode } from "react";
+import { Navigate } from "react-router-dom";
 import Index from "./pages/Index.tsx";
 import Auth from "./pages/Auth.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
@@ -23,6 +26,14 @@ import NotFound from "./pages/NotFound.tsx";
 const queryClient = new QueryClient();
 
 const RECOVERY_REDIRECT_ORIGIN = "https://cidadelas360.com.br";
+
+const RequireAuth = ({ children }: { children: ReactNode }) => {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+  if (loading) return null;
+  if (!user) return <Navigate to="/auth" state={{ from: location }} replace />;
+  return <>{children}</>;
+};
 
 const RecoveryRedirectHandler = () => {
   const location = useLocation();
@@ -56,20 +67,20 @@ const App = () => (
         <AuthProvider>
           <RecoveryRedirectHandler />
           <Routes>
-            <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/perfil" element={<Profile />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/usuario/:userId" element={<UserProfile />} />
-            <Route path="/rede" element={<MyNetwork />} />
-            <Route path="/atletas" element={<Athletes />} />
-            <Route path="/mensagens" element={<ConversationsList />} />
-            <Route path="/comunidades" element={<Communities />} />
-            <Route path="/comunidades/:communityId" element={<CommunityDetail />} />
-            <Route path="/mensagens/:conversationId" element={<ChatView />} />
-            <Route path="/tag/:tagName" element={<Tag />} />
-            <Route path="/eventos" element={<Events />} />
+            <Route path="/" element={<RequireAuth><Index /></RequireAuth>} />
+            <Route path="/perfil" element={<RequireAuth><Profile /></RequireAuth>} />
+            <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth>} />
+            <Route path="/usuario/:userId" element={<RequireAuth><UserProfile /></RequireAuth>} />
+            <Route path="/rede" element={<RequireAuth><MyNetwork /></RequireAuth>} />
+            <Route path="/atletas" element={<RequireAuth><Athletes /></RequireAuth>} />
+            <Route path="/mensagens" element={<RequireAuth><ConversationsList /></RequireAuth>} />
+            <Route path="/comunidades" element={<RequireAuth><Communities /></RequireAuth>} />
+            <Route path="/comunidades/:communityId" element={<RequireAuth><CommunityDetail /></RequireAuth>} />
+            <Route path="/mensagens/:conversationId" element={<RequireAuth><ChatView /></RequireAuth>} />
+            <Route path="/tag/:tagName" element={<RequireAuth><Tag /></RequireAuth>} />
+            <Route path="/eventos" element={<RequireAuth><Events /></RequireAuth>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
