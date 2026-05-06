@@ -14,6 +14,14 @@ import MentionTextarea from "@/components/MentionTextarea";
 import { renderRichText, buildMentionMap } from "@/lib/textParser";
 import VerifiedBadge from "@/components/VerifiedBadge";
 
+const hasRealName = (name: string | null | undefined) => {
+  const clean = (name || "").trim();
+  if (clean.length < 3) return false;
+  if (clean.split(/\s+/).length < 2) return false;
+  if (!/[A-Za-zÀ-ÿ]/.test(clean)) return false;
+  return true;
+};
+
 interface Post {
   id: string;
   content: string;
@@ -44,11 +52,20 @@ const FeedSection = () => {
   const [showLocationInput, setShowLocationInput] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [mentionMap, setMentionMap] = useState<Map<string, string>>(new Map());
+  const [myDisplayName, setMyDisplayName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const commonEmojis = ["😀","😂","🥰","😎","🤩","💪","🏆","🔥","⚽","🏀","🏊","🚴","🏃","🎾","🏋️","👏","❤️","🙌","✨","🎉"];
 
   useEffect(() => { loadPosts(); }, [user, feedTab]);
+
+  useEffect(() => {
+    if (!user) { setMyDisplayName(null); return; }
+    supabase.from("profiles").select("display_name").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => setMyDisplayName(data?.display_name ?? null));
+  }, [user]);
+
+  const canParticipate = hasRealName(myDisplayName);
 
   const loadPosts = async () => {
     let postsData: any[] | null = null;
@@ -133,6 +150,11 @@ const FeedSection = () => {
 
   const handlePost = async () => {
     if (!user) { toast.error("Faça login para postar"); return; }
+    if (!canParticipate) {
+      toast.error("Adicione seu nome e sobrenome reais no perfil para publicar.");
+      navigate("/perfil");
+      return;
+    }
     if (!newPost.trim() && !mediaFile) return;
     setPosting(true);
 
@@ -197,6 +219,11 @@ const FeedSection = () => {
 
   const handleComment = async (postId: string) => {
     if (!user) { toast.error("Faça login para comentar"); return; }
+    if (!canParticipate) {
+      toast.error("Adicione seu nome e sobrenome reais no perfil para comentar.");
+      navigate("/perfil");
+      return;
+    }
     if (!newComment.trim()) return;
     await supabase.from("comments").insert({ post_id: postId, content: newComment.trim(), user_id: user.id });
     setNewComment("");
