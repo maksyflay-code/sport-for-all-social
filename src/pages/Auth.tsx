@@ -6,8 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { Turnstile } from "@marsidev/react-turnstile";
 import logoCidadelas from "@/assets/logo.jpeg";
 import heroImage from "@/assets/hero-sports.jpg";
+
+const TURNSTILE_SITE_KEY = "0x4AAAAAADQj7pfiVq86-kxw";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +19,8 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string>("");
+  const [captchaKey, setCaptchaKey] = useState(0);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -23,12 +28,25 @@ const Auth = () => {
     if (user) navigate("/");
   }, [user, navigate]);
 
+  const resetCaptcha = () => {
+    setCaptchaToken("");
+    setCaptchaKey((k) => k + 1);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!captchaToken) {
+      toast.error("Aguarde a verificação anti-bot terminar.");
+      return;
+    }
     setLoading(true);
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+          options: { captchaToken },
+        });
         if (error) throw error;
         toast.success("Bem-vindo de volta!");
         navigate("/");
@@ -39,6 +57,7 @@ const Auth = () => {
           options: {
             data: { full_name: fullName },
             emailRedirectTo: 'https://cidadelas360.com.br',
+            captchaToken,
           },
         });
         if (error) throw error;
@@ -46,6 +65,7 @@ const Auth = () => {
       }
     } catch (error: any) {
       toast.error(error.message || "Erro ao autenticar");
+      resetCaptcha();
     } finally {
       setLoading(false);
     }
@@ -67,16 +87,22 @@ const Auth = () => {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!captchaToken) {
+      toast.error("Aguarde a verificação anti-bot terminar.");
+      return;
+    }
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `https://cidadelas360.com.br`,
+        captchaToken,
       });
       if (error) throw error;
       toast.success("Email de recuperação enviado! Verifique sua caixa de entrada.");
       setIsForgot(false);
     } catch (error: any) {
       toast.error(error.message || "Erro ao enviar email");
+      resetCaptcha();
     } finally {
       setLoading(false);
     }
