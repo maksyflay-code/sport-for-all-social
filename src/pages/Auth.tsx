@@ -140,6 +140,16 @@ const Auth = () => {
                 required
                 className="h-11 rounded-xl bg-white/5 border-white/10 text-white placeholder:text-white/30 text-sm focus-visible:ring-orange-400/50"
               />
+              <div className="flex justify-center">
+                <Turnstile
+                  key={captchaKey}
+                  siteKey={TURNSTILE_SITE_KEY}
+                  onSuccess={(t) => setCaptchaToken(t)}
+                  onExpire={() => setCaptchaToken("")}
+                  onError={() => setCaptchaToken("")}
+                  options={{ theme: "dark", size: "flexible" }}
+                />
+              </div>
               <Button
                 type="submit"
                 disabled={loading}
@@ -182,6 +192,16 @@ const Auth = () => {
                   minLength={6}
                   className="h-11 rounded-xl bg-white/5 border-white/10 text-white placeholder:text-white/30 text-sm focus-visible:ring-orange-400/50"
                 />
+                <div className="flex justify-center">
+                  <Turnstile
+                    key={captchaKey}
+                    siteKey={TURNSTILE_SITE_KEY}
+                    onSuccess={(t) => setCaptchaToken(t)}
+                    onExpire={() => setCaptchaToken("")}
+                    onError={() => setCaptchaToken("")}
+                    options={{ theme: "dark", size: "flexible" }}
+                  />
+                </div>
                 <Button
                   type="submit"
                   disabled={loading}
