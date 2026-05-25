@@ -7,10 +7,19 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Turnstile } from "@marsidev/react-turnstile";
+import { z } from "zod";
 import logoCidadelas from "@/assets/logo.jpeg";
 import heroImage from "@/assets/hero-sports.jpg";
 
 const TURNSTILE_SITE_KEY = "0x4AAAAAADQj7pfiVq86-kxw";
+
+const signUpNameSchema = z
+  .string()
+  .trim()
+  .min(5, "Use seu nome e sobrenome reais para criar a conta.")
+  .refine((value) => /[A-Za-zÀ-ÿ]/.test(value), "Nome inválido.")
+  .refine((value) => value.split(/\s+/).length >= 2, "Informe nome e sobrenome.")
+  .refine((value) => !/[0-9]{3,}/.test(value), "Nome inválido.");
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -35,15 +44,28 @@ const Auth = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanFullName = fullName.trim();
+
     if (!captchaToken) {
       toast.error("Aguarde a verificação anti-bot terminar.");
       return;
     }
+
+    if (!isLogin) {
+      const result = signUpNameSchema.safeParse(cleanFullName);
+      if (!result.success) {
+        toast.error(result.error.issues[0]?.message || "Nome inválido.");
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
-          email,
+          email: cleanEmail,
           password,
           options: { captchaToken },
         });
@@ -52,10 +74,10 @@ const Auth = () => {
         navigate("/");
       } else {
         const { error } = await supabase.auth.signUp({
-          email,
+          email: cleanEmail,
           password,
           options: {
-            data: { full_name: fullName },
+            data: { full_name: cleanFullName },
             emailRedirectTo: 'https://cidadelas360.com.br',
             captchaToken,
           },
@@ -87,13 +109,17 @@ const Auth = () => {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const cleanEmail = email.trim().toLowerCase();
+
     if (!captchaToken) {
       toast.error("Aguarde a verificação anti-bot terminar.");
       return;
     }
+
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
         redirectTo: `https://cidadelas360.com.br`,
         captchaToken,
       });
