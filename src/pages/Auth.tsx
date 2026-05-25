@@ -109,29 +109,6 @@ const Auth = () => {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!captchaToken) {
-      toast.error("Aguarde a verificação anti-bot terminar.");
-      return;
-    }
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `https://cidadelas360.com.br`,
-        captchaToken,
-      });
-      if (error) throw error;
-      toast.success("Email de recuperação enviado! Verifique sua caixa de entrada.");
-      setIsForgot(false);
-    } catch (error: any) {
-      toast.error(error.message || "Erro ao enviar email");
-      resetCaptcha();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
 
     const cleanEmail = email.trim().toLowerCase();
 
