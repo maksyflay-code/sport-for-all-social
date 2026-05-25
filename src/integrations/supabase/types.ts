@@ -833,6 +833,7 @@ export type Database = {
         Args: { _domain: string }
         Returns: boolean
       }
+      is_valid_signup_name: { Args: { _name: string }; Returns: boolean }
       upsert_strava_distance: {
         Args: { _total_km: number; _user_id: string }
         Returns: undefined
