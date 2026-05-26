@@ -97,7 +97,15 @@ Deno.serve(async (req) => {
     );
 
     if (body.all === true) {
-      // Modo cron: sincroniza todos
+      // Modo cron: sincroniza todos — exige header secreto
+      const cronSecret = Deno.env.get("CRON_SECRET");
+      const provided = req.headers.get("x-cron-secret");
+      if (!cronSecret || provided !== cronSecret) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
       const { data: tokens } = await supabase.from("strava_tokens").select("*");
       const results = [];
       for (const t of tokens || []) {
@@ -112,13 +120,24 @@ Deno.serve(async (req) => {
       });
     }
 
-    const userId = body.user_id;
-    if (!userId) {
-      return new Response(JSON.stringify({ error: "Missing user_id" }), {
-        status: 400,
+    // Modo manual: exige JWT do próprio usuário
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const { data: userData, error: userErr } = await supabase.auth.getUser(
+      authHeader.replace("Bearer ", "")
+    );
+    if (userErr || !userData?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const userId = userData.user.id;
 
     const { data: token } = await supabase
       .from("strava_tokens").select("*").eq("user_id", userId).single();
