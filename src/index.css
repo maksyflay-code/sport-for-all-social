@@ -137,11 +137,15 @@
 .feed-light .border-white\/10 { border-color: #e4e8f0 !important; }
 
 .feed-light .text-white { color: #0f172a !important; }
+.feed-light .text-white\/90 { color: #1e293b !important; }
+.feed-light .text-white\/80 { color: #243042 !important; }
 .feed-light .text-white\/70 { color: #334155 !important; }
 .feed-light .text-white\/60 { color: #475569 !important; }
 .feed-light .text-white\/50 { color: #64748b !important; }
 .feed-light .text-white\/40 { color: #748094 !important; }
 .feed-light .text-white\/30 { color: #94a3b8 !important; }
+.feed-light .text-white\/20 { color: #aab4c4 !important; }
+.feed-light .placeholder\:text-white\/30::placeholder { color: #94a3b8 !important; }
 
 .feed-light .hover\:bg-white\/5:hover { background-color: #f1f5f9 !important; }
 .feed-light .hover\:bg-white\/10:hover { background-color: #e2e8f0 !important; }
