@@ -112,3 +112,56 @@
     -webkit-backdrop-filter: blur(20px) saturate(180%);
   }
 }
+
+/* ========= Light & vivid override for the logged-in feed ========= */
+.feed-light header.sticky,
+.feed-light .bg-\[\#16162a\],
+.feed-light .bg-\[\#16162a\]\/90,
+.feed-light .bg-\[\#1a1a2e\],
+.feed-light .bg-\[\#1e1e3a\],
+.feed-light .bg-\[\#252544\],
+.feed-light .bg-\[\#252544\]\/90,
+.feed-light .bg-\[\#2a2a44\] {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+}
+
+.feed-light .bg-white\/5 {
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+.feed-light .bg-white\/10 { background-color: #f1f5f9 !important; }
+
+.feed-light .border-white\/5,
+.feed-light .border-white\/10 { border-color: #e4e8f0 !important; }
+
+.feed-light .text-white { color: #0f172a !important; }
+.feed-light .text-white\/70 { color: #334155 !important; }
+.feed-light .text-white\/60 { color: #475569 !important; }
+.feed-light .text-white\/50 { color: #64748b !important; }
+.feed-light .text-white\/40 { color: #748094 !important; }
+.feed-light .text-white\/30 { color: #94a3b8 !important; }
+
+.feed-light .hover\:bg-white\/5:hover { background-color: #f1f5f9 !important; }
+.feed-light .hover\:bg-white\/10:hover { background-color: #e2e8f0 !important; }
+.feed-light .hover\:text-white:hover { color: #0f172a !important; }
+
+/* Inputs / search */
+.feed-light input,
+.feed-light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e4e8f0 !important;
+}
+.feed-light input::placeholder,
+.feed-light textarea::placeholder { color: #94a3b8 !important; }
+
+/* Make orange accents pop on light bg */
+.feed-light .bg-orange-500\/10 { background-color: #fff1e6 !important; }
+.feed-light .bg-orange-500\/20 { background-color: #ffe1cc !important; }
+.feed-light .border-orange-400\/20 { border-color: #fdba74 !important; }
+.feed-light .hover\:bg-orange-500\/10:hover { background-color: #fff1e6 !important; }
+
+/* Header brand text stays readable */
+.feed-light header .text-white { color: #0f172a !important; }
