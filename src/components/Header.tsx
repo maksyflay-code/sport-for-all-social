@@ -100,7 +100,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#16162a]/90 glass border-b border-white/5">
+    <header className="sticky top-0 z-50 bg-[#252544]/90 glass border-b border-white/10">
       <div className="container mx-auto flex items-center justify-between h-16 px-4 gap-4">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2.5 shrink-0">
