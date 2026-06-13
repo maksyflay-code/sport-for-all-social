@@ -198,7 +198,7 @@ const LandingPage = () => {
 // Feed page for logged-in users
 const FeedPage = () => {
   return (
-    <div className="feed-light min-h-screen bg-gradient-to-b from-[#eef4ff] via-[#f6f8fc] to-[#fff5ec]">
+    <div className="feed-light min-h-screen bg-[#f0f2f5]">
       <Header />
       <div className="container mx-auto px-4 py-6">
         <div className="xl:grid xl:grid-cols-[260px_minmax(0,1fr)_300px] xl:gap-6 xl:max-w-[1280px] xl:mx-auto">

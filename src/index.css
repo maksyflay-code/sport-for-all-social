@@ -113,8 +113,14 @@
   }
 }
 
-/* ========= Light & vivid override for the logged-in feed ========= */
-.feed-light header.sticky,
+/* ========= Facebook-inspired light theme (Cidadelas identity kept) ========= */
+.feed-light header.sticky {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  border-bottom-color: #dadde1 !important;
+}
 .feed-light .bg-\[\#16162a\],
 .feed-light .bg-\[\#16162a\]\/90,
 .feed-light .bg-\[\#1a1a2e\],
@@ -122,19 +128,17 @@
 .feed-light .bg-\[\#252544\],
 .feed-light .bg-\[\#252544\]\/90,
 .feed-light .bg-\[\#2a2a44\] {
-  background-color: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(16px) saturate(160%);
-  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  background-color: #ffffff !important;
 }
 
 .feed-light .bg-white\/5 {
   background-color: #ffffff !important;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
-.feed-light .bg-white\/10 { background-color: #f1f5f9 !important; }
+.feed-light .bg-white\/10 { background-color: #f0f2f5 !important; }
 
 .feed-light .border-white\/5,
-.feed-light .border-white\/10 { border-color: #e4e8f0 !important; }
+.feed-light .border-white\/10 { border-color: #dadde1 !important; }
 
 .feed-light .text-white { color: #0f172a !important; }
 .feed-light .text-white\/90 { color: #1e293b !important; }
@@ -151,15 +155,18 @@
 .feed-light .hover\:bg-white\/10:hover { background-color: #e2e8f0 !important; }
 .feed-light .hover\:text-white:hover { color: #0f172a !important; }
 
-/* Inputs / search */
+/* Inputs / search — FB-style pill */
 .feed-light input,
 .feed-light textarea {
-  background-color: #ffffff !important;
+  background-color: #f0f2f5 !important;
   color: #0f172a !important;
-  border-color: #e4e8f0 !important;
+  border-color: #dadde1 !important;
 }
 .feed-light input::placeholder,
 .feed-light textarea::placeholder { color: #94a3b8 !important; }
+
+/* Cards mais densos e radius FB */
+.feed-light .rounded-2xl { border-radius: 0.5rem !important; }
 
 /* Make orange accents pop on light bg */
 .feed-light .bg-orange-500\/10 { background-color: #fff1e6 !important; }
