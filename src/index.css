@@ -113,12 +113,15 @@
   }
 }
 
-/* ========= Facebook-inspired light theme (Cidadelas identity kept) ========= */
+/* ========= Facebook-style theme ========= */
+.feed-light {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif !important;
+}
 .feed-light header.sticky {
   background-color: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(12px) saturate(160%);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   border-bottom-color: #dadde1 !important;
 }
 .feed-light .bg-\[\#16162a\],
@@ -133,27 +136,27 @@
 
 .feed-light .bg-white\/5 {
   background-color: #ffffff !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 .feed-light .bg-white\/10 { background-color: #f0f2f5 !important; }
 
 .feed-light .border-white\/5,
 .feed-light .border-white\/10 { border-color: #dadde1 !important; }
 
-.feed-light .text-white { color: #0f172a !important; }
-.feed-light .text-white\/90 { color: #1e293b !important; }
-.feed-light .text-white\/80 { color: #243042 !important; }
-.feed-light .text-white\/70 { color: #334155 !important; }
-.feed-light .text-white\/60 { color: #475569 !important; }
-.feed-light .text-white\/50 { color: #64748b !important; }
-.feed-light .text-white\/40 { color: #748094 !important; }
-.feed-light .text-white\/30 { color: #94a3b8 !important; }
-.feed-light .text-white\/20 { color: #aab4c4 !important; }
-.feed-light .placeholder\:text-white\/30::placeholder { color: #94a3b8 !important; }
+.feed-light .text-white { color: #050505 !important; }
+.feed-light .text-white\/90 { color: #050505 !important; }
+.feed-light .text-white\/80 { color: #1c1e21 !important; }
+.feed-light .text-white\/70 { color: #1c1e21 !important; }
+.feed-light .text-white\/60 { color: #65676b !important; }
+.feed-light .text-white\/50 { color: #65676b !important; }
+.feed-light .text-white\/40 { color: #65676b !important; }
+.feed-light .text-white\/30 { color: #8a8d91 !important; }
+.feed-light .text-white\/20 { color: #8a8d91 !important; }
+.feed-light .placeholder\:text-white\/30::placeholder { color: #8a8d91 !important; }
 
-.feed-light .hover\:bg-white\/5:hover { background-color: #f1f5f9 !important; }
-.feed-light .hover\:bg-white\/10:hover { background-color: #e2e8f0 !important; }
-.feed-light .hover\:text-white:hover { color: #0f172a !important; }
+.feed-light .hover\:bg-white\/5:hover { background-color: #f2f2f2 !important; }
+.feed-light .hover\:bg-white\/10:hover { background-color: #e4e6eb !important; }
+.feed-light .hover\:text-white:hover { color: #050505 !important; }
 
 /* Inputs / search — FB-style pill */
 .feed-light input,
@@ -167,6 +170,37 @@
 
 /* Cards mais densos e radius FB */
 .feed-light .rounded-2xl { border-radius: 0.5rem !important; }
+
+/* === FB blue substitui o laranja dentro do feed === */
+.feed-light .text-orange-400,
+.feed-light .text-orange-300,
+.feed-light .hover\:text-orange-400:hover,
+.feed-light .hover\:text-orange-300:hover,
+.feed-light .group-hover\:text-orange-400,
+.feed-light .hover\:text-orange-400\/50,
+.feed-light .group-hover\:text-orange-400.group:hover,
+.feed-light .text-orange-400\/50 { color: #1877f2 !important; }
+
+.feed-light .bg-orange-500,
+.feed-light .hover\:bg-orange-600:hover { background-color: #1877f2 !important; }
+.feed-light .hover\:bg-orange-600:hover { background-color: #166fe5 !important; }
+
+.feed-light .bg-orange-500\/10,
+.feed-light .bg-orange-500\/20,
+.feed-light .hover\:bg-orange-500\/10:hover,
+.feed-light .hover\:bg-orange-500\/20:hover { background-color: #e7f0fe !important; }
+.feed-light .border-orange-400\/20 { border-color: #1877f2 !important; }
+
+.feed-light .fill-orange-400 { fill: #1877f2 !important; color: #1877f2 !important; }
+
+/* Gradiente de stories — azul FB ao invés de laranja/rosa */
+.feed-light .from-orange-400,
+.feed-light .from-orange-500 { --tw-gradient-from: #1877f2 var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(24 119 242 / 0) var(--tw-gradient-to-position) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.feed-light .via-orange-500 { --tw-gradient-to: rgb(24 119 242 / 0) var(--tw-gradient-to-position) !important; --tw-gradient-stops: var(--tw-gradient-from), #4293f5 var(--tw-gradient-via-position), var(--tw-gradient-to) !important; }
+.feed-light .to-pink-500 { --tw-gradient-to: #1877f2 var(--tw-gradient-to-position) !important; }
+
+/* Logo brand text — manter "360" em azul FB */
+.feed-light header .text-orange-400 { color: #1877f2 !important; }
 
 /* Make orange accents pop on light bg */
 .feed-light .bg-orange-500\/10 { background-color: #fff1e6 !important; }
