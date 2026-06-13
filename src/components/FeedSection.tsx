@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, MessageCircle, Share2, Send, Image, Smile, X, MapPin, Trash2, Flag } from "lucide-react";
+import { Heart, MessageCircle, Share2, Send, Image, Smile, X, MapPin, Trash2, Flag, ThumbsUp, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAdmin } from "@/hooks/useAdmin";
@@ -240,23 +240,52 @@ const FeedSection = () => {
 
   return (
     <section className="space-y-4">
-      {/* Create Post */}
+      {/* Create Post — FB style */}
       {user && (
         <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
-          <div className="flex items-start gap-3">
+          <div className="flex items-center gap-2 pb-3">
             <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center shrink-0">
               <span className="text-sm font-bold text-orange-400">
                 {getUserName().charAt(0).toUpperCase()}
               </span>
             </div>
-            <div className="flex-1">
-              <MentionTextarea
-                value={newPost}
-                onChange={setNewPost}
-                placeholder={`O que está acontecendo, ${getUserName().split(" ")[0]}? Use @ para mencionar e # para tags`}
-                rows={2}
-                className="resize-none border-0 bg-transparent focus-visible:ring-0 text-sm p-0 min-h-[60px] text-white placeholder:text-white/30"
-              />
+            <button
+              onClick={() => fileInputRef.current?.focus?.()}
+              className="flex-1 text-left bg-white/10 hover:bg-white/20 rounded-full px-4 h-10 text-sm text-white/50"
+            >
+              No que você está pensando, {getUserName().split(" ")[0]}?
+            </button>
+          </div>
+          <div className="border-t border-white/10 pt-2 flex items-center justify-around">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-white/5 text-sm font-semibold text-white/70 transition-colors"
+            >
+              <Video className="w-5 h-5 text-red-500" /> Vídeo ao vivo
+            </button>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-white/5 text-sm font-semibold text-white/70 transition-colors"
+            >
+              <Image className="w-5 h-5 text-green-500" /> Foto/vídeo
+            </button>
+            <button
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-white/5 text-sm font-semibold text-white/70 transition-colors"
+            >
+              <Smile className="w-5 h-5 text-yellow-500" /> Sentimento
+            </button>
+          </div>
+
+          {/* Composer expandido */}
+          <div className="mt-3 border-t border-white/10 pt-3">
+            <MentionTextarea
+              value={newPost}
+              onChange={setNewPost}
+              placeholder={`Escreva algo... use @ para mencionar e # para tags`}
+              rows={2}
+              className="resize-none border-0 bg-transparent focus-visible:ring-0 text-sm p-0 min-h-[60px] text-white placeholder:text-white/30"
+            />
               {/* Media preview */}
               {mediaPreview && mediaFile && (
                 <div className="relative mt-2 rounded-xl overflow-hidden border border-white/10 max-h-60">
@@ -322,7 +351,7 @@ const FeedSection = () => {
                   onClick={handlePost}
                   disabled={posting || !newPost.trim()}
                   size="sm"
-                  className="rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 h-9 disabled:opacity-40"
+                  className="rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 h-9 disabled:opacity-40"
                 >
                   {posting ? "..." : "Publicar"}
                 </Button>
@@ -348,7 +377,6 @@ const FeedSection = () => {
                   <MapPin className="w-3 h-3" /> {location}
                 </p>
               )}
-            </div>
           </div>
         </div>
       )}
@@ -488,23 +516,23 @@ const FeedSection = () => {
           <div className="flex items-center border-t border-white/5 mx-4 py-1.5 gap-1">
             <button
               onClick={() => handleLike(post.id, post.user_liked)}
-              className={`flex items-center gap-1.5 flex-1 justify-center py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center gap-1.5 flex-1 justify-center py-2 rounded-xl text-sm font-semibold transition-all ${
                 post.user_liked
                   ? "text-orange-400 bg-orange-500/10"
-                  : "text-white/40 hover:bg-white/5 hover:text-white"
+                  : "text-white/60 hover:bg-white/5 hover:text-white"
               }`}
             >
-              <Heart className={`w-[18px] h-[18px] ${post.user_liked ? "fill-orange-400" : ""}`} /> Curtir
+              <ThumbsUp className={`w-[18px] h-[18px] ${post.user_liked ? "fill-orange-400" : ""}`} /> Curtir
             </button>
             <button
               onClick={() => toggleComments(post.id)}
-              className="flex items-center gap-1.5 flex-1 justify-center py-2 rounded-xl text-sm font-medium text-white/40 hover:bg-white/5 hover:text-white transition-all"
+              className="flex items-center gap-1.5 flex-1 justify-center py-2 rounded-xl text-sm font-semibold text-white/60 hover:bg-white/5 hover:text-white transition-all"
             >
               <MessageCircle className="w-[18px] h-[18px]" /> Comentar
             </button>
             <button
               onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success("Link copiado!"); }}
-              className="flex items-center gap-1.5 flex-1 justify-center py-2 rounded-xl text-sm font-medium text-white/40 hover:bg-white/5 hover:text-white transition-all"
+              className="flex items-center gap-1.5 flex-1 justify-center py-2 rounded-xl text-sm font-semibold text-white/60 hover:bg-white/5 hover:text-white transition-all"
             >
               <Share2 className="w-[18px] h-[18px]" /> Compartilhar
             </button>
