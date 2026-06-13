@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, X, Search, Bell, LogOut, User, MessageCircle, Users, Shield, UserSearch, Calendar } from "lucide-react";
+import { Menu, X, Search, Bell, LogOut, User, MessageCircle, Users, Shield, UserSearch, Calendar, Home } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AnimatePresence, motion } from "framer-motion";
@@ -21,6 +22,7 @@ const Header = () => {
   const { user, signOut } = useAuth();
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -101,22 +103,51 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-[#252544]/90 glass border-b border-white/10">
-      <div className="container mx-auto flex items-center justify-between h-16 px-4 gap-4">
-        {/* Logo */}
-        <a href="/" className="flex items-center gap-2.5 shrink-0">
-          <img src={logoCidadelas} alt="Cidadelas 360" className="w-10 h-10 rounded-full object-cover shadow-sm" />
-          <span className="text-lg font-extrabold tracking-tight text-white hidden sm:block">
-            CIDADELAS <span className="text-orange-400">360</span>
-          </span>
-        </a>
-
-        {/* Search */}
-        <div className="hidden md:block flex-1 max-w-md mx-auto">
-          <SearchUsers />
+      <div className="flex items-center justify-between h-14 px-4 gap-2">
+        {/* Left: Logo + Search */}
+        <div className="flex items-center gap-2 shrink-0 w-[320px]">
+          <a href="/" className="flex items-center gap-2 shrink-0">
+            <img src={logoCidadelas} alt="Cidadelas 360" className="w-10 h-10 rounded-full object-cover" />
+          </a>
+          <div className="hidden md:block flex-1 max-w-[240px]">
+            <SearchUsers />
+          </div>
         </div>
 
+        {/* Center: FB-style nav tabs */}
+        {user && (
+          <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center max-w-[680px]">
+            {[
+              { icon: Home, path: "/", label: "Início" },
+              { icon: UserSearch, path: "/atletas", label: "Atletas" },
+              { icon: Users, path: "/comunidades", label: "Comunidades" },
+              { icon: Calendar, path: "/eventos", label: "Eventos" },
+              { icon: MessageCircle, path: "/mensagens", label: "Mensagens" },
+            ].map((t) => {
+              const active = pathname === t.path;
+              return (
+                <button
+                  key={t.path}
+                  onClick={() => navigate(t.path)}
+                  title={t.label}
+                  className={`flex items-center justify-center h-12 px-10 rounded-lg transition-colors relative ${
+                    active
+                      ? "text-orange-400"
+                      : "text-white/50 hover:bg-white/5"
+                  }`}
+                >
+                  <t.icon className="w-6 h-6" strokeWidth={active ? 2.5 : 2} />
+                  {active && (
+                    <span className="absolute bottom-0 left-2 right-2 h-[3px] bg-orange-500 rounded-full" />
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        )}
+
         {/* Right actions */}
-        <div className="hidden md:flex items-center gap-2 shrink-0">
+        <div className="hidden md:flex items-center gap-1.5 shrink-0 justify-end w-[320px]">
           {user ? (
             <>
               {/* Notifications bell */}
@@ -124,7 +155,7 @@ const Header = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10 relative"
+                  className="rounded-full text-white/70 hover:text-white bg-white/5 hover:bg-white/10 w-10 h-10 relative"
                   onClick={handleBellClick}
                 >
                   <Bell className="w-5 h-5" />
@@ -184,7 +215,7 @@ const Header = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-xl text-orange-400 hover:text-orange-300 hover:bg-orange-500/10 w-10 h-10"
+                  className="rounded-full text-orange-400 hover:text-orange-300 bg-white/5 hover:bg-orange-500/10 w-10 h-10"
                   onClick={() => navigate("/admin")}
                   title="Painel Admin"
                 >
@@ -195,51 +226,18 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
-                onClick={() => navigate("/atletas")}
-                title="Atletas"
-              >
-                <UserSearch className="w-5 h-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
-                onClick={() => navigate("/comunidades")}
-                title="Comunidades"
-              >
-                <Users className="w-5 h-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
-                onClick={() => navigate("/eventos")}
-                title="Eventos"
-              >
-                <Calendar className="w-5 h-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
-                onClick={() => navigate("/mensagens")}
-              >
-                <MessageCircle className="w-5 h-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-xl text-white/50 hover:text-white hover:bg-white/10 w-10 h-10"
+                className="rounded-full text-white/70 hover:text-white bg-white/5 hover:bg-white/10 w-10 h-10"
                 onClick={() => navigate("/perfil")}
+                title="Meu Perfil"
               >
                 <User className="w-5 h-5" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-xl text-white/50 hover:text-red-400 hover:bg-white/10 w-10 h-10"
+                className="rounded-full text-white/70 hover:text-red-400 bg-white/5 hover:bg-white/10 w-10 h-10"
                 onClick={handleSignOut}
+                title="Sair"
               >
                 <LogOut className="w-5 h-5" />
               </Button>
