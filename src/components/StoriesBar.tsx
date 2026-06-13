@@ -33,7 +33,7 @@ const StoriesBar = () => {
           )}
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-[60px] bg-white flex items-center justify-center">
-          <StoryUploader onCreated={reload} variant="fb" />
+          <StoryUploader onCreated={reload} />
         </div>
         <div className="absolute top-[120px] left-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-orange-500 border-4 border-white flex items-center justify-center pointer-events-none">
           <Plus className="w-4 h-4 text-white" />
