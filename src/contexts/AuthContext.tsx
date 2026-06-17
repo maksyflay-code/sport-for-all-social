@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface AuthContextType {
   user: User | null;
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 const IDLE_TIMEOUT_MS = 60 * 60 * 1000; // 1 hora
+const IDLE_WARNING_MS = 60 * 1000; // aviso 1 minuto antes
 const IDLE_STORAGE_KEY = "last_activity_at";
 const ACTIVITY_EVENTS = ["mousemove", "mousedown", "keydown", "touchstart", "scroll", "click"];
 
@@ -66,14 +68,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!session) return;
 
     let timer: ReturnType<typeof setTimeout>;
+    let warnTimer: ReturnType<typeof setTimeout>;
 
     const logoutForIdle = async () => {
+      toast.error("Sessão expirada por inatividade. Faça login novamente.", { duration: 6000 });
       await supabase.auth.signOut();
+    };
+
+    const warnIdle = () => {
+      toast.warning("Você será desconectado em 1 minuto por inatividade.", {
+        duration: IDLE_WARNING_MS,
+        id: "idle-warning",
+      });
     };
 
     const markActivity = () => {
       localStorage.setItem(IDLE_STORAGE_KEY, Date.now().toString());
       clearTimeout(timer);
+      clearTimeout(warnTimer);
+      toast.dismiss("idle-warning");
+      warnTimer = setTimeout(warnIdle, IDLE_TIMEOUT_MS - IDLE_WARNING_MS);
       timer = setTimeout(logoutForIdle, IDLE_TIMEOUT_MS);
     };
 
@@ -96,6 +110,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => {
       clearTimeout(timer);
+      clearTimeout(warnTimer);
       ACTIVITY_EVENTS.forEach((ev) => window.removeEventListener(ev, markActivity));
       document.removeEventListener("visibilitychange", checkOnVisibility);
     };
